@@ -1,10 +1,11 @@
 import Image from "next/image";
+import ScopePageOne from "./Scopes/(ScopeOne)/ScopePageOne";
 
 export default function Home() {
   return (
    <>
-   
-   <h1>hello world</h1>
+   <ScopePageOne></ScopePageOne>
+  
    
    
    </>
