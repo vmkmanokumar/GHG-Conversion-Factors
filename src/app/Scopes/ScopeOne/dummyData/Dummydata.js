@@ -7,3 +7,18 @@ export const dummyData = [
     { value: "SEWR KWh pass and delivery vehicles", label: "SEWR KWh pass and delivery vehicles" },
   ];
   
+
+ export const DummydataForActives = [
+    {
+      "Fuels": [
+        "Gasous fuels",
+        "Liquid fuels",
+        "Solid fuels"
+      ],
+      "Passenger vehicles": [
+        "Car (by marketing)",
+        "Car (by size)",
+        "Car (by motorbike)"
+      ]
+    }
+  ];

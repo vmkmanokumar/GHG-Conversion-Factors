@@ -5,11 +5,25 @@ import { useState } from "react";
 import ScopeOneSelection from "./ScopeOne/ScopeOneSelection";
 import ScopeTwoSelection from "./Scopetwo/ScopeTwoSelection";
 import ScopeThreeSelection from "./Scopethree/ScopeTwoSelection";
+import { ConfigProvider, Steps } from 'antd';
 
 export default function HeaderPage() {
-  const [activeScope, setActiveScope] = useState(1); // State to track the active scope
+  const [activeScope, setActiveScope] = useState(0); // State to track the active scope
 
   console.log(activeScope)
+  
+  const customDot = (dot, { status, index }) => (
+    <div
+    style={{
+      backgroundColor: '#98E6CA', // Green color for finished steps
+      width: '15px',  // Bigger dot size
+      height: '15px',  // Bigger dot size
+      borderRadius: '50%',  // Make the dot circular
+    }}
+    >
+      {dot}
+    </div>
+  );
 
   const handleScopeClick = (index) => {
     setActiveScope(index); // Set the clicked index
@@ -63,8 +77,8 @@ export default function HeaderPage() {
             <div style={{ textAlign: "center" }}>
               <h1
                 className="text-lg sm:text-xl"
-                style={{ color: activeScope === 1 ? "#008D87" : "black" }} // Green if Scope 1 is active
-                onClick={() => handleScopeClick(1)}
+                style={{ color: activeScope === 0 ? "#008D87" : "black" }} // Green if Scope 1 is active
+                onClick={() => handleScopeClick(0)}
               >
                 Scope 1
               </h1>
@@ -74,8 +88,8 @@ export default function HeaderPage() {
             <div style={{ textAlign: "center" }}>
               <h1
                 className="text-lg sm:text-xl"
-                style={{ color: activeScope === 2 ? "#008D87" : "black" }} // Green if Scope 2 is active
-                onClick={() => handleScopeClick(2)}
+                style={{ color: activeScope === 1 ? "#008D87" : "black" }} // Green if Scope 2 is active
+                onClick={() => handleScopeClick(1)}
               >
                 Scope 2
               </h1>
@@ -85,8 +99,8 @@ export default function HeaderPage() {
             <div style={{ textAlign: "center" }}>
               <h1
                 className="text-lg sm:text-xl"
-                style={{ color: activeScope === 3 ? "#008D87" : "black" }} // Green if Scope 3 is active
-                onClick={() => handleScopeClick(3)}
+                style={{ color: activeScope === 2 ? "#008D87" : "black" }} // Green if Scope 3 is active
+                onClick={() => handleScopeClick(2)}
               >
                 Scope 3
               </h1>
@@ -94,10 +108,25 @@ export default function HeaderPage() {
           </Col>
         </Row>
       </Flex>
-        
-      {activeScope === 1 && <ScopeOneSelection></ScopeOneSelection>}
-      {activeScope === 2 && <ScopeTwoSelection></ScopeTwoSelection>}
-      {activeScope === 3 && <ScopeThreeSelection></ScopeThreeSelection>}
+  
+  
+      <ConfigProvider
+    theme={{
+      token: {
+        colorPrimary: '#27A376', // Green color
+      },
+    }}
+  >
+    <Steps
+      current={activeScope}
+      items={[{}, {}, {}]}
+     className="w-full sm:w-[1000px] md:w-[1000px] lg:w-[1000px] ml-auto mr-auto mt-10"
+      progressDot={customDot}
+    />
+  </ConfigProvider>
+      {activeScope === 0 && <ScopeOneSelection></ScopeOneSelection>}
+      {activeScope === 1 && <ScopeTwoSelection></ScopeTwoSelection>}
+      {activeScope === 2 && <ScopeThreeSelection></ScopeThreeSelection>}
     </>
   );
 }

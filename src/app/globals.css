@@ -9,6 +9,30 @@ body {
   font-family: 'Noto Sans', sans-serif;
 }
 
+/* Change the color of the steps line */
+.ant-steps-item-process .ant-steps-item-line {
+  background-color: #28a745 !important; /* Green color */
+}
+
+/* Change the color of the active dot */
+.ant-steps-item-process .ant-steps-item-icon {
+  background-color: #28a745 !important; /* Green color */
+  border-color: #28a745 !important; /* Green border */
+}
+
+/* Change the color of the completed dot */
+.ant-steps-item-finish .ant-steps-item-icon {
+  background-color: #28a745 !important; /* Green color */
+  border-color: #28a745 !important; /* Green border */
+}
+
+/* Change the color of the pending dot */
+.ant-steps-item-next .ant-steps-item-icon {
+  background-color: #4caf50 !important; /* Lighter green color */
+  border-color: #4caf50 !important; /* Lighter green border */
+}
+
+
 
 @tailwind base;
 @tailwind components;
