@@ -64,7 +64,7 @@ export default function ScopeOneSelection() {
         </Chooseactivities>)}
 
 
-        {pageChange === 2 && ("")}
+        {pageChange === 2 && (<h1>hello wolrd</h1>)}
 
 
       <div className="flex justify-center gap-4 mt-6">
