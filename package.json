@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.6.0",
+    "@headlessui/react": "^2.2.0",
     "@heroicons/react": "^2.2.0",
+    "@heroui/accordion": "^2.2.8",
     "@heroui/button": "^2.2.10",
     "@heroui/checkbox": "^2.3.9",
     "antd": "^5.23.3",

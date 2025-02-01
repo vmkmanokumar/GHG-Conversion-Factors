@@ -109,8 +109,8 @@ export default function HeaderPage() {
         </Row>
       </Flex>
   
-  
-      <ConfigProvider
+      <div className="w-full md:w-[1000px] lg:w-[1000px] ml-auto mr-auto mt-10 sm:block hidden">
+  <ConfigProvider
     theme={{
       token: {
         colorPrimary: '#27A376', // Green color
@@ -120,10 +120,14 @@ export default function HeaderPage() {
     <Steps
       current={activeScope}
       items={[{}, {}, {}]}
-     className="w-full sm:w-[1000px] md:w-[1000px] lg:w-[1000px] ml-auto mr-auto mt-10"
+      className="w-full md:w-[1000px] lg:w-[1000px] ml-auto mr-auto mt-10"
       progressDot={customDot}
     />
   </ConfigProvider>
+</div>
+
+
+
       {activeScope === 0 && <ScopeOneSelection></ScopeOneSelection>}
       {activeScope === 1 && <ScopeTwoSelection></ScopeTwoSelection>}
       {activeScope === 2 && <ScopeThreeSelection></ScopeThreeSelection>}
