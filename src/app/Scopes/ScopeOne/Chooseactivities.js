@@ -3,9 +3,11 @@ import { Accordion, AccordionItem } from "@heroui/accordion";
 import { Checkbox } from "antd";
 import { DummydataForActives } from "./dummyData/Dummydata";
 
-export default function ChooseActivities({ checkedValues, setCheckedValues }) {
-  const [selectedValues, setSelectedValues] = useState({});
+export default function ChooseActivities({ checkedValues, setSelectedValues ,selectedValues}) {
 
+  // const [selectedValues, setSelectedValues] = useState({});  
+
+  
   // Handle Checkbox Change
   const handleCheckboxChange = (category, item) => {
     setSelectedValues((prev) => {

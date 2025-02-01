@@ -15,6 +15,10 @@ export default function ScopeOneSelection() {
   const [pageChange, setPageChange] = useState(0);
   const [checkedValues, setCheckedValue] = useState([])
 
+   const [selectedValues, setSelectedValues] = useState({});
+
+   console.log(selectedValues);
+
 
 
 
@@ -53,7 +57,14 @@ export default function ScopeOneSelection() {
 
       )}
 
-      {pageChange === 1 && (<Chooseactivities checkedValues={checkedValues}  setCheckedValues={setCheckedValue}></Chooseactivities>)}
+      {pageChange === 1 && (<Chooseactivities checkedValues={checkedValues} 
+      selectedValues={selectedValues}
+        setSelectedValues={setSelectedValues}>
+
+        </Chooseactivities>)}
+
+
+        {pageChange === 2 && ("")}
 
 
       <div className="flex justify-center gap-4 mt-6">
