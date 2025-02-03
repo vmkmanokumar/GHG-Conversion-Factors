@@ -7,7 +7,344 @@ export const dummyData = [
     { value: "SEWR KWh pass and delivery vehicles", label: "SEWR KWh pass and delivery vehicles" },
   ];
   
-
+export  const biogasDummyData = [
+    {
+      name: "Butane",
+      values: ["tonnes", "litres", "kWh (Net CV)", "kWh (Gross CV)"],
+    },
+    {
+      name: "CNG",
+      values: ["tonnes", "litres", "kWh (Net CV)", "kWh (Gross CV)"],
+    },
+    {
+        name: "LNG",
+        values: ["tonnes", "litres", "kWh (Net CV)", "kWh (Gross CV)"],
+      },
+      {
+        name: "LPG",
+        values: ["tonnes", "litres", "kWh (Net CV)", "kWh (Gross CV)"],
+      },
+      {
+        name: "Natural gas",
+        values: ["tonnes", "litres", "kWh (Net CV)", "kWh (Gross CV)"],
+      },
+      {
+        name: "Natural gas (100% mineral blend)",
+        values: ["tonnes", "litres", "kWh (Net CV)", "kWh (Gross CV)"],
+      },
+      {
+        name: "Propane",
+        values: ["tonnes", "litres", "kWh (Net CV)", "kWh (Gross CV)"],
+      },
+      {
+        name:"Aviation spirit",
+        values:["tonnes", "litres", "kWh (Net CV)", "kWh (Gross CV)"]
+      },
+      {
+        name:"Aviation turbine fuel",
+        values:["tonnes", "litres", "kWh (Net CV)", "kWh (Gross CV)"]
+      },
+      {
+        name:"Burning oil",
+        values:["tonnes", "litres", "kWh (Net CV)", "kWh (Gross CV)"]
+      }
+      ,
+      {
+        name:"Diesel (average biofuel blend)",
+        values:["tonnes", "litres", "kWh (Net CV)", "kWh (Gross CV)"]
+      }
+      ,
+      {
+        name:"Diesel (100% mineral diesel)",
+        values:["tonnes", "litres", "kWh (Net CV)", "kWh (Gross CV)"]
+      }
+      ,
+      {
+        name:"Fuel oil",
+        values:["tonnes", "litres", "kWh (Net CV)", "kWh (Gross CV)"]
+      }
+      ,
+      {
+        name:"Gas oil",
+        values:["tonnes", "litres", "kWh (Net CV)", "kWh (Gross CV)"]
+      }
+      ,
+      {
+        name:"Lubricants",
+        values:["tonnes", "litres", "kWh (Net CV)", "kWh (Gross CV)"]
+      }
+      ,
+      {
+        name:"Naphtha",
+        values:["tonnes", "litres", "kWh (Net CV)", "kWh (Gross CV)"]
+      },
+      {
+        name:"Petrol (average biofuel blend)",
+        values:["tonnes", "litres", "kWh (Net CV)", "kWh (Gross CV)"]
+      }
+      ,
+      {
+        name:"Petrol (100% mineral petrol)",
+        values:["tonnes", "litres", "kWh (Net CV)", "kWh (Gross CV)"]
+      }
+      ,
+      {
+        name:"Processed fuel oils - residual oil",
+        values:["tonnes", "litres", "kWh (Net CV)", "kWh (Gross CV)"]
+      }
+      ,
+      {
+        name:"Processed fuel oils - distillate oil",
+        values:["tonnes", "litres", "kWh (Net CV)", "kWh (Gross CV)"]
+      }
+      ,
+      {
+        name:"Refinery miscellaneous",
+        values:["tonnes", "litres", "kWh (Net CV)", "kWh (Gross CV)"]
+      }
+      ,
+      {
+        name:"Waste oils",
+        values:["tonnes", "litres", "kWh (Net CV)", "kWh (Gross CV)"]
+      }
+      ,
+      {
+        name:"Marine gas oil",
+        values:["tonnes", "litres", "kWh (Net CV)", "kWh (Gross CV)"]
+      }
+      ,
+      {
+        name:"Coal (industrial)",
+        values:["tonnes", "litres", "kWh (Net CV)", "kWh (Gross CV)"]
+      }
+      ,
+      {
+        name:"Coal (electricity generation)",
+        values:["tonnes", "litres", "kWh (Net CV)", "kWh (Gross CV)"]
+      }
+      ,
+      {
+        name:"Coal (domestic)",
+        values:["tonnes", "litres", "kWh (Net CV)", "kWh (Gross CV)"]
+      }
+      ,
+      {
+        name:"Coking coal",
+        values:["tonnes", "litres", "kWh (Net CV)", "kWh (Gross CV)"]
+      }
+      ,
+      {
+        name:"Petroleum coke",
+        values:["tonnes", "litres", "kWh (Net CV)", "kWh (Gross CV)"]
+      }
+      ,
+      {
+        name:"Coal (electricity generation - home produced coal only)",
+        values:["tonnes", "litres", "kWh (Net CV)", "kWh (Gross CV)"]
+      }
+      ,
+      {
+        name:"Marine fuel oil",
+        values:["tonnes", "litres", "kWh (Net CV)", "kWh (Gross CV)"]
+      },
+      {
+        name: "Bioethanol",
+        values: ["litres", "GJ", "kg"],
+      },
+      {
+        name: "Biodiesel ME",
+        values: ["litres", "GJ", "kg"],
+      },
+      {
+        name: "Biomethane (compressed)",
+        values: ["litres", "GJ", "kg"],
+      },
+      {
+        name: "Biodiesel ME (from used cooking oil)",
+        values: ["litres", "GJ", "kg"],
+      },
+      {
+        name: "Biodiesel ME (from tallow)",
+        values: ["litres", "GJ", "kg"],
+      },
+      {
+        name: "Biodiesel HVO",
+        values: ["litres", "GJ", "kg"],
+      },
+      {
+        name: "Biopropane",
+        values: ["litres", "GJ", "kg"],
+      },
+      {
+        name: "Development diesel",
+        values: ["litres", "GJ", "kg"],
+      },
+      {
+        name: "Development petrol",
+        values: ["litres", "GJ", "kg"],
+      },
+      {
+        name: "Off road biodiesel",
+        values: ["litres", "GJ", "kg"],
+      },
+      {
+        name: "Biomethane (liquified)",
+        values: ["litres", "GJ", "kg"],
+      },
+      {
+        name: "Methanol (bio)",
+        values: ["litres", "GJ", "kg"],
+      },
+      {
+        name: "Avtur (renewable)",
+        values: ["litres", "GJ", "kg"],
+      },
+      {
+        name: "Wood logs",
+        values: ["tonnes", "kWh"],
+      },
+      {
+        name: "Wood chips",
+        values: ["tonnes", "kWh"],
+      },
+      {
+        name: "Wood pellets",
+        values: ["tonnes", "kWh"],
+      },
+      {
+        name: "Grass/straw",
+        values: ["tonnes", "kWh"],
+      },
+      {
+        name: "Biogas",
+        values: ["tonnes", "kWh"],
+      },
+      {
+        name: "Landfill gas",
+        values: ["tonnes", "kWh"],
+      },
+      {
+        name: "Mini",
+        values: ["km", "miles"],
+      },
+      {
+        name: "Supermini",
+        values: ["km", "miles"],
+      },
+      {
+        name: "Lower medium",
+        values: ["km", "miles"],
+      },
+      {
+        name: "Upper medium",
+        values: ["km", "miles"],
+      },
+      {
+        name: "Executive",
+        values: ["km", "miles"],
+      },
+      {
+        name: "Luxury",
+        values: ["km", "miles"],
+      },
+      {
+        name: "Sports",
+        values: ["km", "miles"],
+      },
+      {
+        name: "Dual purpose 4X4",
+        values: ["km", "miles"],
+      },
+      {
+        name: "MPV",
+        values: ["km", "miles"],
+      },
+      {
+        name: "Small car",
+        values: ["km", "miles"],
+      },
+      {
+        name: "Medium car",
+        values: ["km", "miles"],
+      },
+      {
+        name: "Large car",
+        values: ["km", "miles"],
+      },
+      {
+        name: "Average car",
+        values: ["km", "miles"],
+      },
+      {
+        name: "Small",
+        values: ["km", "miles"],
+      },
+      {
+        name: "Medium",
+        values: ["km", "miles"],
+      },
+      {
+        name: "Large",
+        values: ["km", "miles"],
+      },
+      {
+        name: "Average",
+        values: ["km", "miles"],
+      },
+      {
+        name: "Class I (up to 1.305 tonnes)",
+        values: ["tonne.km", "km", "miles"],
+      },
+      {
+        name: "Class II (1.305 to 1.74 tonnes)",
+        values: ["tonne.km", "km", "miles"],
+      },
+      {
+        name: "Class III (1.74 to 3.5 tonnes)",
+        values: ["tonne.km", "km", "miles"],
+      },
+      {
+        name: "Average (up to 3.5 tonnes)",
+        values: ["tonne.km", "km", "miles"],
+      },
+      {
+        name: "Rigid (>3.5 - 7.5 tonnes)",
+        values: ["tonne.km", "km", "miles"],
+      },
+      {
+        name: "Rigid (>7.5 - 17 tonnes)",
+        values: ["tonne.km", "km", "miles"],
+      },
+      {
+        name: "Rigid (>17 tonnes)",
+        values: ["tonne.km", "km", "miles"],
+      },
+      {
+        name: "All rigids",
+        values: ["tonne.km", "km", "miles"],
+      },
+      {
+        name: "Articulated (>3.5 - 33t)",
+        values: ["tonne.km", "km", "miles"],
+      },
+      {
+        name: "Articulated (>33t)",
+        values: ["tonne.km", "km", "miles"],
+      },
+      {
+        name: "All artics",
+        values: ["tonne.km", "km", "miles"],
+      },
+      {
+        name: "All HGVs",
+        values: ["tonne.km", "km", "miles"],
+      },
+      {
+        name:"Rigid (>7.5 tonnes - 17 tonnes)",
+        values: ["tonne.km", "km", "miles"],
+      }
+      
+  ];
 export const DummydataForActives = {
   Fuels: ["Gasous fuels", "Liquid fuels", "Solid fuels"],
   "Passenger vehicles": ["Car (by marketing)", "Car (by size)", "Car (by motorbike)"],

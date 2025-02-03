@@ -1,11 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import { Disclosure } from "@headlessui/react";
 import { ChevronDown } from "lucide-react";
-import { Checkbox } from "antd";
+import { Radio, Checkbox } from "antd";
 import { DummydataForParameters } from "./dummyData/Dummydata";
+import { biogasDummyData } from "./dummyData/Dummydata";
 
 export default function Parameters({ selectedValues }) {
   console.log("From Parameters Page:", selectedValues);
+
+  const [selectedFuels, setSelectedFuels] = useState({});
+
+
+  // Handle checkbox toggle
+  const handleCheckboxChange = (fuel) => {
+    setSelectedFuels((prev) => ({
+      ...prev,
+      [fuel]: !prev[fuel], // Toggle selection state
+    }));
+  };
 
   return (
     <div className="flex flex-col justify-center items-center bg-[#effbf7] w-full md:w-[768px] lg:w-[1152px] md:mx-auto mt-10 md:mt-16 lg:mt-10 p-4 md:p-6 rounded-xl shadow-lg flex-grow min-h-[515px]">
@@ -46,20 +58,41 @@ export default function Parameters({ selectedValues }) {
                             />
                           </Disclosure.Button>
 
-                          {/* Inner Panel with checkboxes */}
+                          {/* Inner Panel with Checkbox & Radio Buttons */}
                           <Disclosure.Panel className="p-2 bg-[#effbf7] rounded-md mt-1 text-gray-500">
-                            {/* Dynamically Render Checkboxes if item matches */}
                             {Object.keys(DummydataForParameters).map((key) => {
                               if (key === item) {
                                 return (
-                                  <div key={key} className="flex flex-wrap gap-4 mt-2">
-                                    {DummydataForParameters[key].map((fuelItem) => (
-                                      <div key={fuelItem} className="flex items-center">
-                                        <Checkbox className="text-gray-700">
-                                          <span className="text-gray-700">{fuelItem}</span>
-                                        </Checkbox>
-                                      </div>
-                                    ))}
+                                  <div key={key} className="flex flex-wrap flex-col gap-4 mt-2">
+                                    {DummydataForParameters[key].map((fuelItem) => {
+                                      const fuelData = biogasDummyData.find(
+                                        (fuel) => fuel.name === fuelItem
+                                      );
+
+                                      return (
+                                        <div key={fuelItem} className="flex flex-col p-2 border rounded-lg">
+                                          {/* Checkbox for Fuel Type */}
+                                          <Checkbox
+                                            checked={selectedFuels[fuelItem] || false}
+                                            onChange={() => handleCheckboxChange(fuelItem)}
+                                            className="font-semibold  text-gray-700"
+                                          >
+                                            {fuelItem}
+                                          </Checkbox>
+
+                                          {/* Radio Group (Only shown if checkbox is checked) */}
+                                          {fuelData && selectedFuels[fuelItem] && (
+                                            <Radio.Group className="ml-10 mt-2">
+                                              {fuelData.values.map((unit) => (
+                                                <Radio key={unit} value={unit}>
+                                                  {unit}
+                                                </Radio>
+                                              ))}
+                                            </Radio.Group>
+                                          )}
+                                        </div>
+                                      );
+                                    })}
                                   </div>
                                 );
                               }
