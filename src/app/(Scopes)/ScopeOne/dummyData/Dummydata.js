@@ -216,7 +216,7 @@ export  const biogasDummyData = [
         values: ["tonnes", "kWh"],
       },
       {
-        name: "Biogas",
+        name: "BioGas",
         values: ["tonnes", "kWh"],
       },
       {
