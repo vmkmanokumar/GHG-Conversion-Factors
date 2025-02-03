@@ -16,9 +16,13 @@ export default function Login() {
 
   return (
     <div className="h-screen w-screen bg-white flex items-center justify-center p-4">
-      <Row className="text-white w-full h-auto rounded-lg ml-28 sm:mr-9 flex flex-col md:flex-row items-center md:items-start">
+      <Row className="w-full h-auto rounded-lg flex flex-col md:flex-row items-center md:items-start  lg:ml-28">
         {/* Left Section: Logo (Hidden on Mobile) */}
-        <Col md={12} className="hidden md:flex justify-center items-center">
+        <Col
+          md={12}
+          xs={0}
+          className="hidden md:flex justify-center items-center"
+        >
           <img
             src={loginLogo.src}
             alt="Login Logo"
@@ -30,8 +34,8 @@ export default function Login() {
         <Col
           xs={24}
           sm={24}
-          md={12}
-          className="p-6 sm:p-10 w-full flex flex-col justify-center"
+          md={9}
+          className="p-6 sm:p-10 w-full  flex flex-col justify-center "
         >
           <Title level={2} className="text-gray-800 text-center md:text-left">
             Welcome back!
@@ -78,7 +82,7 @@ export default function Login() {
               <Button
                 type="primary"
                 htmlType="submit"
-                className="bg-green-500 text-white w-full"
+                className="bg-[#27A376] text-white w-full hover:bg-[#27A376]"
               >
                 Login
               </Button>
