@@ -2,7 +2,7 @@
 import { Row, Col, Flex } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useState } from "react";
-import ScopeOneSelection from "./ScopeOne/ScopeOneSelection";
+import ScopeOneSelection from "./ScopeOne/page";
 import ScopeTwoSelection from "./Scopetwo/ScopeTwoSelection";
 import ScopeThreeSelection from "./Scopethree/ScopeTwoSelection";
 import { ConfigProvider, Steps } from 'antd';
@@ -128,9 +128,9 @@ export default function HeaderPage() {
 
 
 
-      {activeScope === 0 && <ScopeOneSelection></ScopeOneSelection>}
+      {/* {activeScope === 0 && <ScopeOneSelection></ScopeOneSelection>}
       {activeScope === 1 && <ScopeTwoSelection></ScopeTwoSelection>}
-      {activeScope === 2 && <ScopeThreeSelection></ScopeThreeSelection>}
+      {activeScope === 2 && <ScopeThreeSelection></ScopeThreeSelection>} */}
     </>
   );
 }

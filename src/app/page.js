@@ -1,6 +1,7 @@
 import Image from "next/image";
 
-import HeaderPage from "./Scopes/HeaderPage";
+import HeaderPage from "./(Scopes)/HeaderPage";
+import Login from "./(Auth)/login/login";
 
 export default function Home() {
 
@@ -12,8 +13,8 @@ export default function Home() {
   return (
    <>
   
-    <HeaderPage></HeaderPage>
-  
+    
+  <Login></Login>
    
    
    </>

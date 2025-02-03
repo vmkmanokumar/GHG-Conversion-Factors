@@ -1,3 +1,6 @@
+"use client"
+
+
 import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons"
 
 import { Checkbox, message } from "antd";
@@ -6,6 +9,9 @@ import { Button } from "@heroui/button";
 import { useState } from "react";
 import Chooseactivities from "./Chooseactivities";
 import { dummyData } from "./dummyData/Dummydata";
+import HeaderPage from "../HeaderPage";
+
+import Parameters from "./Parameters";
 
 
 
@@ -37,6 +43,9 @@ export default function ScopeOneSelection() {
   return (
     <>
 
+ 
+   <HeaderPage></HeaderPage>
+
       {pageChange === 0 && (<div className="flex justify-center items-center bg-[#effbf7] w-full md:w-[768px] lg:w-[1152px] md:mx-auto h-auto md:h-[450px] lg:h-[512px] mt-10 md:mt-16 lg:mt-10 p-4 md:p-6 rounded-xl">
   <div className="w-full md:w-[500px] max-w-2xl rounded-lg p-4 md:p-6 lg:mr-96">
     <h1 className="text-[20px] md:text-[22px] lg:text-[23px] font-black">Scope Factors</h1>
@@ -65,7 +74,7 @@ export default function ScopeOneSelection() {
         </Chooseactivities>)}
 
 
-        {pageChange === 2 && (<h1>hello wolrd</h1>)}
+        {pageChange === 2 && (<Parameters selectedValues={selectedValues}></Parameters>)}
 
 
       <div className="flex justify-center gap-4 mt-6">
