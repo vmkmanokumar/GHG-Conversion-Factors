@@ -1,5 +1,5 @@
 import React from "react";
-import { Disclosure } from "@headlessui/react";
+import { Disclosure ,DisclosureButton,DisclosurePanel } from "@headlessui/react";
 import { Checkbox } from "antd";
 import { ChevronDown } from "lucide-react";
 import { DummydataForActives } from "./dummyData/Dummydata";
@@ -36,16 +36,16 @@ export default function ChooseActivities({ checkedValues, setSelectedValues, sel
             <Disclosure key={key}>
               {({ open }) => (
                 <div className="bg-[#BFF1DF] w-full mt-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                  <Disclosure.Button className="flex justify-between items-center w-full px-4 py-3 text-lg font-medium text-gray-700 focus:outline-none transition duration-700">
+                  <DisclosureButton className="flex justify-between items-center w-full px-4 py-3 text-lg font-medium text-gray-700 focus:outline-none transition duration-700">
                     <span>{key}</span>
                     <ChevronDown
                       className={`w-5 h-5 transition-transform ${
                         open ? "rotate-180" : "rotate-0"
                       }`}
                     />
-                  </Disclosure.Button>
+                  </DisclosureButton>
 
-                  <Disclosure.Panel
+                  <DisclosurePanel
                     className={`p-4 w-full bg-[#effbf7] rounded-b-lg overflow-hidden transition-all duration-300 ease-in-out ${
                       open ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
                     }`}
@@ -63,7 +63,7 @@ export default function ChooseActivities({ checkedValues, setSelectedValues, sel
                         </div>
                       ))}
                     </div>
-                  </Disclosure.Panel>
+                  </DisclosurePanel>
                 </div>
               )}
             </Disclosure>
