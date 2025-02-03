@@ -7,10 +7,8 @@ import { DummydataForParameters } from "./dummyData/Dummydata";
 export default function Parameters({ selectedValues }) {
   console.log("From Parameters Page:", selectedValues);
 
-
-
   return (
-    <div className="flex flex-col flex-grow justify-center items-center bg-[#effbf7] w-full md:w-[768px] lg:w-[1152px] md:mx-auto h-auto md:h-[450px] lg:h-[512px] mt-10 md:mt-16 lg:mt-10 p-4 md:p-6 rounded-xl shadow-lg">
+    <div className="flex flex-col justify-center items-center bg-[#effbf7] w-full md:w-[768px] lg:w-[1152px] md:mx-auto mt-10 md:mt-16 lg:mt-10 p-4 md:p-6 rounded-xl shadow-lg flex-grow min-h-[515px]">
       {/* Title Section */}
       <div className="w-full mb-4">
         <h1 className="text-2xl font-bold text-gray-800">Parameters</h1>
@@ -39,7 +37,7 @@ export default function Parameters({ selectedValues }) {
                       {({ open }) => (
                         <div className="w-full mt-2">
                           {/* Inner Disclosure Button */}
-                          <Disclosure.Button className="flex  justify-between items-center w-full px-3 py-2 text-gray-600 bg-[#BFF1DF] rounded-md focus:outline-none transition-all duration-300">
+                          <Disclosure.Button className="flex justify-between items-center w-full px-3 py-2 text-gray-600 bg-[#BFF1DF] rounded-md focus:outline-none transition-all duration-300">
                             <span className="text-base">{item}</span>
                             <ChevronDown
                               className={`w-4 h-4 transition-transform ${
@@ -54,7 +52,7 @@ export default function Parameters({ selectedValues }) {
                             {Object.keys(DummydataForParameters).map((key) => {
                               if (key === item) {
                                 return (
-                                  <div key={key} className="flex flex-wrap mt-2 gap-4">
+                                  <div key={key} className="flex flex-wrap gap-4 mt-2">
                                     {DummydataForParameters[key].map((fuelItem) => (
                                       <div key={fuelItem} className="flex items-center">
                                         <Checkbox className="text-gray-700">
