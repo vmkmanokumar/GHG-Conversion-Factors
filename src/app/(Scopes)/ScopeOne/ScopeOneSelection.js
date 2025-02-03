@@ -57,7 +57,8 @@ export default function ScopeOneSelection() {
 
       )}
 
-      {pageChange === 1 && (<Chooseactivities checkedValues={checkedValues} 
+      {pageChange === 1 && (<Chooseactivities 
+      checkedValues={checkedValues} 
       selectedValues={selectedValues}
         setSelectedValues={setSelectedValues}>
 
@@ -69,14 +70,15 @@ export default function ScopeOneSelection() {
 
       <div className="flex justify-center gap-4 mt-6">
         {/* Transparent Button with Green Border & Arrow */}
-        <Button onPress={() => setPageChange(pageChange - 1)}
+        {pageChange == 0 ? null : ( <Button onPress={() => setPageChange(pageChange - 1)}
           className="bg-transparent text-green-500 border border-green-500 px-6 py-3 rounded-lg text-lg font-semibold flex items-center
           hover:border-green-500 focus:border-green-500 focus:ring-0 disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={pageChange <= 0 }
 
         >
           <ArrowLeftOutlined className="text-green-500" />
-        </Button>
+        </Button>) }
+       
 
         {/* White Background Button with Green Border & Arrow */}
         <Button onPress={() => setPageChange(pageChange + 1)}
