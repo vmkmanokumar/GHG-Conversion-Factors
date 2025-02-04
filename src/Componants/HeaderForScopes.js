@@ -1,36 +1,41 @@
-"use client";
+"use client"
+
+import { useState } from "react";
 import { Row, Col, Flex } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import { useState } from "react";
-
 import { ConfigProvider, Steps } from 'antd';
 
-export default function HeaderPage() {
-  const [activeScope, setActiveScope] = useState(0); // State to track the active scope
 
-  console.log(activeScope)
-  
-  const customDot = (dot, { status, index }) => (
-    <div
-    style={{
-      backgroundColor: '#98E6CA', // Green color for finished steps
-      width: '15px',  // Bigger dot size
-      height: '15px',  // Bigger dot size
-      borderRadius: '50%',  // Make the dot circular
-    }}
-    >
-      {dot}
-    </div>
-  );
 
-  const handleScopeClick = (index) => {
-    setActiveScope(index); // Set the clicked index
-  };
+export default function HeaderForScopes(){
 
-  return (
-    <>
-    {/* <HeaderForScopes></HeaderForScopes> */}
+    const [activeScope, setActiveScope] = useState(0); // State to track the active scope
+        
+    console.log(activeScope)
+
+    const customDot = (dot, { status, index }) => (
       <div
+      style={{
+        backgroundColor: '#98E6CA', // Green color for finished steps
+        width: '15px',  // Bigger dot size
+        height: '15px',  // Bigger dot size
+        borderRadius: '50%',  // Make the dot circular
+      }}
+      >
+        {dot}
+      </div>
+    );
+
+
+    const handleScopeClick = (index) => {
+        setActiveScope(index); 
+      };
+
+    return(
+
+        <>
+
+    <div
         className="flex justify-center mt-10 sm:mt-20"
         style={{ width: "100%" }}
       >
@@ -106,8 +111,8 @@ export default function HeaderPage() {
             </div>
           </Col>
         </Row>
-      </Flex>
-  
+      </Flex>   
+
       <div className="w-full md:w-[1000px] lg:w-[1000px] ml-auto mr-auto mt-10 sm:block hidden">
   <ConfigProvider
     theme={{
@@ -117,17 +122,17 @@ export default function HeaderPage() {
     }}
   >
     <Steps
-      current={activeScope}
+      current={0}
       items={[{}, {}, {}]}
       className="w-full md:w-[1000px] lg:w-[1000px] ml-auto mr-auto mt-10"
       progressDot={customDot}
     />
   </ConfigProvider>
-</div>
+</div>  
 
 
+        </>
 
-    </>
-  );
+    )
+
 }
-
