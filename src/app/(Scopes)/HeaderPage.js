@@ -5,7 +5,7 @@ import { useState } from "react";
 
 import { ConfigProvider, Steps } from 'antd';
 
-export default function HeaderPage() {
+export default function HeaderPage({changeShope}) {
   const [activeScope, setActiveScope] = useState(0); // State to track the active scope
 
   console.log(activeScope)
@@ -117,7 +117,7 @@ export default function HeaderPage() {
     }}
   >
     <Steps
-      current={activeScope}
+      current={changeShope}
       items={[{}, {}, {}]}
       className="w-full md:w-[1000px] lg:w-[1000px] ml-auto mr-auto mt-10"
       progressDot={customDot}

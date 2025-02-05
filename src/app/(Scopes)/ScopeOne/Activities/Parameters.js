@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Disclosure } from "@headlessui/react";
 import { ChevronDown } from "lucide-react";
 import { Radio, Checkbox } from "antd";
-import { DummydataForParameters } from "./dummyData/Dummydata";
-import { biogasDummyData } from "./dummyData/Dummydata";
+import { DummydataForParameters } from "../dummyData/Dummydata";
+import { biogasDummyData } from "../dummyData/Dummydata";
 
 export default function Parameters({ selectedValues }) {
   console.log("From Parameters Page:", selectedValues);

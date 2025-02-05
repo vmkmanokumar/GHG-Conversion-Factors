@@ -2,7 +2,7 @@ import React from "react";
 import { Disclosure ,DisclosureButton,DisclosurePanel } from "@headlessui/react";
 import { Checkbox } from "antd";
 import { ChevronDown } from "lucide-react";
-import { DummydataForActives } from "./dummyData/Dummydata";
+import { DummydataForActives } from "../dummyData/Dummydata";
 
 export default function ChooseActivities({ checkedValues, setSelectedValues, selectedValues }) {
   // Handle Checkbox Change
