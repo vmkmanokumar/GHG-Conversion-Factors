@@ -7,7 +7,7 @@ import { ConfigProvider, Steps } from 'antd';
 
 
 
-export default function HeaderForScopes(){
+export default function HeaderForScopes({changeShope}){
 
     const [activeScope, setActiveScope] = useState(0); // State to track the active scope
         
@@ -122,7 +122,7 @@ export default function HeaderForScopes(){
     }}
   >
     <Steps
-      current={0}
+      current={changeShope}
       items={[{}, {}, {}]}
       className="w-full md:w-[1000px] lg:w-[1000px] ml-auto mr-auto mt-10"
       progressDot={customDot}
