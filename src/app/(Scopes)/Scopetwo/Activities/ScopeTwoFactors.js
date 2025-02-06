@@ -3,7 +3,8 @@
 import { Checkbox } from "antd";
 import ChooesactivitiesScopeTwo from "./ChooesactiviesScopeTwo";
 import { dummyDataScope2factors } from "../dummyDataForScopeTwo/DummyData";
-
+import ParametersForScopeTwo from "./ParametersForScopeTwo";
+import ParameterUnitForScopeTwo from "./ParametersUnitForScopeTwo";
 export default function ScopeTwoFactors({
   checkedValuesScopeTwo,
   setCheckedValuesScopeTwo,
@@ -50,6 +51,20 @@ export default function ScopeTwoFactors({
 
         />
       )}
+
+
+      {pageChange === 2 && ( 
+       <ParametersForScopeTwo selectedValuesScopeTwo={selectedValuesScopeTwo}></ParametersForScopeTwo>
+      )} 
+
+      {pageChange === 3 && 
+      
+        (
+          <ParameterUnitForScopeTwo></ParameterUnitForScopeTwo>
+        )
+      
+      }
+
     </>
   );
 }
