@@ -1,7 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ScopeTwoProvider } from "./(Scopes)/Scopetwo/Context/ScopeTwoContext";
-
+import { ScopeThreeProvider } from "./(Scopes)/Scopethree/Context/ScopeThreeContext";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -22,7 +22,14 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body
       >
-    <ScopeTwoProvider> {children}</ScopeTwoProvider>   
+        <ScopeTwoProvider> 
+      <ScopeThreeProvider>
+
+          {children}
+      </ScopeThreeProvider>
+         
+      
+      </ScopeTwoProvider>   
       </body>
     </html>
   );

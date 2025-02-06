@@ -23,9 +23,6 @@ export default function HeaderPage({changeShope}) {
     </div>
   );
 
-  const handleScopeClick = (index) => {
-    setActiveScope(index); // Set the clicked index
-  };
 
   return (
     <>
@@ -76,8 +73,8 @@ export default function HeaderPage({changeShope}) {
             <div style={{ textAlign: "center" }}>
               <h1
                 className="text-lg sm:text-xl"
-                style={{ color: activeScope === 0 ? "#008D87" : "black" }} // Green if Scope 1 is active
-                onClick={() => handleScopeClick(0)}
+                style={{ color: changeShope === 0 ? "#008D87" : "black" }} // Green if Scope 1 is active
+                // onClick={() => handleScopeClick(0)}
               >
                 Scope 1
               </h1>
@@ -87,8 +84,8 @@ export default function HeaderPage({changeShope}) {
             <div style={{ textAlign: "center" }}>
               <h1
                 className="text-lg sm:text-xl"
-                style={{ color: activeScope === 1 ? "#008D87" : "black" }} // Green if Scope 2 is active
-                onClick={() => handleScopeClick(1)}
+                style={{ color: changeShope === 1 ? "#008D87" : "black" }} // Green if Scope 2 is active
+                // onClick={() => handleScopeClick(1)}
               >
                 Scope 2
               </h1>
@@ -98,8 +95,8 @@ export default function HeaderPage({changeShope}) {
             <div style={{ textAlign: "center" }}>
               <h1
                 className="text-lg sm:text-xl"
-                style={{ color: activeScope === 2 ? "#008D87" : "black" }} // Green if Scope 3 is active
-                onClick={() => handleScopeClick(2)}
+                style={{ color: changeShope === 2 ? "#008D87" : "black" }} // Green if Scope 3 is active
+                // onClick={() => handleScopeClick(2)}
               >
                 Scope 3
               </h1>

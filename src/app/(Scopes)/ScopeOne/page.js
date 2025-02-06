@@ -5,6 +5,7 @@ import HeaderForScopes from "@/Componants/HeaderForScopes";
 import ScopeOneFactors from "./Activities/ScopeOneFactors";
 import ScopeTwoSelection from "../Scopetwo/ScopeTwoSelectionPage";
 import FooterForScopes from "@/Componants/FooterForScopes";
+import ScopeThreeSelection from "../Scopethree/ScopeThreeSelection";
 
 
 export default function ScopeOneSelection() {
@@ -43,6 +44,8 @@ export default function ScopeOneSelection() {
       />)}
 
       {changeShope === 1 && (<ScopeTwoSelection pageChange={pageChange}></ScopeTwoSelection>)}
+
+      {changeShope === 2 && (<ScopeThreeSelection pageChange={pageChange}></ScopeThreeSelection>)}
       
 
       <FooterForScopes pageChange={pageChange} setPageChange={setPageChange} changeShope={changeShope} setChangeShope={setChangeShope}></FooterForScopes>
