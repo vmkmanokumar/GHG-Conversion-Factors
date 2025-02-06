@@ -39,13 +39,10 @@ export default function ScopeOneSelection() {
         selectedValues={selectedValues}
         setSelectedValues={setSelectedValues}
         pageChange={pageChange}
-        onChange={onChange} // ✅ Pass the onChange function
+        onChange={onChange} 
       />)}
 
-      {changeShope === 1 && (<ScopeTwoSelection pageChange={pageChange}
-
-
-                              ></ScopeTwoSelection>)}
+      {changeShope === 1 && (<ScopeTwoSelection pageChange={pageChange}></ScopeTwoSelection>)}
       
 
       <FooterForScopes pageChange={pageChange} setPageChange={setPageChange} changeShope={changeShope} setChangeShope={setChangeShope}></FooterForScopes>

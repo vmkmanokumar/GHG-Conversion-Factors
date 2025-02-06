@@ -1,16 +1,14 @@
+"use client";
 import React from "react";
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react";
 import { Checkbox } from "antd";
 import { ChevronDown } from "lucide-react";
 import { DummydataForScope2Actives } from "../dummyDataForScopeTwo/DummyData";
 
-export default function ChooesactivitiesScopeTwo({
-  checkedValuesScopeTwo, 
-  setSelectedValuesScopeTwo, 
-  selectedValuesScopeTwo
-}) {
+export default function ChooesactivitiesScopeTwo({ checkedValuesScopeTwo, setCheckedValuesScopeTwo,selectedValuesScopeTwo ,setSelectedValuesScopeTwo}) { // ✅ Use passed props
+  // const [selectedValuesScopeTwo, setSelectedValuesScopeTwo] = React.useState({});
 
-  console.log("From activepage", checkedValuesScopeTwo);
+  console.log(selectedValuesScopeTwo)
 
   // Handle Checkbox Change
   const handleCheckboxChange = (category, item) => {
@@ -24,7 +22,6 @@ export default function ChooesactivitiesScopeTwo({
         updatedCategoryValues.push(item);
       }
 
-      // Return updated state with the new category values
       return { ...prev, [category]: updatedCategoryValues };
     });
   };
@@ -38,47 +35,42 @@ export default function ChooesactivitiesScopeTwo({
 
       {/* Disclosure Section */}
       <div className="w-full min-h-[250px] flex-grow text-[22px]">
-      {Object.keys(DummydataForScope2Actives).map((key) => {
-  if (!checkedValuesScopeTwo.includes(key) || !DummydataForScope2Actives[key]) return null;
+        {Object.keys(DummydataForScope2Actives).map((key) => {
+          if (!checkedValuesScopeTwo.includes(key) || !DummydataForScope2Actives[key]) return null;
 
-  return (
-    <Disclosure key={key}>
-      {({ open }) => (
-        <div className="bg-[#BFF1DF] w-full mt-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-          <DisclosureButton className="flex justify-between items-center w-full px-4 py-3 text-lg font-medium text-gray-700 focus:outline-none transition duration-700">
-            <span>{key}</span>
-            <ChevronDown
-              className={`w-5 h-5 transition-transform ${
-                open ? "rotate-180" : "rotate-0"
-              }`}
-            />
-          </DisclosureButton>
+          return (
+            <Disclosure key={key}>
+              {({ open }) => (
+                <div className="bg-[#BFF1DF] w-full mt-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                  <DisclosureButton className="flex justify-between items-center w-full px-4 py-3 text-lg font-medium text-gray-700 focus:outline-none transition duration-700">
+                    <span>{key}</span>
+                    <ChevronDown className={`w-5 h-5 transition-transform ${open ? "rotate-180" : "rotate-0"}`} />
+                  </DisclosureButton>
 
-          <DisclosurePanel
-            className={`p-4 w-full bg-[#effbf7] rounded-b-lg overflow-hidden transition-all duration-300 ease-in-out ${
-              open ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
-            }`}
-          >
-            <div className="flex flex-wrap gap-4">
-              {DummydataForScope2Actives[key]?.map((item, idx) => (
-                <div key={idx} className="flex items-center">
-                  <Checkbox
-                    checked={selectedValuesScopeTwo[key]?.includes(item) || false}
-                    onChange={() => handleCheckboxChange(key, item)}
-                    className="text-gray-700"
+                  <DisclosurePanel
+                    className={`p-4 w-full bg-[#effbf7] rounded-b-lg overflow-hidden transition-all duration-300 ease-in-out ${
+                      open ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
+                    }`}
                   >
-                    <span className="text-gray-700">{item}</span>
-                  </Checkbox>
+                    <div className="flex flex-wrap gap-4">
+                      {DummydataForScope2Actives[key]?.map((item, idx) => (
+                        <div key={idx} className="flex items-center">
+                          <Checkbox
+                            checked={selectedValuesScopeTwo[key]?.includes(item) || false}
+                            onChange={() => handleCheckboxChange(key, item)}
+                            className="text-gray-700"
+                          >
+                            <span className="text-gray-700">{item}</span>
+                          </Checkbox>
+                        </div>
+                      ))}
+                    </div>
+                  </DisclosurePanel>
                 </div>
-              ))}
-            </div>
-          </DisclosurePanel>
-        </div>
-      )}
-    </Disclosure>
-  );
-})}
-
+              )}
+            </Disclosure>
+          );
+        })}
       </div>
     </div>
   );

@@ -1,3 +1,5 @@
+"use client";
+
 import { Checkbox } from "antd";
 import ChooesactivitiesScopeTwo from "./ChooesactiviesScopeTwo";
 import { dummyDataScope2factors } from "../dummyDataForScopeTwo/DummyData";
@@ -6,10 +8,14 @@ export default function ScopeTwoFactors({
   checkedValuesScopeTwo,
   setCheckedValuesScopeTwo,
   pageChange,
+  setSelectedValuesScopeTwo,
+  selectedValuesScopeTwo
+
 }) {
-  // This function will handle the change in checkboxes and update the state
+  // Handle Checkbox Change
   const handleCheckboxChange = (checkedValues) => {
-    setCheckedValuesScopeTwo(checkedValues); // Update the state with selected checkbox values
+    console.log("Selected values:", checkedValues); // Debugging
+    setCheckedValuesScopeTwo(checkedValues); // ✅ Ensure this updates the state
   };
 
   return (
@@ -20,8 +26,8 @@ export default function ScopeTwoFactors({
             <h1 className="text-[20px] md:text-[22px] lg:text-[23px] font-black">Scope Factors</h1>
 
             <Checkbox.Group
-              onChange={handleCheckboxChange}  // Ensure the onChange updates state
-              value={checkedValuesScopeTwo}    // Pass checkedValues to control the checkboxes
+              onChange={handleCheckboxChange} // ✅ Updates the state
+              value={checkedValuesScopeTwo}  // ✅ Controls the checkboxes
             >
               <div className="flex flex-col gap-4 md:gap-5 lg:gap-6 mt-4 md:mt-6 lg:mt-8">
                 {dummyDataScope2factors.map((item) => (
@@ -37,8 +43,11 @@ export default function ScopeTwoFactors({
 
       {pageChange === 1 && (
         <ChooesactivitiesScopeTwo
-          checkedValuesScopeTwo={checkedValuesScopeTwo}
-          setCheckedValuesScopeTwo={setCheckedValuesScopeTwo}
+          checkedValuesScopeTwo={checkedValuesScopeTwo} // ✅ Pass state here
+          setCheckedValuesScopeTwo={setCheckedValuesScopeTwo} // ✅ Pass state setter
+          setSelectedValuesScopeTwo={setSelectedValuesScopeTwo}
+          selectedValuesScopeTwo={selectedValuesScopeTwo}
+
         />
       )}
     </>
