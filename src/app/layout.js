@@ -1,5 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { ScopeTwoProvider } from "./(Scopes)/Scopetwo/Context/ScopeTwoContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,9 +21,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+    <ScopeTwoProvider> {children}</ScopeTwoProvider>   
       </body>
     </html>
   );
