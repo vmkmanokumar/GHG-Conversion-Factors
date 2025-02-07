@@ -3,12 +3,16 @@
 import { useScopeThree } from "../Context/ScopeThreeContext";
 import { DummydataForScopeThreeActives } from "../Dummydata/DummydataScopeThree";
 import { Disclosure } from '@headlessui/react'; // Import Disclosure from headlessui
-import { ChevronDown } from 'react-icons/fa'; // Assuming you're using react-icons for ChevronDown
+import { FaChevronDown } from 'react-icons/fa'; // Assuming you're using react-icons for FaChevronDown
+import { FaFaChevronDown } from 'react-icons/fa';
+import { Checkbox } from "antd";
 
 export default function ChooesactivitiesScopeThree() {
   const { checkedValuesScopeThree, selectedValuesScopeThree, setSelectedValuesScopeThree } = useScopeThree();
 
   console.log("From activity page", selectedValuesScopeThree);
+
+  console.log("Form1 activity page",checkedValuesScopeThree)
 
   const handleCheckboxChange = (category, item) => {
     setSelectedValuesScopeThree((prev) => {
@@ -32,7 +36,7 @@ export default function ChooesactivitiesScopeThree() {
                 <div className="bg-[#BFF1DF] w-full mt-4 rounded-lg shadow-sm">
                   <Disclosure.Button className="flex justify-between items-center w-full px-4 py-3 text-lg font-medium text-gray-700">
                     <span>{key}</span>
-                    <ChevronDown className={`w-5 h-5 transition-transform ${open ? "rotate-180" : "rotate-0"}`} />
+                    <FaChevronDown className={`w-5 h-5 transition-transform ${open ? "rotate-180" : "rotate-0"}`} />
                   </Disclosure.Button>
                   <Disclosure.Panel className="p-4 w-full bg-[#effbf7] rounded-b-lg">
                     <div className="flex flex-wrap gap-4">

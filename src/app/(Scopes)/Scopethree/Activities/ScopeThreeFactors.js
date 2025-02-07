@@ -2,8 +2,8 @@
 import { Checkbox } from "antd";
 import { dummyDataForScopeThree } from "../Dummydata/DummydataScopeThree";
 import { useScopeThree } from "../Context/ScopeThreeContext";
-// import ChooesactivitiesScopeThree from "./ChooesactivitiesScopeThree";
-
+import ChooesactivitiesScopeThree from "./ChooesactivitiesScopeThree";
+import ParametersForScopeTHree from "./ParametersForScopeThree";
 export default function ScopeThreeFactor({ pageChange }) {
   const { checkedValuesScopeThree, setCheckedValuesScopeThree, setSelectedValuesScopeThree } = useScopeThree();
 
@@ -11,7 +11,7 @@ export default function ScopeThreeFactor({ pageChange }) {
 
   const handleCheckboxChange = (checkedValues) => {
     setCheckedValuesScopeThree(checkedValues);  // Update checked values state
-    setSelectedValuesScopeThree(checkedValues); // Optionally update selected values state
+
   };
 
   return (
@@ -36,9 +36,13 @@ export default function ScopeThreeFactor({ pageChange }) {
         </div>
       )}
 
-      {/* {pageChange === 1 && (
+      {pageChange === 1 && (
         <ChooesactivitiesScopeThree></ChooesactivitiesScopeThree>
-      )} */}
+      )}
+      {pageChange === 2 && (
+        <ParametersForScopeTHree></ParametersForScopeTHree>
+      )}
+
     </>
   );
 }
