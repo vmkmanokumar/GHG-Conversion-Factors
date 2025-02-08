@@ -59,12 +59,12 @@ export default function Dashboard() {
       </Header>
 
       {/* Main Content */}
-      <Content className="p-6">
+      {/* <Content className="p-6">
         <div className="bg-white shadow-lg rounded-lg p-8 text-center">
           <Title level={2} className="text-gray-700">Welcome, {username}!</Title>
           <Text className="text-gray-500">Manage your activities here.</Text>
         </div>
-      </Content>
+      </Content> */}
 
       {/* User Drawer */}
       <Drawer
