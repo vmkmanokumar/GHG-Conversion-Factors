@@ -9,10 +9,44 @@ const { Title, Text } = Typography;
 export default function Login() {
   const router = useRouter();
 
-  const onFinish = (values) => {
-    console.log(values);
-    router.push("/ScopeOne"); // Redirect after login
+  const onFinish = async (values) => {
+    const email = values.email;
+    const password = values.password;
+  
+    try {
+      const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/get_user", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json" // ✅ Fixed header
+        },
+        body: JSON.stringify({ email, password })
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        const token = data.token; // ✅ Fetch JWT token from response
+        const username = data.user.email
+        const roles = data.user.roles
+  
+        if (token) {
+          localStorage.setItem("token", token); // ✅ Store token
+          localStorage.setItem("username",username)
+          localStorage.setItem("roles",roles)
+          router.push("/dashboard"); // ✅ Redirect user
+        } else {
+          alert("Login failed: No token received!");
+        }
+      } else {
+        alert(data.error || "Login failed!");
+      }
+    } catch (error) {
+      console.error("Login Error:", error);
+      alert("Something went wrong!");
+    }
   };
+  
+  
 
   return (
     <div className="h-screen w-screen bg-white flex items-center justify-center p-4">
@@ -51,8 +85,8 @@ export default function Login() {
           >
             {/* Username Field */}
             <Form.Item
-              label={<Text className="text-gray-500">Username</Text>}
-              name="username"
+              label={<Text className="text-gray-500">Email</Text>}
+              name="email"
               rules={[{ required: true, message: "Please enter your username!" }]}
             >
               <Input placeholder="Enter a username" />
