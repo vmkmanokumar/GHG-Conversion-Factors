@@ -3,11 +3,29 @@
 import { Col, Row, Input, Button, Checkbox, Form, Typography } from "antd";
 import { useRouter } from "next/navigation";
 import loginLogo from "@/assets/images/loginLogo.png";
+import { useState } from "react";
 
 const { Title, Text } = Typography;
 
 export default function Login() {
+  const [loadings, setLoadings] = useState([]);
+  const enterLoading = (index) => {
+    setLoadings((prevLoadings) => {
+      const newLoadings = [...prevLoadings];
+      newLoadings[index] = true;
+      return newLoadings;
+    });
+    setTimeout(() => {
+      setLoadings((prevLoadings) => {
+        const newLoadings = [...prevLoadings];
+        newLoadings[index] = false;
+        return newLoadings;
+      });
+    }, 10000);
+  };
+
   const router = useRouter();
+  
 
   const onFinish = async (values) => {
     const email = values.email;
@@ -113,14 +131,17 @@ export default function Login() {
 
             {/* Submit Button */}
             <Form.Item>
-              <Button
-                type="primary"
-                htmlType="submit"
-                className="bg-[#27A376] text-white w-full hover:bg-[#27A376]"
-              >
-                Login
-              </Button>
-            </Form.Item>
+  <Button
+    type="primary"
+    htmlType="submit"
+    className="bg-[#27A376] text-white w-full hover:bg-[#27A376]"
+    loading={loadings[0]}  // ✅ Loading state based on the first index
+    onClick={() => enterLoading(0)} // ✅ Trigger loading animation
+  >
+    Login
+  </Button>
+</Form.Item>
+
           </Form>
         </Col>
       </Row>
