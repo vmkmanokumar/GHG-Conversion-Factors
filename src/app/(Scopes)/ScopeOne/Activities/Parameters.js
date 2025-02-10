@@ -4,14 +4,16 @@ import { ChevronDown } from "lucide-react";
 import { Radio, Checkbox } from "antd";
 import { DummydataForParameters } from "../dummyData/Dummydata";
 import { biogasDummyData } from "../dummyData/Dummydata";
+import { useScopeOne } from "../Context/ScopeOneContext";
 
-export default function Parameters({ selectedValues }) {
-  console.log("From Parameters Page:", selectedValues);
+export default function Parameters() {
+  const { selectedValuesScopeOne } = useScopeOne();
+  console.log("parameter", selectedValuesScopeOne);
+
+  const selectedValues = selectedValuesScopeOne || {};
 
   const [selectedFuels, setSelectedFuels] = useState({});
 
-
-  // Handle checkbox toggle
   const handleCheckboxChange = (fuel) => {
     setSelectedFuels((prev) => ({
       ...prev,
@@ -44,7 +46,7 @@ export default function Parameters({ selectedValues }) {
 
                 {/* Panel for Inner Items */}
                 <Disclosure.Panel className="p-4 w-full bg-[#effbf7] rounded-b-lg overflow-hidden">
-                  {selectedValues[category].map((item, idx) => (
+                  {selectedValues[category]?.map((item, idx) => (
                     <Disclosure key={idx}>
                       {({ open }) => (
                         <div className="w-full mt-2">
@@ -64,7 +66,7 @@ export default function Parameters({ selectedValues }) {
                               if (key === item) {
                                 return (
                                   <div key={key} className="flex flex-wrap flex-col gap-4 mt-2">
-                                    {DummydataForParameters[key].map((fuelItem) => {
+                                    {DummydataForParameters[key]?.map((fuelItem) => {
                                       const fuelData = biogasDummyData.find(
                                         (fuel) => fuel.name === fuelItem
                                       );

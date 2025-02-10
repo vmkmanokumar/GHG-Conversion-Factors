@@ -1,19 +1,27 @@
 import React from "react";
-import { Disclosure ,DisclosureButton,DisclosurePanel } from "@headlessui/react";
+import { Disclosure } from "@headlessui/react"; // Corrected import here
 import { Checkbox } from "antd";
 import { ChevronDown } from "lucide-react";
 import { DummydataForActives } from "../dummyData/Dummydata";
+import { useScopeOne } from "../Context/ScopeOneContext";
 
-export default function ChooseActivities({ checkedValues, setSelectedValues, selectedValues }) {
+export default function ChooseActivities() {
+  const { checkedValuesScopeOne, selectedValuesScopeOne, setSelectedValuesScopeOne } = useScopeOne();
+
+  // Log context values for debugging
+  console.log("checkedValuesScopeOne:", checkedValuesScopeOne);
+  console.log("selectedValuesScopeOne:", selectedValuesScopeOne);
+  console.log("DummydataForActives:", DummydataForActives);
+
   // Handle Checkbox Change
   const handleCheckboxChange = (category, item) => {
-    setSelectedValues((prev) => {
+    setSelectedValuesScopeOne((prev) => {
       const updatedCategoryValues = prev[category] ? [...prev[category]] : [];
 
       if (updatedCategoryValues.includes(item)) {
-        updatedCategoryValues.splice(updatedCategoryValues.indexOf(item), 1);
+        updatedCategoryValues.splice(updatedCategoryValues.indexOf(item), 1); // Remove item if already selected
       } else {
-        updatedCategoryValues.push(item);
+        updatedCategoryValues.push(item); // Add item if not selected
       }
 
       return { ...prev, [category]: updatedCategoryValues };
@@ -30,22 +38,22 @@ export default function ChooseActivities({ checkedValues, setSelectedValues, sel
       {/* Disclosure Section */}
       <div className="w-full min-h-[250px] flex-grow text-[22px]">
         {Object.keys(DummydataForActives).map((key) => {
-          if (!checkedValues.includes(key)) return null;
+          if (!checkedValuesScopeOne.includes(key)) return null; // Only display if category is checked
 
           return (
             <Disclosure key={key}>
               {({ open }) => (
                 <div className="bg-[#BFF1DF] w-full mt-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                  <DisclosureButton className="flex justify-between items-center w-full px-4 py-3 text-lg font-medium text-gray-700 focus:outline-none transition duration-700">
+                  {/* Main Disclosure Button */}
+                  <Disclosure.Button className="flex justify-between items-center w-full px-4 py-3 text-lg font-medium text-gray-700 focus:outline-none transition duration-700">
                     <span>{key}</span>
                     <ChevronDown
-                      className={`w-5 h-5 transition-transform ${
-                        open ? "rotate-180" : "rotate-0"
-                      }`}
+                      className={`w-5 h-5 transition-transform ${open ? "rotate-180" : "rotate-0"}`}
                     />
-                  </DisclosureButton>
+                  </Disclosure.Button>
 
-                  <DisclosurePanel
+                  {/* Disclosure Panel for the Category */}
+                  <Disclosure.Panel
                     className={`p-4 w-full bg-[#effbf7] rounded-b-lg overflow-hidden transition-all duration-300 ease-in-out ${
                       open ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
                     }`}
@@ -54,7 +62,7 @@ export default function ChooseActivities({ checkedValues, setSelectedValues, sel
                       {DummydataForActives[key].map((item, idx) => (
                         <div key={idx} className="flex items-center">
                           <Checkbox
-                            checked={selectedValues[key]?.includes(item) || false}
+                            checked={selectedValuesScopeOne[key]?.includes(item) || false}
                             onChange={() => handleCheckboxChange(key, item)}
                             className="text-gray-700"
                           >
@@ -63,7 +71,7 @@ export default function ChooseActivities({ checkedValues, setSelectedValues, sel
                         </div>
                       ))}
                     </div>
-                  </DisclosurePanel>
+                  </Disclosure.Panel>
                 </div>
               )}
             </Disclosure>
