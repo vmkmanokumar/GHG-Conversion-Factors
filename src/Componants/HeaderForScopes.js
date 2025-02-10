@@ -4,10 +4,12 @@ import { useState } from "react";
 import { Row, Col, Flex } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { ConfigProvider, Steps } from 'antd';
-
+import { useRouter } from "next/navigation";
 
 
 export default function HeaderForScopes({changeShope}){
+
+    const router = useRouter();
 
     const [activeScope, setActiveScope] = useState(0); // State to track the active scope
         
@@ -50,7 +52,7 @@ export default function HeaderForScopes({changeShope}){
           <Row justify="center">
             <Col xs={24} sm={24} md={24} lg={24} xl={24}>
               <Flex align="center" gap={20} justify="center">
-                <ArrowLeftOutlined
+                <ArrowLeftOutlined onClick={()=>router.push('/dashboard')}
                   style={{
                     fontSize: "28px",
                     fontWeight: "bold",
