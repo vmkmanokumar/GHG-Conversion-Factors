@@ -9,9 +9,9 @@ export default function ChooseActivities() {
   const { checkedValuesScopeOne, selectedValuesScopeOne, setSelectedValuesScopeOne } = useScopeOne();
 
   // Log context values for debugging
-  console.log("checkedValuesScopeOne:", checkedValuesScopeOne);
-  console.log("selectedValuesScopeOne:", selectedValuesScopeOne);
-  console.log("DummydataForActives:", DummydataForActives);
+  // console.log("checkedValuesScopeOne:", checkedValuesScopeOne);
+  // console.log("selectedValuesScopeOne:", selectedValuesScopeOne);
+  // console.log("DummydataForActives:", DummydataForActives);
 
   // Handle Checkbox Change
   const handleCheckboxChange = (category, item) => {
