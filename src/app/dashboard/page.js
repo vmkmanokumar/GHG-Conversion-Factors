@@ -1,9 +1,11 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Button, Drawer, Avatar, Layout, Typography, Spin } from "antd";
+import { Button, Drawer, Avatar, Layout, Typography, Spin,Card } from "antd";
 import { UserOutlined, LogoutOutlined, MenuOutlined, IdcardOutlined } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useScopeOne } from "../(Scopes)/ScopeOne/Context/ScopeOneContext";
+
 
 const { Header } = Layout;
 const { Title, Text } = Typography;
@@ -14,6 +16,8 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [username, setUsername] = useState("");
   const [roles, setRoles] = useState("");
+
+  const {selectedFuels} = useScopeOne();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -37,7 +41,9 @@ export default function Dashboard() {
   };
 
   return (
-    <Layout className="h-screen bg-gray-100">
+    <>
+
+<Layout className="h-screen bg-gray-100">
       <Header className="bg-[#27A376] h-[100px] flex justify-between items-center px-6 shadow-md">
         <Title level={3} className="text-white">Dashboard</Title>
         <div className="flex items-center gap-4">
@@ -87,6 +93,40 @@ export default function Dashboard() {
           </div>
         )}
       </Drawer>
+
+     
+
+
+
+
+  {Object.entries(selectedFuels).map(([fuel, data]) => (
+  <Card
+    key={fuel}
+    title={fuel}
+    className="w-[300px] md:w-[400px] lg:w-[500px] m-4 shadow-md"
+
+  >
+     <p><strong>Value:</strong> {(data?.maxValue)|| "N/A"}</p>
+    <p><strong>Max Value:</strong> {(data?.maxValue)*3033.38067 || "N/A"}</p>
+    <p><strong>Unit:</strong> {data?.selectedValue || "N/A"}</p>
+  </Card>
+))}
+
+
+
+        
+              
+
+
+
+
     </Layout>
+
+   
+    
+    
+    
+    </>
+    
   );
 }
