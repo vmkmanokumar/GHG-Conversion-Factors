@@ -13,8 +13,7 @@ export default function ScopeOneFactors({ pageChange }) {
 
     const { checkedValuesScopeOne, setCheckedValuesScopeOne } = useScopeOne();
 
-
-
+    console.log("Form ScopeOneFactors",checkedValuesScopeOne)
 
   return (
     <>

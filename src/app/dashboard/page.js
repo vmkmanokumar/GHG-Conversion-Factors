@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useScopeOne } from "../(Scopes)/ScopeOne/Context/ScopeOneContext";
 
-
 const { Header } = Layout;
 const { Title, Text } = Typography;
 
@@ -18,6 +17,9 @@ export default function Dashboard() {
   const [roles, setRoles] = useState("");
 
   const {selectedFuels} = useScopeOne();
+
+
+  console.log(selectedFuels)
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -94,29 +96,18 @@ export default function Dashboard() {
         )}
       </Drawer>
 
-     
 
-
-
-
-  {Object.entries(selectedFuels).map(([fuel, data]) => (
-  <Card
-    key={fuel}
-    title={fuel}
-    className="w-[300px] md:w-[400px] lg:w-[500px] m-4 shadow-md"
-
-  >
-     <p><strong>Value:</strong> {(data?.maxValue)|| "N/A"}</p>
-    <p><strong>Max Value:</strong> {(data?.maxValue)*3033.38067 || "N/A"}</p>
-    <p><strong>Unit:</strong> {data?.selectedValue || "N/A"}</p>
-  </Card>
-))}
-
-
-
-        
-              
-
+        {Object.entries(selectedFuels).map(([fuel, data]) => (
+          <Card
+            key={fuel}
+            title={fuel}
+            className="w-[300px] md:w-[400px] lg:w-[500px] m-4 shadow-md"
+          >
+            <p><strong>Value:</strong> {(data?.maxValue)|| "N/A"}</p>
+            <p><strong>Max Value:</strong> {(data?.maxValue)*3033.38067 || "N/A"}</p>
+            <p><strong>Unit:</strong> {data?.selectedValue || "N/A"}</p>
+          </Card>
+        ))}
 
 
 

@@ -11,7 +11,7 @@ const { Option } = Select;
 export default function ParametersAndUnits() {
   const { selectedValuesScopeOne, selectedFuels, setSelectedFuels } = useScopeOne();
     
-  console.log("parameter page", selectedFuels);
+  console.log("Parameter Page - Selected Fuels:", selectedFuels);
 
   const selectedValues = selectedValuesScopeOne || {};
 
@@ -62,45 +62,52 @@ export default function ParametersAndUnits() {
                               if (key === item) {
                                 return (
                                   <div key={key} className="flex flex-col gap-4 mt-2">
-                                    <h1>{key}</h1>
+                                    {/* <h1 className="text-lg font-bold">{key}</h1> */}
 
                                     {DummydataForParameters[key]?.map((fuelItem) => {
                                       const fuelData = biogasDummyData.find((b) => b.name === fuelItem);
 
                                       return (
-                                        <div key={fuelItem} className="rounded-lg p-2">
-                                          <h1>{fuelItem}</h1>
-                                          <Disclosure.Button className="flex justify-between items-center w-full px-3 bg-[#CBF4E5] text-gray-700 rounded-md focus:outline-none">
-                                            <span className="text-[21]">{fuelItem}</span>
-                                            <ChevronDown className={`w-4 h-4 transition-transform ${open ? "rotate-180" : "rotate-0"}`} />
-                                          </Disclosure.Button>
+                                        selectedFuels[fuelItem] && ( // Ensure only selected fuels are displayed
+                                          <div key={fuelItem} className="p-0  shadow-md">
+                                            <Disclosure>
+                                              {({ open }) => (
+                                                <div>
+                                                  <Disclosure.Button className="flex justify-between items-center w-full px-3 py-2 bg-[#CBF4E5] text-gray-700 rounded-md focus:outline-none">
+                                                    <span className="text-lg">{fuelItem}</span>
+                                                    <ChevronDown className={`w-4 h-4 transition-transform ${open ? "rotate-180" : "rotate-0"}`} />
+                                                  </Disclosure.Button>
 
-                                          <Disclosure.Panel className="p-2 bg-white rounded-md mt-1">
-                                            <div className="flex items-center gap-4">
-                                              {/* Input field to save the max value */}
-                                              <Input
-                                                placeholder="Enter the max value"
-                                                className="w-[344px] border-emerald-400"
-                                                value={selectedFuels[fuelItem]?.maxValue || ""}
-                                                onChange={(e) => handleInputChange(fuelItem, e.target.value)}
-                                              />
+                                                  <Disclosure.Panel className="p-2 bg-white rounded-lg mt-1"> 
+                                                    <div className="flex items-center gap-4">
+                                                      {/* Input field to save the max value */}
+                                                      <Input
+                                                        placeholder="Enter the max value"
+                                                        className="w-[344px] border-emerald-400"
+                                                        value={selectedFuels[fuelItem]?.maxValue || ""}
+                                                        onChange={(e) => handleInputChange(fuelItem, e.target.value)}
+                                                      />
 
-                                              {/* Select dropdown for unit selection */}
-                                              <Select
-                                                className="w-[410px] border-emerald-400"
-                                                placeholder="Select unit"
-                                                value={selectedFuels[fuelItem]?.selectedValue || undefined}
-                                                onChange={(unit) => handleUnitChange(fuelItem, unit)}
-                                              >
-                                                {fuelData?.values?.map((unit) => (
-                                                  <Option key={unit} value={unit}>
-                                                    {unit}
-                                                  </Option>
-                                                ))}
-                                              </Select>
-                                            </div>
-                                          </Disclosure.Panel>
-                                        </div>
+                                                      {/* Select dropdown for unit selection */}
+                                                      <Select
+                                                        className="w-[410px] border-emerald-400"
+                                                        placeholder="Select unit"
+                                                        value={selectedFuels[fuelItem]?.selectedValue || undefined}
+                                                        onChange={(unit) => handleUnitChange(fuelItem, unit)}
+                                                      >
+                                                        {fuelData?.values?.map((unit) => (
+                                                          <Option key={unit} value={unit}>
+                                                            {unit}
+                                                          </Option>
+                                                        ))}
+                                                      </Select>
+                                                    </div>
+                                                  </Disclosure.Panel>
+                                                </div>
+                                              )}
+                                            </Disclosure>
+                                          </div>
+                                        )
                                       );
                                     })}
                                   </div>
