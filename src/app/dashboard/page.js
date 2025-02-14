@@ -16,10 +16,13 @@ export default function Dashboard() {
   const [username, setUsername] = useState("");
   const [roles, setRoles] = useState("");
 
-  const {selectedFuels} = useScopeOne();
+  const {selectedFuels,checkedValuesScopeOne,selectedValuesScopeOne} = useScopeOne();
 
 
   console.log(selectedFuels)
+  //i want to compain this to data checkdvaluesScopeOne and selecttedvaluesScopeone
+  console.log(checkedValuesScopeOne)
+  console.log(selectedValuesScopeOne)
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -105,7 +108,7 @@ export default function Dashboard() {
           >
             <p><strong>Value:</strong> {(data?.maxValue)|| "N/A"}</p>
             <p><strong>Max Value:</strong> {(data?.maxValue)*3033.38067 || "N/A"}</p>
-            <p><strong>Unit:</strong> {data?.selectedValue || "N/A"}</p>
+            <p><strong>Unit:</strong> {data?.selectedUnit || "N/A"}</p>
           </Card>
         ))}
 
