@@ -21,8 +21,8 @@ export default function Dashboard() {
 
   console.log(selectedFuels)
   //i want to compain this to data checkdvaluesScopeOne and selecttedvaluesScopeone
-  console.log(checkedValuesScopeOne)
-  console.log(selectedValuesScopeOne)
+  // console.log(checkedValuesScopeOne)
+  // console.log(selectedValuesScopeOne)
 
   useEffect(() => {
     if (typeof window !== "undefined") {

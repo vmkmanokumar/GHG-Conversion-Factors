@@ -13,19 +13,19 @@ export default function ParametersAndUnits() {
 
   // Debugging logs
   console.log("Parameter Page - Selected Fuels:", selectedFuels);
-  // console.log("Selected Values:", selectedValuesScopeOne);
-  // console.log("DummydataForParameters:", DummydataForParameters);
-  // console.log("Biogas Dummy Data:", biogasDummyData);
 
   const selectedValues = selectedValuesScopeOne || {};
 
   // Combined handleChange function
-  const handleChange = (type, fuelItem, value) => {
+  const handleChange = (fuelItem, field, value, item) => {
     setSelectedFuels((prev) => ({
       ...prev,
-      [fuelItem]: {
-        ...(prev[fuelItem] || {}),
-        ...(type === "maxValue" ? { maxValue: value } : { selectedUnit: value }),
+      [item]: {
+        ...prev[item], // Preserve existing properties for the current item
+        [fuelItem]: {
+          ...(prev[item]?.[fuelItem] || {}), // Preserve existing properties for the current fuelItem
+          [field]: value, // Update the specific field (maxValue or selectedUnit)
+        },
       },
     }));
   };
@@ -64,11 +64,8 @@ export default function ParametersAndUnits() {
                                     {DummydataForParameters[key]?.map((fuelItem) => {
                                       const fuelData = biogasDummyData.find((b) => b.name === fuelItem);
 
-                                      console.log("inside data",selectedFuels[item][fuelItem])
-
                                       return (
-                                       selectedFuels[item][fuelItem]  //i only want to display what is selecedFuels in 
-                                       && ( 
+                                        selectedFuels[item]?.[fuelItem] && ( // Ensure only selected fuels are displayed
                                           <div key={fuelItem} className="p-0 shadow-md">
                                             <Disclosure>
                                               {({ open }) => (
@@ -84,16 +81,16 @@ export default function ParametersAndUnits() {
                                                       <Input
                                                         placeholder="Enter the max value"
                                                         className="w-[344px] border-emerald-400"
-                                                        value={selectedFuels[fuelItem]?.maxValue || ""}
-                                                        onChange={(e) => handleChange("maxValue", fuelItem, e.target.value)}
+                                                        value={selectedFuels[item]?.[fuelItem]?.maxValue || ""}
+                                                        onChange={(e) => handleChange(fuelItem, "maxValue", e.target.value, item)}
                                                       />
 
                                                       {/* Select dropdown for unit selection */}
                                                       <Select
                                                         className="w-[410px] border-black"
                                                         placeholder="Select unit"
-                                                        value={selectedFuels[item][fuelItem]?.selectedValue || undefined}
-                                                        onChange={(unit) => handleChange("selectedUnit", fuelItem, unit)}
+                                                        value={selectedFuels[item]?.[fuelItem]?.selectedValue || undefined}
+                                                        onChange={(unit) => handleChange(fuelItem, "selectedUnit", unit, item)}
                                                       >
                                                         {fuelData?.values?.map((unit) => (
                                                           <Option key={unit} value={unit}>
