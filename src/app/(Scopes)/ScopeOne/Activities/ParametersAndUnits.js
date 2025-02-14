@@ -24,7 +24,7 @@ export default function ParametersAndUnits() {
         ...prev[item], // Preserve existing properties for the current item
         [fuelItem]: {
           ...(prev[item]?.[fuelItem] || {}), // Preserve existing properties for the current fuelItem
-          [field]: value, // Update the specific field (maxValue or selectedUnit)
+          ...(field === "selectedValue" ? { selectedValue: value } : { [field]: value }), // Replace selectedUnit if field is selectedValue
         },
       },
     }));
@@ -90,7 +90,7 @@ export default function ParametersAndUnits() {
                                                         className="w-[410px] border-black"
                                                         placeholder="Select unit"
                                                         value={selectedFuels[item]?.[fuelItem]?.selectedValue || undefined}
-                                                        onChange={(unit) => handleChange(fuelItem, "selectedUnit", unit, item)}
+                                                        onChange={(unit) => handleChange(fuelItem, "selectedValue", unit, item)}
                                                       >
                                                         {fuelData?.values?.map((unit) => (
                                                           <Option key={unit} value={unit}>
