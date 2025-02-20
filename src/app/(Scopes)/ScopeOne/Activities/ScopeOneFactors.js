@@ -13,12 +13,14 @@ import { dummyData } from "../dummyData/Dummydata";
 export default function ScopeOneFactors({ pageChange }) {
   const { checkedValuesScopeOne, setCheckedValuesScopeOne } = useScopeOne();
 
-  console.log("Form ScopeOneFactors", checkedValuesScopeOne);
+
 
   // ScopeFactors state
   const [activities, setActivities] = useState([]);
 
-  console.log("active",activities)
+  console.log("ScopeFactor",checkedValuesScopeOne)
+
+ 
 
   const fetchFactors = async () => {
     try {
@@ -38,7 +40,7 @@ export default function ScopeOneFactors({ pageChange }) {
 
       const data = await response.json();
 
-      console.log("data",data)
+    
 
       // Transform data to match dummyData format
       const formattedData = data.map((item) => (
@@ -62,7 +64,7 @@ export default function ScopeOneFactors({ pageChange }) {
     fetchFactors();
   }, []); // Dependency array should be empty to prevent infinite fetch calls
 
-  console.log(activities);
+ 
 
   return (
     <>

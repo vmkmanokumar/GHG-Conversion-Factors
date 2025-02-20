@@ -1,17 +1,55 @@
-import React, { useState } from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import { Disclosure } from "@headlessui/react"; // Corrected import here
 import { Checkbox } from "antd";
 import { ChevronDown } from "lucide-react";
-import { DummydataForActives } from "../dummyData/Dummydata";
 import { useScopeOne } from "../Context/ScopeOneContext";
 
 export default function ChooseActivities() {
-  const { checkedValuesScopeOne, selectedValuesScopeOne, setSelectedValuesScopeOne } = useScopeOne();
+  const { checkedValuesScopeOne, selectedValuesScopeOne, setSelectedValuesScopeOne ,activities, setActivities} = useScopeOne();
+  // const [activities, setActivities] = useState({});
 
+  console.log("From Activities Page - Checked Values:", activities);
 
-  console.log("from active page",checkedValuesScopeOne)
+  // Function to fetch activities based on checked scope factors
+  const FetchActivities = async () => {
+    try {
+      if (!checkedValuesScopeOne || checkedValuesScopeOne.length === 0) return;
+  
+      const checkedValuesStr = checkedValuesScopeOne
+  
+      console.log("Fetching activities for:", checkedValuesStr); // Debugging log
+  
+      const response = await fetch(
+        `https://ghg-conversion-factors-backend.vercel.app/scope_activities/${checkedValuesStr}`,
+        {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      // console.log("Fetched Activities:", data);
+  
+      // Store structured data
+      setActivities(data);
+    } catch (error) {
+      console.error("Error fetching scope activities:", error);
+    }
+  };
+  
 
+  // Fetch activities whenever checkedValuesScopeOne changes
+  useEffect(() => {
+    FetchActivities();
+  }, [checkedValuesScopeOne]);
 
+  // console.log("Activities Data:", activities);
 
   // Handle Checkbox Change
   const handleCheckboxChange = (category, item) => {
@@ -37,7 +75,7 @@ export default function ChooseActivities() {
 
       {/* Disclosure Section */}
       <div className="w-full min-h-[250px] flex-grow text-[22px]">
-        {Object.keys(DummydataForActives).map((key) => {
+        {Object.keys(activities).map((key) => {
           if (!checkedValuesScopeOne.includes(key)) return null; // Only display if category is checked
 
           return (
@@ -59,7 +97,7 @@ export default function ChooseActivities() {
                     }`}
                   >
                     <div className="flex flex-wrap gap-4">
-                      {DummydataForActives[key].map((item, idx) => (
+                      {activities[key].map((item, idx) => (
                         <div key={idx} className="flex items-center">
                           <Checkbox
                             checked={selectedValuesScopeOne[key]?.includes(item) || false}
