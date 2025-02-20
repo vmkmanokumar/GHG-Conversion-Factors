@@ -16,13 +16,49 @@ export default function Dashboard() {
   const [username, setUsername] = useState("");
   const [roles, setRoles] = useState("");
 
-  const {selectedFuels,checkedValuesScopeOne,selectedValuesScopeOne} = useScopeOne();
+  const {selectedFuels} = useScopeOne();
+ 
 
 
-  console.log(selectedFuels)
-  //i want to compain this to data checkdvaluesScopeOne and selecttedvaluesScopeone
-  // console.log(checkedValuesScopeOne)
-  // console.log(selectedValuesScopeOne)
+  useEffect(() => {
+    const response = async () => {
+      try {
+        const res = await fetch("https://ghg-conversion-factors-backend.vercel.app/ShopeGetData", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(selectedFuels), // Corrected body
+        });
+    
+        const result = await res.json();
+        console.log("Server Response:", result);
+      } catch (error) {
+        console.error("Error sending data:", error);
+      }
+    };
+  
+    // Call response only once when the component mounts or when selectedFuels change
+    if (selectedFuels) {
+      response();
+    }
+  }, [selectedFuels]);  // Dependency array ensures the call happens when selectedFuels is updated
+  
+  
+  //  selectedFuels is display like in page
+
+const fuelType = Object.keys(selectedFuels)[0]; // "Propane"
+const fuelValues = selectedFuels[fuelType];
+
+console.log(fuelType)
+
+// Print all key-value pairs of the nested object
+for (const key in fuelValues) {
+  console.log(`${key}:`, fuelValues[key]);
+}
+
+
+
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -101,6 +137,7 @@ export default function Dashboard() {
 
 
         {Object.entries(selectedFuels).map(([fuel, data]) => (
+         
           <Card
             key={fuel}
             title={fuel}
@@ -110,7 +147,7 @@ export default function Dashboard() {
             <p><strong>Max Value:</strong> {(data?.maxValue)*3033.38067 || "N/A"}</p>
             <p><strong>Unit:</strong> {data?.selectedUnit || "N/A"}</p>
           </Card>
-        ))}
+        ))} 
 
 
 

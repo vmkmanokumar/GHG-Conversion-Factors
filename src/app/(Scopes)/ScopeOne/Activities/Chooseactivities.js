@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Disclosure } from "@headlessui/react"; // Corrected import here
 import { Checkbox } from "antd";
 import { ChevronDown } from "lucide-react";
@@ -8,10 +8,10 @@ import { useScopeOne } from "../Context/ScopeOneContext";
 export default function ChooseActivities() {
   const { checkedValuesScopeOne, selectedValuesScopeOne, setSelectedValuesScopeOne } = useScopeOne();
 
-  // Log context values for debugging
-  // console.log("checkedValuesScopeOne:", checkedValuesScopeOne);
-  // console.log("selectedValuesScopeOne:", selectedValuesScopeOne);
-  // console.log("DummydataForActives:", DummydataForActives);
+
+  console.log("from active page",checkedValuesScopeOne)
+
+
 
   // Handle Checkbox Change
   const handleCheckboxChange = (category, item) => {
