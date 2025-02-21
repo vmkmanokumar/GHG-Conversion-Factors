@@ -20,6 +20,8 @@ export default function ScopeOneFactors({ pageChange }) {
 
   console.log("ScopeFactor",checkedValuesScopeOne)
 
+  console.log("activies",activities)
+
  
 
   const fetchFactors = async () => {

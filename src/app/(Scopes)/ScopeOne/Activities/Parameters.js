@@ -9,10 +9,12 @@ export default function Parameters() {
     selectedValuesScopeOne,
     selectedFuels,
     setSelectedFuels,
+    fetchedParameters,
+    setFetchedParameters
   } = useScopeOne();
-  const [fetchedParameters, setFetchedParameters] = useState({});
+  
 
-  console.log(fetchedParameters)
+  console.log("fected parameters:",fetchedParameters)
 
   // Function to fetch parameters dynamically
   const fetchData = async () => {
@@ -111,34 +113,34 @@ export default function Parameters() {
                           </Disclosure.Button>
 
                           <Disclosure.Panel className="p-2 bg-[#effbf7] rounded-md mt-1 text-gray-500">
-  {Object.keys(fetchedParameters[category][item])?.map((parameter, idx) => (
-    <div key={`${parameter}-${idx}`} className="flex flex-col p-2 rounded-lg">
-      {/* Checkbox for parameter */}
-      <Checkbox
-        checked={selectedFuels[item]?.[parameter]?.checked || false}
-        onChange={() => handleClick("checkbox", parameter, item)}
-        className="font-semibold text-gray-700"
-      >
-        {parameter}
-      </Checkbox>
+                            {Object.keys(fetchedParameters[category][item])?.map((parameter, idx) => (
+                              <div key={`${parameter}-${idx}`} className="flex flex-col p-2 rounded-lg">
+                                {/* Checkbox for parameter */}
+                                <Checkbox
+                                  checked={selectedFuels[item]?.[parameter]?.checked || false}
+                                  onChange={() => handleClick("checkbox", parameter, item)}
+                                  className="font-semibold text-gray-700"
+                                >
+                                  {parameter}
+                                </Checkbox>
 
-      {/* Dynamically populated radio buttons for unit selection */}
-      {selectedFuels[item]?.[parameter]?.checked && (
-        <Radio.Group
-          className="ml-10 mt-2"
-          value={selectedFuels[item]?.[parameter]?.selectedValue}
-          onChange={(e) => handleClick("radio", parameter, item, e.target.value)}
-        >
-          {fetchedParameters[category][item][parameter]?.units.map((unit, radioIdx) => (
-            <Radio key={`${parameter}-${unit}-${radioIdx}`} value={unit}>
-              {unit}
-            </Radio>
-          ))}
-        </Radio.Group>
-      )}
-    </div>
-  ))}
-</Disclosure.Panel>
+                                {/* Dynamically populated radio buttons for unit selection */}
+                                {selectedFuels[item]?.[parameter]?.checked && (
+                                  <Radio.Group
+                                    className="ml-10 mt-2"
+                                    value={selectedFuels[item]?.[parameter]?.selectedValue}
+                                    onChange={(e) => handleClick("radio", parameter, item, e.target.value)}
+                                  >
+                                    {fetchedParameters[category][item][parameter]?.units.map((unit, radioIdx) => (
+                                      <Radio key={`${parameter}-${unit}-${radioIdx}`} value={unit}>
+                                        {unit}
+                                      </Radio>
+                                    ))}
+                                  </Radio.Group>
+                                )}
+                              </div>
+                            ))}
+                          </Disclosure.Panel>
 
 
                         </div>

@@ -17,7 +17,8 @@ export default function ChooseActivities() {
     try {
       if (!checkedValuesScopeOne || checkedValuesScopeOne.length === 0) return;
   
-      const checkedValuesStr = checkedValuesScopeOne
+      // Convert array to a properly encoded string
+      const checkedValuesStr = checkedValuesScopeOne.map(encodeURIComponent).join(",");
   
       console.log("Fetching activities for:", checkedValuesStr); // Debugging log
   
@@ -34,14 +35,14 @@ export default function ChooseActivities() {
       }
   
       const data = await response.json();
-      // console.log("Fetched Activities:", data);
+      console.log("Fetched Activities:", data);
   
-      // Store structured data
-      setActivities(data);
+      setActivities(data); // Store structured data
     } catch (error) {
       console.error("Error fetching scope activities:", error);
     }
   };
+  
   
 
   // Fetch activities whenever checkedValuesScopeOne changes

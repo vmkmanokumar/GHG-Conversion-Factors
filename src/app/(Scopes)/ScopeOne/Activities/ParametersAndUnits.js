@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Disclosure } from "@headlessui/react";
 import { ChevronDown } from "lucide-react";
 import { Input, Select } from "antd";
@@ -9,26 +9,67 @@ import { biogasDummyData } from "../dummyData/Dummydata";
 const { Option } = Select;
 
 export default function ParametersAndUnits() {
-  const { selectedValuesScopeOne, selectedFuels, setSelectedFuels } = useScopeOne();
+  const { selectedValuesScopeOne, selectedFuels, setSelectedFuels, fetchedParameters, setFetchedParameters } = useScopeOne();
 
-  // Debugging logs
-  console.log("Parameter Page - Selected Fuels:", selectedFuels);
+  console.log("Parameter unit page - Selected Fuels:", selectedFuels);
+
+  const updateSelectedValues = async () => {
+    try {
+      const scopeList = [];
+
+      for (const scope in selectedFuels) {
+        for (const param in selectedFuels[scope]) {
+          if (selectedFuels[scope][param].checked) {  
+            scopeList.push({
+              scope: scope,
+              param: param,
+              unit: selectedFuels[scope][param].selectedValue,
+            });
+          }
+        }
+      }
+
+      console.log("Scope List:", scopeList);
+
+      const response = await fetch("http://127.0.0.1:5000/selectedvalues", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(scopeList), 
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Update successful:", data);
+
+    } catch (error) {
+      console.error("Error updating selected values:", error);
+    }
+  };
 
   const selectedValues = selectedValuesScopeOne || {};
 
-  // Combined handleChange function
   const handleChange = (fuelItem, field, value, item) => {
     setSelectedFuels((prev) => ({
       ...prev,
       [item]: {
-        ...prev[item], // Preserve existing properties for the current item
+        ...prev[item],
         [fuelItem]: {
-          ...(prev[item]?.[fuelItem] || {}), // Preserve existing properties for the current fuelItem
-          ...(field === "selectedValue" ? { selectedValue: value } : { [field]: value }), // Replace selectedUnit if field is selectedValue
+          ...(prev[item]?.[fuelItem] || {}),
+          ...(field === "selectedValue" ? { selectedValue: value } : { [field]: value }),
         },
       },
     }));
   };
+
+
+  useEffect(()=>{
+    updateSelectedValues();
+  },[])
 
   return (
     <div className="flex flex-col justify-center items-center bg-[#effbf7] w-full md:w-[768px] lg:w-[1152px] md:mx-auto mt-10 md:mt-16 lg:mt-10 p-4 md:p-6 rounded-xl shadow-lg flex-grow min-h-[515px]">
@@ -65,7 +106,7 @@ export default function ParametersAndUnits() {
                                       const fuelData = biogasDummyData.find((b) => b.name === fuelItem);
 
                                       return (
-                                        selectedFuels[item]?.[fuelItem] && ( // Ensure only selected fuels are displayed
+                                        selectedFuels[item]?.[fuelItem] && (
                                           <div key={fuelItem} className="p-0 shadow-md">
                                             <Disclosure>
                                               {({ open }) => (
@@ -77,7 +118,6 @@ export default function ParametersAndUnits() {
 
                                                   <Disclosure.Panel className="p-2 bg-white rounded-lg mt-1">
                                                     <div className="flex items-center gap-4">
-                                                      {/* Input field to save the max value */}
                                                       <Input
                                                         placeholder="Enter the max value"
                                                         className="w-[344px] border-emerald-400"
@@ -85,7 +125,6 @@ export default function ParametersAndUnits() {
                                                         onChange={(e) => handleChange(fuelItem, "maxValue", e.target.value, item)}
                                                       />
 
-                                                      {/* Select dropdown for unit selection */}
                                                       <Select
                                                         className="w-[410px] border-black"
                                                         placeholder="Select unit"

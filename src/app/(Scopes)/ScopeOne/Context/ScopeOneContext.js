@@ -11,16 +11,28 @@ export function ScopeOneProvider({ children }) {
     const [selectedValuesScopeOne, setSelectedValuesScopeOne] = useState({});
     const [selectedFuels, setSelectedFuels] = useState({});
     const [activities, setActivities] = useState({});
+    const [fetchedParameters, setFetchedParameters] = useState({});
 
     return (
 
         <ScopeOneContext.Provider
 
-            value={{ checkedValuesScopeOne, setCheckedValuesScopeOne, selectedValuesScopeOne, setSelectedValuesScopeOne, selectedFuels, setSelectedFuels ,activities, setActivities}}>
+            value={{
+                checkedValuesScopeOne,
+                setCheckedValuesScopeOne,
+                selectedValuesScopeOne,
+                setSelectedValuesScopeOne,
+                selectedFuels,
+                setSelectedFuels,
+                activities,
+                setActivities,
+                fetchedParameters,
+                setFetchedParameters
+            }}>
             {children}
 
 
- 
+
         </ScopeOneContext.Provider>
 
 
