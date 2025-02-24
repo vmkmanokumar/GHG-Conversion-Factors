@@ -12,7 +12,7 @@ export default function FooterForScopes({ pageChange, setPageChange, changeShope
         {changeShope === 1 && (
           <Button
             onClick={() => setChangeShope(changeShope - 1)}
-            className="bg-green-500 text-black border border-green-500 px-6 py-3 rounded-lg text-lg font-semibold flex hover:bg-green-600 focus:ring-0"
+            className="bg-[#27A376] text-black border border-green-500 px-6 py-3 rounded-lg text-lg font-semibold flex hover:bg-green-600 focus:ring-0"
           >
             <ArrowLeftOutlined /> Move to Scope 1
           </Button>
@@ -24,7 +24,7 @@ export default function FooterForScopes({ pageChange, setPageChange, changeShope
               setChangeShope(1);
               setPageChange(0);
             }}
-            className="bg-green-500 text-black border border-green-500 px-6 py-3 rounded-lg text-lg font-semibold flex items-center hover:bg-green-600 focus:ring-0"
+            className="bg-[#27A376] text-black border border-green-500 px-6 py-3 rounded-lg text-lg font-semibold flex items-center hover:bg-green-600 focus:ring-0"
           >
             <ArrowLeftOutlined /> Move to Scope 2
           </Button>
@@ -34,7 +34,7 @@ export default function FooterForScopes({ pageChange, setPageChange, changeShope
           <Button
             type="default"
             onClick={() => setPageChange(pageChange - 1)}
-            className="bg-green-500 text-black border border-green-500 px-6 py-3 rounded-lg text-lg font-semibold flex items-center hover:bg-green-600 focus:ring-0"
+            className="bg-[#27A376] text-black border border-green-500 px-6 py-3 rounded-lg text-lg font-semibold flex items-center hover:bg-green-600 focus:ring-0"
             disabled={pageChange <= 0} // Disable button when `pageChange` is 0
           >
             <ArrowLeftOutlined className="text-black" />
@@ -45,7 +45,7 @@ export default function FooterForScopes({ pageChange, setPageChange, changeShope
         {pageChange < 3 && (
           <Button
             onClick={() => setPageChange(pageChange + 1)}
-            className="bg-green-500 text-black border border-green-500 px-6 py-3 rounded-lg text-lg font-semibold flex items-center hover:bg-green-600 focus:ring-0"
+            className="bg-[#27A376] text-black border border-green-500 px-6 py-3 rounded-lg text-lg font-semibold flex items-center hover:bg-green-600 focus:ring-0"
             disabled={pageChange >= 6} // Disable button when `pageChange` reaches 6
           >
             <ArrowRightOutlined />
@@ -59,7 +59,7 @@ export default function FooterForScopes({ pageChange, setPageChange, changeShope
               setChangeShope(changeShope + 1);
               setPageChange(0);
             }}
-            className="bg-green-500 text-black border border-green-500 px-6 py-3 rounded-lg text-lg font-semibold flex items-center hover:bg-green-600 focus:ring-0"
+            className="bg-[#27A376] text-black border border-green-500 px-6 py-3 rounded-lg text-lg font-semibold flex items-center hover:bg-green-600 focus:ring-0"
           >
             Move to Scope 2 <ArrowRightOutlined />
           </Button>
@@ -71,7 +71,7 @@ export default function FooterForScopes({ pageChange, setPageChange, changeShope
               setChangeShope(changeShope + 1);
               setPageChange(0);
             }}
-            className="bg-green-500 text-black border border-green-500 px-6 py-3 rounded-lg text-lg font-semibold flex items-center hover:bg-green-600 focus:ring-0"
+            className="bg-[#27A376] text-black border border-green-500 px-6 py-3 rounded-lg text-lg font-semibold flex items-center hover:bg-green-600 focus:ring-0"
           >
             Move to Scope 3 <ArrowRightOutlined />
           </Button>

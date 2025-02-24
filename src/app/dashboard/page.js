@@ -128,7 +128,7 @@ for (const key in fuelValues) {
 
             <div className="flex items-center gap-3 p-3 bg-gray-100 rounded-lg">
               <div className="flex items-center w-full">
-                <Link href="/ScopeOne">Create Template</Link>
+                <Link href="/TemplateCreation">Template Creation</Link>
               </div>
             </div>
           </div>

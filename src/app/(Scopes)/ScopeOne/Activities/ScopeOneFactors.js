@@ -19,11 +19,11 @@ export default function ScopeOneFactors({ pageChange }) {
   // ScopeFactors state
   const [activities, setActivities] = useState([]);
 
-  console.log("ScopeFactor",checkedValuesScopeOne)
+  console.log("ScopeFactor", checkedValuesScopeOne)
 
-  console.log("activies",activities)
+  console.log("activies", activities)
 
- 
+
 
   const fetchFactors = async () => {
     try {
@@ -43,13 +43,13 @@ export default function ScopeOneFactors({ pageChange }) {
 
       const data = await response.json();
 
-    
+
 
       // Transform data to match dummyData format
       const formattedData = data.map((item) => (
         {
-          name:item,
-          value:item
+          name: item,
+          value: item
         }
       ));
 
@@ -57,7 +57,7 @@ export default function ScopeOneFactors({ pageChange }) {
 
       setActivities(formattedData);
 
-   
+
     } catch (error) {
       console.error("Error fetching scope factors:", error);
     }
@@ -67,7 +67,7 @@ export default function ScopeOneFactors({ pageChange }) {
     fetchFactors();
   }, []); // Dependency array should be empty to prevent infinite fetch calls
 
- 
+
 
   return (
     <>
