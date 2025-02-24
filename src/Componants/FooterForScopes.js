@@ -7,7 +7,7 @@ export default function FooterForScopes({ pageChange, setPageChange, changeShope
 
   return (
     <>
-      <div className="flex justify-start  gap-4 mt-6 w-full"> {/* Change justify-center to justify-start and width to w-full */}
+      <div className="flex justify-center  gap-4 mt-6 w-full"> {/* Change justify-center to justify-start and width to w-full */}
         {/* Show "Previous Page" button only if `pageChange` is greater than 0 and `changeShope` is 1 */}
         {changeShope === 1 && (
           <Button
