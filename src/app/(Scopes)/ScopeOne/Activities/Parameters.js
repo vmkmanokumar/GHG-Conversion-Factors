@@ -50,6 +50,7 @@ export default function Parameters() {
   // Handle Checkbox Click - Now Stores Category Too
   const handleClick = (type, parameter, item, category, selectedValue = null) => {
     setSelectedFuels((prev) => {
+
       if (type === "checkbox") {
         const isChecked = !prev[category]?.[item]?.[parameter]?.checked;
 
@@ -114,7 +115,7 @@ export default function Parameters() {
                           <Disclosure.Panel className="p-2 bg-[#effbf7] rounded-md mt-1 text-gray-500">
                             {Object.keys(fetchedParameters[category][item])?.map((parameter, idx) => (
                               <div key={`${parameter}-${idx}`} className="flex flex-col p-2 rounded-lg">
-                                {/* Checkbox for parameter */}
+                                
                                 <Checkbox
                                   checked={selectedFuels[category]?.[item]?.[parameter]?.checked || false}
                                   onChange={() => handleClick("checkbox", parameter, item, category)}
@@ -122,8 +123,7 @@ export default function Parameters() {
                                 >
                                   {parameter}
                                 </Checkbox>
-
-                                {/* Dynamically populated radio buttons for unit selection */}
+                               
                                 {selectedFuels[category]?.[item]?.[parameter]?.checked && (
                                   <Radio.Group
                                     className="ml-10 mt-2"
