@@ -10,16 +10,20 @@ export default function Parameters() {
     selectedFuels,
     setSelectedFuels,
     fetchedParameters,
-    setFetchedParameters
+    setFetchedParameters,
+    activities,
+    setActivities,
   } = useScopeOne();
 
-  console.log("Fetched parameters:", fetchedParameters);
+  const userId = localStorage.getItem("username") // Replace this with dynamic user ID
 
-  // Function to fetch parameters dynamically
+  console.log("Fetched parameters:", activities);
+
+  // Fetch parameters from the API
   const fetchData = async () => {
     try {
       const ac = Object.values(selectedValuesScopeOne).map((items) => items);
-      const ScopeFactors = Object.keys(selectedValuesScopeOne);
+      const ScopeFactors = Object.keys(activities);
       const scopeFactors = encodeURIComponent(ScopeFactors);
       const activitie = encodeURIComponent(ac.flat());
 
@@ -30,9 +34,7 @@ export default function Parameters() {
         { method: "GET" }
       );
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
+      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
       const data = await response.json();
       console.log("Fetched Data:", data);
@@ -43,18 +45,57 @@ export default function Parameters() {
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  // Fetch saved draft from backend
+  const loadScopeOneDraft = async () => {
+    try {
+      const response = await fetch(
+        `https://ghg-conversion-factors-backend.vercel.app/get_scope_one_draft2/${userId}`
+      );
 
-  // Handle Checkbox Click - Now Stores Category Too
+      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+      const data = await response.json();
+      console.log("Loaded Draft Data:", data);
+
+      if (data.activities) setActivities(data.activities);
+      if (data.parameters) setSelectedFuels(data.parameters);
+    } catch (error) {
+      console.error("Error loading draft:", error);
+    }
+  };
+
+  // Save draft to backend
+  const saveScopeOneDraft = async (updatedFuels) => {
+    try {
+      const payload = {
+        user_id: userId,
+        activities: activities,
+        parameters: updatedFuels, // Sending selected values
+      };
+
+      const response = await fetch(
+        "https://ghg-conversion-factors-backend.vercel.app/save_scope_one_draft2",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      const data = await response.json();
+      console.log("Draft Save Response:", data);
+    } catch (error) {
+      console.error("Error saving draft:", error);
+    }
+  };
+
+  // Handle Checkbox/Radio Click - Stores Category Too
   const handleClick = (type, parameter, item, category, selectedValue = null) => {
     setSelectedFuels((prev) => {
-
+      let updatedFuels;
       if (type === "checkbox") {
         const isChecked = !prev[category]?.[item]?.[parameter]?.checked;
-
-        return {
+        updatedFuels = {
           ...prev,
           [category]: {
             ...prev[category],
@@ -68,7 +109,7 @@ export default function Parameters() {
           },
         };
       } else if (type === "radio") {
-        return {
+        updatedFuels = {
           ...prev,
           [category]: {
             ...prev[category],
@@ -82,14 +123,20 @@ export default function Parameters() {
           },
         };
       }
-      return prev;
+      saveScopeOneDraft(updatedFuels); // Auto-save draft after change
+      return updatedFuels;
     });
   };
+
+  useEffect(() => {
+    fetchData();
+    loadScopeOneDraft();
+  }, []);
 
   return (
     <div className="flex flex-col justify-center items-center bg-[#effbf7] w-full md:w-[768px] lg:w-[1152px] md:mx-auto mt-10 md:mt-16 lg:mt-10 p-4 md:p-6 rounded-xl shadow-lg flex-grow min-h-[515px]">
       <div className="w-full mb-4">
-        <h1 className="text-2xl font-bold text-gray-800  mr-[1000]">Parameters</h1>
+        <h1 className="text-2xl font-bold text-gray-800 mr-[1000]">Parameters</h1>
       </div>
 
       <div className="w-full min-h-[250px] flex-grow text-[22px]">
@@ -115,7 +162,6 @@ export default function Parameters() {
                           <Disclosure.Panel className="p-2 bg-[#effbf7] rounded-md mt-1 text-gray-500">
                             {Object.keys(fetchedParameters[category][item])?.map((parameter, idx) => (
                               <div key={`${parameter}-${idx}`} className="flex flex-col p-2 rounded-lg">
-                                
                                 <Checkbox
                                   checked={selectedFuels[category]?.[item]?.[parameter]?.checked || false}
                                   onChange={() => handleClick("checkbox", parameter, item, category)}
@@ -123,10 +169,10 @@ export default function Parameters() {
                                 >
                                   {parameter}
                                 </Checkbox>
-                               
+
                                 {selectedFuels[category]?.[item]?.[parameter]?.checked && (
                                   <Radio.Group
-                                    className="ml-10 mt-2"
+                                    className="ml-10 mt-2 mr-[800]"
                                     value={selectedFuels[category]?.[item]?.[parameter]?.selectedValue}
                                     onChange={(e) => handleClick("radio", parameter, item, category, e.target.value)}
                                   >

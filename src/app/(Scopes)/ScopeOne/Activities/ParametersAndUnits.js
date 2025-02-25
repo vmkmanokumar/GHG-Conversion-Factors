@@ -33,7 +33,7 @@ export default function ParametersAndUnits() {
 
       console.log("Scope List:", scopeList);
 
-      const response = await fetch("http://127.0.0.1:5000/selectedvalues", {
+      const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/selectedvalues", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(scopeList),
@@ -110,7 +110,7 @@ export default function ParametersAndUnits() {
                                   <Disclosure>
                                     {({ open }) => (
                                       <div>
-                                        <Disclosure.Button className="flex justify-between items-center w-full px-3 py-2 bg-[#CBF4E5] text-gray-700 rounded-md">
+                                        <Disclosure.Button className="flex justify-between items-center w-full mt-2 px-3 py-2 bg-[#CBF4E5] text-gray-700 rounded-md">
                                           <span className="text-sm">{parameter}</span>
                                           <ChevronDown className={`w-4 h-4 ${open ? "rotate-180" : "rotate-0"}`} />
                                         </Disclosure.Button>
