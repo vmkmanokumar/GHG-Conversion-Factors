@@ -15,7 +15,9 @@ export default function Parameters() {
     setActivities,
   } = useScopeOne();
 
-  const userId = localStorage.getItem("username") // Replace this with dynamic user ID
+  // Replace this with dynamic user ID
+
+  const [userId,setUserId] = useState("");
 
   console.log("Fetched parameters:", activities);
 
@@ -30,7 +32,7 @@ export default function Parameters() {
       console.log("Fetching Data for:", scopeFactors, activitie);
 
       const response = await fetch(
-        `https://ghg-conversion-factors-backend.vercel.app/parameters?scope=${scopeFactors}&params=${activitie}`,
+        `http://127.0.0.1:5000/parameters?scope=${scopeFactors}&params=${activitie}`,
         { method: "GET" }
       );
 
@@ -48,6 +50,7 @@ export default function Parameters() {
   // Fetch saved draft from backend
   const loadScopeOneDraft = async () => {
     try {
+    
       const response = await fetch(
         `https://ghg-conversion-factors-backend.vercel.app/get_scope_one_draft2/${userId}`
       );
@@ -129,6 +132,7 @@ export default function Parameters() {
   };
 
   useEffect(() => {
+    setUserId(localStorage.getItem("username"))
     fetchData();
     loadScopeOneDraft();
   }, []);

@@ -6,11 +6,13 @@ import { Checkbox } from "antd";
 import { ChevronDown } from "lucide-react";
 import { useScopeOne } from "../Context/ScopeOneContext";
 
-const userId = localStorage.getItem("username") // Replace with actual user ID
+
 
 export default function ChooseActivities() {
-  const { checkedValuesScopeOne, selectedValuesScopeOne, setSelectedValuesScopeOne, activities, setActivities } = useScopeOne();
+  const { checkedValuesScopeOne, selectedValuesScopeOne, setSelectedValuesScopeOne,activities,setActivities} = useScopeOne();
+  
 
+ 
   console.log("From Activities Page - Checked Values:", activities);
 
   // Fetch available activities based on checked scope factors
@@ -45,7 +47,7 @@ export default function ChooseActivities() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           user_id: userId,
-          activities: updatedData, // Saving selected activities
+          activities: updatedData,
         }),
       });
 
@@ -80,6 +82,7 @@ export default function ChooseActivities() {
   // Fetch saved activities from PostgreSQL when page loads
   const fetchSavedActivities = async () => {
     try {
+      const userId = localStorage.getItem("username")
       const response = await fetch(`https://ghg-conversion-factors-backend.vercel.app/get_scope_one_draft/${userId}`);
       if (!response.ok) throw new Error("Failed to fetch saved data");
 
@@ -90,9 +93,10 @@ export default function ChooseActivities() {
     }
   };
 
-  // Fetch activities and saved selections on component mount
   useEffect(() => {
+    
     fetchSavedActivities();
+
   }, []);
 
   useEffect(() => {
