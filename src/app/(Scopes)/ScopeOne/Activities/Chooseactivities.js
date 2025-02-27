@@ -6,13 +6,13 @@ import { Checkbox } from "antd";
 import { ChevronDown } from "lucide-react";
 import { useScopeOne } from "../Context/ScopeOneContext";
 
-const userId = localStorage.getItem("username") // Replace with actual user ID
+  // Replace with actual user ID
 
 export default function ChooseActivities() {
   const { checkedValuesScopeOne, selectedValuesScopeOne, setSelectedValuesScopeOne, activities, setActivities } = useScopeOne();
 
   console.log("From Activities Page - Checked Values:", activities);
-
+  const [userId,setUserId] = useState("")
   // Fetch available activities based on checked scope factors
   const FetchActivities = async () => {
     try {
@@ -92,6 +92,8 @@ export default function ChooseActivities() {
 
   // Fetch activities and saved selections on component mount
   useEffect(() => {
+
+    setUserId(localStorage.getItem("username"))
     fetchSavedActivities();
   }, []);
 

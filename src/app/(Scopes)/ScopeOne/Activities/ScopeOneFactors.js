@@ -8,11 +8,12 @@ import { useEffect, useState } from "react";
 import ParametersAndUnits from "./ParametersAndUnits";
 import "./Styles/ScopeOneFactors.css";
 
-const userId = localStorage.getItem("username")
+
 
 export default function ScopeOneFactors({ pageChange }) {
   const { checkedValuesScopeOne, setCheckedValuesScopeOne } = useScopeOne();
   const [activities, setActivities] = useState([]);
+  const[userId,setUserId] = useState();
 
   
 
@@ -81,6 +82,7 @@ export default function ScopeOneFactors({ pageChange }) {
   };
 
   useEffect(() => {
+    setUserId(localStorage.getItem("username"))
     fetchFactors();
     fetchSavedScopeOne();
   }, []); // Runs only once

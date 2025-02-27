@@ -14,8 +14,10 @@ export default function Parameters() {
     activities,
     setActivities,
   } = useScopeOne();
+ const [userId,setUserId] = useState("")
 
-  const userId = localStorage.getItem("username") // Replace this with dynamic user ID
+
+  // Replace this with dynamic user ID
 
   console.log("Fetched parameters:", activities);
 
@@ -129,6 +131,7 @@ export default function Parameters() {
   };
 
   useEffect(() => {
+    setUserId(localStorage.getItem("username"))
     fetchData();
     loadScopeOneDraft();
   }, []);
