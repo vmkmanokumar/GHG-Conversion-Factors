@@ -17,6 +17,8 @@ export default function Parameters() {
 
   // Replace this with dynamic user ID
 
+  const [userId,setUserId] = useState("");
+
   console.log("Fetched parameters:", activities);
 
   // Fetch parameters from the API
@@ -48,7 +50,7 @@ export default function Parameters() {
   // Fetch saved draft from backend
   const loadScopeOneDraft = async () => {
     try {
-      const userId = localStorage.getItem("username") 
+    
       const response = await fetch(
         `https://ghg-conversion-factors-backend.vercel.app/get_scope_one_draft2/${userId}`
       );
@@ -130,6 +132,7 @@ export default function Parameters() {
   };
 
   useEffect(() => {
+    setUserId(localStorage.getItem("username"))
     fetchData();
     loadScopeOneDraft();
   }, []);

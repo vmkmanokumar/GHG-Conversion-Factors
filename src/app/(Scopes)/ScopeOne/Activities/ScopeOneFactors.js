@@ -13,6 +13,7 @@ import "./Styles/ScopeOneFactors.css";
 export default function ScopeOneFactors({ pageChange }) {
   const { checkedValuesScopeOne, setCheckedValuesScopeOne } = useScopeOne();
   const [activities, setActivities] = useState([]);
+  const [userId,setUserId] = useState("")
 
   
 
@@ -46,7 +47,6 @@ export default function ScopeOneFactors({ pageChange }) {
   // Fetch saved checkboxes
   const fetchSavedScopeOne = async () => {
     try {
-      const userId = localStorage.getItem("username")
       const response = await fetch(`https://ghg-conversion-factors-backend.vercel.app/get_scope_one/${userId}`);
       if (!response.ok) throw new Error("Failed to fetch saved data");
 
@@ -81,7 +81,8 @@ export default function ScopeOneFactors({ pageChange }) {
     saveScopeOne(updatedValues); // Auto-save when checkbox is clicked
   };
 
-  useEffect(() => {
+  useEffect(() => {  
+    setUserId(localStorage.getItem("username"))
     fetchFactors();
     fetchSavedScopeOne();
   }, []); // Runs only once
