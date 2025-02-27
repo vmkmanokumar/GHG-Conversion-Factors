@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import ParametersAndUnits from "./ParametersAndUnits";
 import "./Styles/ScopeOneFactors.css";
 
-const userId = localStorage.getItem("username")
+
 
 export default function ScopeOneFactors({ pageChange }) {
   const { checkedValuesScopeOne, setCheckedValuesScopeOne } = useScopeOne();
@@ -46,6 +46,7 @@ export default function ScopeOneFactors({ pageChange }) {
   // Fetch saved checkboxes
   const fetchSavedScopeOne = async () => {
     try {
+      const userId = localStorage.getItem("username")
       const response = await fetch(`https://ghg-conversion-factors-backend.vercel.app/get_scope_one/${userId}`);
       if (!response.ok) throw new Error("Failed to fetch saved data");
 

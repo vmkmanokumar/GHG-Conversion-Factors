@@ -15,7 +15,7 @@ export default function Parameters() {
     setActivities,
   } = useScopeOne();
 
-  const userId = localStorage.getItem("username") // Replace this with dynamic user ID
+  // Replace this with dynamic user ID
 
   console.log("Fetched parameters:", activities);
 
@@ -48,6 +48,7 @@ export default function Parameters() {
   // Fetch saved draft from backend
   const loadScopeOneDraft = async () => {
     try {
+      const userId = localStorage.getItem("username") 
       const response = await fetch(
         `https://ghg-conversion-factors-backend.vercel.app/get_scope_one_draft2/${userId}`
       );
