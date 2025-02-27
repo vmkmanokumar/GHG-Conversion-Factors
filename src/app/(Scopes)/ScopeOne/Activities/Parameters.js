@@ -32,7 +32,7 @@ export default function Parameters() {
       console.log("Fetching Data for:", scopeFactors, activitie);
 
       const response = await fetch(
-        `http://127.0.0.1:5000/parameters?scope=${scopeFactors}&params=${activitie}`,
+        `https://ghg-conversion-factors-backend.vercel.app/parameters?scope=${scopeFactors}&params=${activitie}`,
         { method: "GET" }
       );
 
