@@ -17,7 +17,7 @@ export default function Parameters() {
  const [userId,setUserId] = useState("")
 
 
-  const userId = localStorage.getItem("username") // Replace this with dynamic user ID
+// Replace this with dynamic user ID
 
   console.log("Fetched parameters:", activities);
 
