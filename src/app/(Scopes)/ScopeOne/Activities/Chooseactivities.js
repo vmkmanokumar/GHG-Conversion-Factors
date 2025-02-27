@@ -9,8 +9,10 @@ import { useScopeOne } from "../Context/ScopeOneContext";
 const userId = localStorage.getItem("username") // Replace with actual user ID
 
 export default function ChooseActivities() {
-  const { checkedValuesScopeOne, selectedValuesScopeOne, setSelectedValuesScopeOne, activities, setActivities } = useScopeOne();
+  const { checkedValuesScopeOne, selectedValuesScopeOne, setSelectedValuesScopeOne,activities,setActivities} = useScopeOne();
+  
 
+  // const [] = useState({})
   console.log("From Activities Page - Checked Values:", activities);
 
   // Fetch available activities based on checked scope factors
@@ -45,7 +47,7 @@ export default function ChooseActivities() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           user_id: userId,
-          activities: updatedData, // Saving selected activities
+          activities: updatedData,
         }),
       });
 
@@ -90,7 +92,6 @@ export default function ChooseActivities() {
     }
   };
 
-  // Fetch activities and saved selections on component mount
   useEffect(() => {
     fetchSavedActivities();
   }, []);
