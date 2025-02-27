@@ -8,82 +8,100 @@ import { useEffect, useState } from "react";
 import ParametersAndUnits from "./ParametersAndUnits";
 import "./Styles/ScopeOneFactors.css";
 
-
-
 export default function ScopeOneFactors({ pageChange }) {
   const { checkedValuesScopeOne, setCheckedValuesScopeOne } = useScopeOne();
-  const [activities, setActivities] = useState([]);
+  const [activities, setActivities] = useState([]); // Available activities
+  const [userId, setUserId] = useState(""); // Store user ID
 
-  
+  // Get user ID from localStorage
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedUserId = localStorage.getItem("username");
+      if (storedUserId) setUserId(storedUserId);
+    }
+  }, []);
 
   console.log("ScopeFactor", checkedValuesScopeOne);
   console.log("Activities", activities);
 
-  // Fetch available activities
+  // Fetch available activities from the API
   const fetchFactors = async () => {
     try {
-      const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/scope_factors", {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      });
-
+      const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/scope_factors");
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
       const data = await response.json();
-
       const formattedData = data.map((item) => ({
         name: item,
         value: item,
       }));
 
       setActivities(formattedData);
-
     } catch (error) {
       console.error("Error fetching scope factors:", error);
     }
   };
 
-  // Fetch saved checkboxes
+  // Fetch saved selected activities
   const fetchSavedScopeOne = async () => {
+    if (!userId) return;
+
     try {
       const response = await fetch(`https://ghg-conversion-factors-backend.vercel.app/get_scope_one/${userId}`);
       if (!response.ok) throw new Error("Failed to fetch saved data");
 
       const data = await response.json();
-      setCheckedValuesScopeOne(data.selected_activities);
+      setCheckedValuesScopeOne(data.selected_activities || []);
+      console.log("Fetched Saved Data:", data);
     } catch (error) {
       console.error("Error loading saved scope factors:", error);
     }
   };
 
-  // Save selected checkboxes **immediately after clicking**
+  // Save selected checkboxes **immediately** after clicking
   const saveScopeOne = async (updatedValues) => {
+    if (!userId) {
+      console.error("User ID is missing! Cannot save.");
+      return;
+    }
+  
     try {
-      await fetch("https://ghg-conversion-factors-backend.vercel.app/save_scope_one", {
+      const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/save_scope_one", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           user_id: userId,
           selected_activities: updatedValues,
         }),
       });
+  
+      const data = await response.json(); // Get response JSON
+      console.log("Server Response:", data);
+  
+      if (!response.ok) {
+        throw new Error(`HTTP Error! Status: ${response.status}`);
+      }
+  
+      console.log("Saved Draft:", updatedValues);
     } catch (error) {
       console.error("Error saving scope factors:", error);
     }
   };
+  
 
   // Handle checkbox change & auto-save
   const handleCheckboxChange = (updatedValues) => {
     setCheckedValuesScopeOne(updatedValues);
-    saveScopeOne(updatedValues); // Auto-save when checkbox is clicked
+    saveScopeOne(updatedValues);
   };
 
   useEffect(() => {
-    fetchFactors();
-    fetchSavedScopeOne();
-  }, []); // Runs only once
+    fetchFactors(); // Load available activities once
+  }, []);
+
+  useEffect(() => {
+    if (userId) fetchSavedScopeOne(); // Load saved data when userId is available
+  }, [userId]);
 
   return (
     <>

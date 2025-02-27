@@ -19,6 +19,16 @@ export default function Parameters() {
 
 // Replace this with dynamic user ID
 
+useEffect(() => {
+  if (typeof window !== "undefined") {
+    const storedUserId = localStorage.getItem("username");
+    if (storedUserId) setUserId(storedUserId);
+  }
+  fetchData();
+  loadScopeOneDraft();
+}, []);
+
+
   console.log("Fetched parameters:", activities);
 
   // Fetch parameters from the API
@@ -132,7 +142,7 @@ export default function Parameters() {
   };
 
   useEffect(() => {
-    setUserId(localStorage.getItem("username"))
+    // setUserId(localStorage.getItem("username"))
     fetchData();
     loadScopeOneDraft();
   }, []);
