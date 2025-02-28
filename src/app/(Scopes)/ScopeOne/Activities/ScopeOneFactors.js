@@ -9,8 +9,8 @@ import ParametersAndUnits from "./ParametersAndUnits";
 import "./Styles/ScopeOneFactors.css";
 
 export default function ScopeOneFactors({ pageChange }) {
-  const { checkedValuesScopeOne, setCheckedValuesScopeOne } = useScopeOne();
-  const [activities, setActivities] = useState([]); // Available activities
+  const { checkedValuesScopeOne, setCheckedValuesScopeOne,activities, setActivities } = useScopeOne();
+  // const [] = useState([]); // Available activities
   const [userId, setUserId] = useState(""); // Store user ID
 
   // Get user ID from localStorage

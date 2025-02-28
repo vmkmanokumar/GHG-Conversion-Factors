@@ -16,17 +16,31 @@ export default function Parameters() {
   } = useScopeOne();
  const [userId,setUserId] = useState("")
 
+//  console.log("userName:",userId)
+
+//  console.log("fectchd parametres",fetchedParameters)
+
+console.log("selected fules cleck",selectedFuels)
+
 
 // Replace this with dynamic user ID
 
 useEffect(() => {
   if (typeof window !== "undefined") {
     const storedUserId = localStorage.getItem("username");
-    if (storedUserId) setUserId(storedUserId);
+    if (storedUserId) {
+      setUserId(storedUserId);
+    }
   }
-  fetchData();
-  loadScopeOneDraft();
-}, []);
+}, []);  // Only run on mount to get userId
+
+useEffect(() => {
+  if (userId) {
+    fetchData();
+    loadScopeOneDraft();
+  }
+}, [userId]); // Run only when userId is set
+
 
 
   console.log("Fetched parameters:", activities);
@@ -62,7 +76,7 @@ useEffect(() => {
     try {
     
       const response = await fetch(
-        `https://ghg-conversion-factors-backend.vercel.app/get_scope_one_draft2/${userId}`
+        `http://127.0.0.1:5000/get_scope_one_draft2/${userId}`
       );
 
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
@@ -70,8 +84,12 @@ useEffect(() => {
       const data = await response.json();
       console.log("Loaded Draft Data:", data);
 
-      if (data.activities) setActivities(data.activities);
-      if (data.parameters) setSelectedFuels(data.parameters);
+      if (data && data.activities) {
+        setActivities(data.activities);
+      }
+      if (data && data.parameters) {
+        setSelectedFuels(data.parameters);
+      }
     } catch (error) {
       console.error("Error loading draft:", error);
     }

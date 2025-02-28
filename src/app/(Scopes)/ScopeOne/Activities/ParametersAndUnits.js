@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Disclosure } from "@headlessui/react";
 import { ChevronDown } from "lucide-react";
 import { Input, Select } from "antd";
@@ -10,11 +10,15 @@ const { Option } = Select;
 export default function ParametersAndUnits() {
   const { selectedFuels, setSelectedFuels } = useScopeOne();
 
+  const [biogas,setBiogas] = useState({});
+
   console.log("Selected Fuels:", selectedFuels);
 
   const updateSelectedValues = async () => {
     try {
       const scopeList = [];
+
+      console.log("scopelIst",scopeList)
 
       for (const category in selectedFuels) {
         for (const item in selectedFuels[category]) {
@@ -31,9 +35,21 @@ export default function ParametersAndUnits() {
         }
       }
 
+      const responseForBiogas = await fetch("http://127.0.0.1:5000/biogasData",{
+        method:"GET"
+      });
+
+      if(!responseForBiogas.ok){
+        throw new Error(`HTTP error! status :${responseForBiogas.status}`)
+      }
+
+      const responseForBiogasData = await responseForBiogas.json();
+      setBiogas(responseForBiogasData)
+      console.log("File datas",responseForBiogasData)
+
       console.log("Scope List:", scopeList);
 
-      const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/selectedvalues", {
+      const response = await fetch("http://127.0.0.1:5000/selectedvalues", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(scopeList),
@@ -102,8 +118,10 @@ export default function ParametersAndUnits() {
                           </Disclosure.Button>
 
                           <Disclosure.Panel className="p-2 bg-[#effbf7] rounded-md mt-1 text-gray-500">
-                            {Object.keys(selectedFuels[category][item]).map((parameter) => {
-                              const fuelData = biogasDummyData.find((b) => b.name === parameter);
+                            {Object.keys(selectedFuels[category][item])
+                            .filter((parameter) => selectedFuels[category][item][parameter]?.checked)
+                            .map((parameter) => {
+                              const fuelData = biogas.find((b) => b.name === parameter);
 
                               return (
                                 <div key={parameter} className="p-0 shadow-md">
