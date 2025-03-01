@@ -6,7 +6,6 @@ import {
   Typography,
   Spin,
   Card,
-  Progress,
   Input,
   Tooltip,
   Switch,
@@ -20,6 +19,7 @@ import {
 } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import Papa from "papaparse";
+import Link from "next/link";
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
@@ -34,36 +34,27 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/getmasterData", {
-          method: "GET",
-        });
+        const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/getmasterData");
+        if (!response.ok) throw new Error("Failed to fetch data");
 
-        if (!response.ok) {
-          console.error("Failed to fetch data");
-          return;
-        }
+        const res = await response.json();
+        console.log(res);
 
-        const res = await response.json();  
-        console.log("data",res);
-
-        // Transform and set the data
         const transformedData = {};
         res.forEach((item) => {
           if (!transformedData[item.scopes]) {
             transformedData[item.scopes] = {};
           }
           if (!transformedData[item.scopes][item.scope_factors]) {
-            transformedData[item.scopes][item.scope_factors] = [];
+            transformedData[item.scopes][item.scope_factors] = {};
           }
 
-          transformedData[item.scopes][item.scope_factors].push({
-            name: item.parameters,
-            value: Number(item.maxvalues),
-            unit: item.units,
-          });
+          transformedData[item.scopes][item.scope_factors][item.parameters] = {
+            checked: true,
+            selectedValue: item.units,
+            maxvalue: item.maxvalues,
+          };
         });
-
-        console.log(transformedData)
 
         setData(transformedData);
       } catch (error) {
@@ -76,21 +67,23 @@ export default function Dashboard() {
     fetchData();
   }, []);
 
-  const toggleDarkMode = () => {
-    setDarkMode((prev) => !prev);
-  };
+  const toggleDarkMode = () => setDarkMode((prev) => !prev);
 
   const downloadCSV = () => {
     if (!data) return;
 
     let csvData = [];
-    Object.entries(data["Scope 1"]).forEach(([category, items]) => {
-      items.forEach((item) => {
-        csvData.push({
-          Category: category,
-          Fuel: item.name,
-          Value: item.value,
-          Unit: item.unit,
+    Object.entries(data).forEach(([category, subCategories]) => {
+      Object.entries(subCategories).forEach(([subCategory, items]) => {
+        Object.entries(items).forEach(([itemName, itemData]) => {
+          csvData.push({
+            Category: category,
+            SubCategory: subCategory,
+            Name: itemName,
+            Checked: itemData.checked,
+            Value: itemData.maxvalue,
+            Unit: itemData.selectedValue,
+          });
         });
       });
     });
@@ -99,23 +92,39 @@ export default function Dashboard() {
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.setAttribute("download", "fuel_data.csv");
+    link.setAttribute("download", "data.csv");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
   return (
-    <Layout className={`h-screen ${darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-black"}`}>
+    <Layout
+      className={`h-screen transition-all duration-300 ${
+        darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-black"
+      }`}
+    >
       {/* Header */}
-      <Header className={`shadow-md flex items-center px-6 h-[80px] ${darkMode ? "bg-gray-800" : "bg-white"}`}>
+      <Header
+        className={`shadow-md flex items-center px-6 h-[80px] transition-all duration-300 ${
+          darkMode ? "bg-gray-800 text-white" : "bg-white text-black"
+        }`}
+      >
         <Button
           icon={<ArrowLeftOutlined />}
           type="text"
           onClick={() => router.back()}
           className={`text-xl mr-4 ${darkMode ? "text-white" : "text-gray-800"}`}
         />
-        <Title level={3} className={`m-0 ${darkMode ? "text-white" : "text-gray-800"}`}>Dashboard</Title>
+        <Title level={3} className={`m-0 flex-1 ${darkMode ? "text-white" : ""}`}>
+          Dashboard
+        </Title>
+
+        <Button type="link" className={darkMode ? "text-white" : ""}>
+          <Link href="/TemplateCreation">Create Template</Link>
+        </Button>
+
+        {/* Dark Mode Toggle */}
         <Switch
           checked={darkMode}
           onChange={toggleDarkMode}
@@ -126,18 +135,28 @@ export default function Dashboard() {
       </Header>
 
       {/* Main Content */}
-      <Content className="p-6">
-        <div className={`p-6 rounded-lg ${darkMode ? "bg-gray-800" : "bg-green-50"}`}>
+      <Content
+        className={`p-4 sm:p-6 transition-all duration-300 ${
+          darkMode ? "bg-gray-800 text-white" : "bg-green-50 text-black"
+        }`}
+      >
+        <div
+          className={`p-6 rounded-lg transition-all duration-300 ${
+            darkMode ? "bg-gray-800 text-white" : "bg-green-50 text-black"
+          }`}
+        >
           {/* Header Actions */}
-          <div className="flex justify-between items-center mb-4">
-            <Title level={3} className="text-center">Dashboard Data</Title>
-            <div className="flex items-center gap-3">
+          <div className="flex flex-wrap justify-between items-center mb-4">
+            <Title level={3} className={`text-center w-full sm:w-auto ${darkMode ? "text-white" : ""}`}>
+              Dashboard Data
+            </Title>
+            <div className="flex flex-wrap gap-3 w-full sm:w-auto">
               <Input
                 placeholder="Search..."
-                prefix={<SearchOutlined />}
+                prefix={<SearchOutlined className={darkMode ? "text-white" : "text-black"} />}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-60"
+                className={`w-full sm:w-60 ${darkMode ? "bg-gray-700 text-white" : ""}`}
               />
               <Button type="primary" icon={<DownloadOutlined />} onClick={downloadCSV}>
                 Download CSV
@@ -147,30 +166,49 @@ export default function Dashboard() {
 
           {/* Display Data */}
           {loading ? (
-            <div className="flex justify-center items-center">
+            <div className="flex justify-center items-center h-40">
               <Spin size="large" />
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {Object.entries(data["Scope 1"])
-                .filter(([category]) => category.toLowerCase().includes(search.toLowerCase()))
-                .map(([category, items]) => (
-                  <Card key={category} title={category} className={`shadow-md ${darkMode ? "bg-gray-700 text-white" : ""}`}>
-                    {items.map((item) => (
-                      <div key={item.name} className="mb-3">
-                        <Text strong>{item.name} ({item.unit})</Text>
-                        <div className="w-full bg-gray-200 rounded-full h-3 relative">
-  <div
-    className="bg-green-500 h-3 rounded-full"
-    style={{ width: `${(item.value / 100) * 100}%` }}
-  ></div>
-</div>
-<Text type="secondary" className="text-sm">{`Value: ${item.value} ${item.unit}`}</Text>
-
-                      </div>
-                    ))}
-                  </Card>
-                ))}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Object.entries(data)
+                .filter(([category]) =>
+                  category.toLowerCase().includes(search.toLowerCase())
+                )
+                .map(([category, subCategories]) =>
+                  Object.entries(subCategories).map(([subCategory, items]) => (
+                    <Card
+                      key={subCategory}
+                      title={`${category}-${subCategory}`}
+                      className={`shadow-md transition-all duration-300 ${
+                        darkMode
+                          ? "bg-gray-700 text-white border-gray-600"
+                          : "bg-[#EFFBF7] text-black"
+                      }`}
+                    >
+                      {Object.entries(items).map(([itemName, itemData]) => (
+                        <div key={itemName} className="mb-3">
+                          <Text strong className={darkMode ? "text-white" : "text-black"}>
+                            {itemName} ({itemData.selectedValue})
+                          </Text>
+                          <Tooltip
+                            title={`Value: ${itemData.maxvalue} ${itemData.selectedValue}`}
+                            overlayClassName={darkMode ? "bg-gray-700 text-white" : ""}
+                          >
+                            <div className="w-full bg-gray-200 rounded-full h-[28] mt-2">
+                              <div
+                                className="bg-green-500 h-[28] rounded-full transition-all duration-300"
+                                style={{
+                                  width: `${(itemData.maxvalue / 100) * 100}%`,
+                                }}
+                              ></div>
+                            </div>
+                          </Tooltip>
+                        </div>
+                      ))}
+                    </Card>
+                  ))
+                )}
             </div>
           )}
         </div>
