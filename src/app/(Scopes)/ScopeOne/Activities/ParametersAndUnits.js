@@ -17,7 +17,7 @@ export default function ParametersAndUnits() {
   useEffect(() => {
     const fetchBiogasData = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:5000/biogasData");
+        const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/biogasData");
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
         
         const data = await response.json();
@@ -34,7 +34,7 @@ export default function ParametersAndUnits() {
   // ✅ Move `saveDraftData` outside `updateSelectedValues`
   const saveDraftData = async () => {
     try {
-      const response = await fetch(`http://127.0.0.1:5000/saveParameter/vmkmano13@gmail.com`, {
+      const response = await fetch(`https://ghg-conversion-factors-backend.vercel.app/saveParameter/vmkmano13@gmail.com`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(selectedFuels),
@@ -81,7 +81,7 @@ export default function ParametersAndUnits() {
 
   const getSaveParameters = useCallback(async () => {
     try {
-      const response = await fetch("http://127.0.0.1:5000/getsaveParameters/vmkmano13@gmail.com", {
+      const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/getsaveParameters/vmkmano13@gmail.com", {
         method: "GET",
       });
   
@@ -151,7 +151,7 @@ export default function ParametersAndUnits() {
 
         console.log("Scope List:", scopeList);
 
-        const response = await fetch("http://127.0.0.1:5000/selectedvalues", {
+        const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/selectedvalues", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(scopeList),

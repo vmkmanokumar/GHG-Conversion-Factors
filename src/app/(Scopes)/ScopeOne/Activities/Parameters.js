@@ -56,7 +56,7 @@ export default function Parameters() {
   // Load saved draft
   const loadScopeOneDraft = async () => {
     try {
-      const response = await fetch(`http://127.0.0.1:5000/get_scope_one_draft2/${userId}`);
+      const response = await fetch(`https://ghg-conversion-factors-backend.vercel.app/get_scope_one_draft2/${userId}`);
 
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 

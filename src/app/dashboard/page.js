@@ -1,163 +1,180 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Button, Drawer, Avatar, Layout, Typography, Spin,Card } from "antd";
-import { UserOutlined, LogoutOutlined, MenuOutlined, IdcardOutlined } from "@ant-design/icons";
+import {
+  Button,
+  Layout,
+  Typography,
+  Spin,
+  Card,
+  Progress,
+  Input,
+  Tooltip,
+  Switch,
+} from "antd";
+import {
+  ArrowLeftOutlined,
+  DownloadOutlined,
+  SearchOutlined,
+  MoonOutlined,
+  SunOutlined,
+} from "@ant-design/icons";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { useScopeOne } from "../(Scopes)/ScopeOne/Context/ScopeOneContext";
+import Papa from "papaparse";
 
-const { Header } = Layout;
+const { Header, Content } = Layout;
 const { Title, Text } = Typography;
 
 export default function Dashboard() {
   const router = useRouter();
-  const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [username, setUsername] = useState("");
-  const [roles, setRoles] = useState("");
-
-  const {selectedFuels} = useScopeOne();
- 
-
+  const [search, setSearch] = useState("");
+  const [darkMode, setDarkMode] = useState(false);
+  const [data, setData] = useState(null);
 
   useEffect(() => {
-    const response = async () => {
+    const fetchData = async () => {
       try {
-        const res = await fetch("https://ghg-conversion-factors-backend.vercel.app/ShopeGetData", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(selectedFuels), // Corrected body
+        const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/getmasterData", {
+          method: "GET",
         });
-    
-        const result = await res.json();
-        console.log("Server Response:", result);
+
+        if (!response.ok) {
+          console.error("Failed to fetch data");
+          return;
+        }
+
+        const res = await response.json();  
+        console.log("data",res);
+
+        // Transform and set the data
+        const transformedData = {};
+        res.forEach((item) => {
+          if (!transformedData[item.scopes]) {
+            transformedData[item.scopes] = {};
+          }
+          if (!transformedData[item.scopes][item.scope_factors]) {
+            transformedData[item.scopes][item.scope_factors] = [];
+          }
+
+          transformedData[item.scopes][item.scope_factors].push({
+            name: item.parameters,
+            value: Number(item.maxvalues),
+            unit: item.units,
+          });
+        });
+
+        console.log(transformedData)
+
+        setData(transformedData);
       } catch (error) {
-        console.error("Error sending data:", error);
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
       }
     };
-  
-    // Call response only once when the component mounts or when selectedFuels change
-    if (selectedFuels) {
-      response();
-    }
-  }, [selectedFuels]);  // Dependency array ensures the call happens when selectedFuels is updated
-  
-  
-  //  selectedFuels is display like in page
 
-const fuelType = Object.keys(selectedFuels)[0]; // "Propane"
-const fuelValues = selectedFuels[fuelType];
-
-console.log(fuelType)
-
-// Print all key-value pairs of the nested object
-for (const key in fuelValues) {
-  console.log(`${key}:`, fuelValues[key]);
-}
-
-
-
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedUsername = localStorage.getItem("username");
-      const role = localStorage.getItem("roles");
-      setRoles(role || "N/A");
-      setUsername(storedUsername || "Guest");
-    }
+    fetchData();
   }, []);
 
-  const showUserDrawer = () => {
-    setOpen(true);
-    setLoading(true);
-    setTimeout(() => setLoading(false), 1000);
+  const toggleDarkMode = () => {
+    setDarkMode((prev) => !prev);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("username");
-    router.push("/");
+  const downloadCSV = () => {
+    if (!data) return;
+
+    let csvData = [];
+    Object.entries(data["Scope 1"]).forEach(([category, items]) => {
+      items.forEach((item) => {
+        csvData.push({
+          Category: category,
+          Fuel: item.name,
+          Value: item.value,
+          Unit: item.unit,
+        });
+      });
+    });
+
+    const csv = Papa.unparse(csvData);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute("download", "fuel_data.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
-    <>
-
-<Layout className="h-screen bg-gray-100">
-      <Header className="bg-[#27A376] h-[100px] flex justify-between items-center px-6 shadow-md">
-        <Title level={3} className="text-white">Dashboard</Title>
-        <div className="flex items-center gap-4">
-          <Avatar size="large" icon={<UserOutlined />} className="cursor-pointer shadow-md" onClick={showUserDrawer} />
-          <Button type="text" icon={<LogoutOutlined />} onClick={handleLogout} className="text-white hover:text-red-500">
-            Logout
-          </Button>
-        </div>
+    <Layout className={`h-screen ${darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-black"}`}>
+      {/* Header */}
+      <Header className={`shadow-md flex items-center px-6 h-[80px] ${darkMode ? "bg-gray-800" : "bg-white"}`}>
+        <Button
+          icon={<ArrowLeftOutlined />}
+          type="text"
+          onClick={() => router.back()}
+          className={`text-xl mr-4 ${darkMode ? "text-white" : "text-gray-800"}`}
+        />
+        <Title level={3} className={`m-0 ${darkMode ? "text-white" : "text-gray-800"}`}>Dashboard</Title>
+        <Switch
+          checked={darkMode}
+          onChange={toggleDarkMode}
+          checkedChildren={<SunOutlined />}
+          unCheckedChildren={<MoonOutlined />}
+          className="ml-auto"
+        />
       </Header>
 
-      {/* User Drawer */}
-      <Drawer
-        title={<Title level={4} className="text-gray-700">User Info</Title>}
-        placement="right"
-        open={open}
-        onClose={() => setOpen(false)}
-        closable
-      >
-        {loading ? (
-          <div className="flex flex-col items-center justify-center gap-4 mt-10">
-            <Spin size="large" />
-            <Text>Loading user details...</Text>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            <div className="flex items-center gap-3 p-3 bg-gray-100 rounded-lg">
-              <Avatar size={50} icon={<UserOutlined />} />
-              <div>
-                <Text className="text-gray-600 text-sm">Username</Text>
-                <Title level={5} className="m-0">{username}</Title>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3 p-3 bg-gray-100 rounded-lg">
-              <IdcardOutlined className="text-xl text-gray-600" />
-              <div className="flex items-center w-full">
-                <Text className="text-gray-600 text-sm mr-10">Role:</Text>
-                <Title level={5} className="m-0 text-gray-700">{roles}</Title>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3 p-3 bg-gray-100 rounded-lg">
-              <div className="flex items-center w-full">
-                <Link href="/TemplateCreation">Template Creation</Link>
-              </div>
+      {/* Main Content */}
+      <Content className="p-6">
+        <div className={`p-6 rounded-lg ${darkMode ? "bg-gray-800" : "bg-green-50"}`}>
+          {/* Header Actions */}
+          <div className="flex justify-between items-center mb-4">
+            <Title level={3} className="text-center">Dashboard Data</Title>
+            <div className="flex items-center gap-3">
+              <Input
+                placeholder="Search..."
+                prefix={<SearchOutlined />}
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-60"
+              />
+              <Button type="primary" icon={<DownloadOutlined />} onClick={downloadCSV}>
+                Download CSV
+              </Button>
             </div>
           </div>
-        )}
-      </Drawer>
 
+          {/* Display Data */}
+          {loading ? (
+            <div className="flex justify-center items-center">
+              <Spin size="large" />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Object.entries(data["Scope 1"])
+                .filter(([category]) => category.toLowerCase().includes(search.toLowerCase()))
+                .map(([category, items]) => (
+                  <Card key={category} title={category} className={`shadow-md ${darkMode ? "bg-gray-700 text-white" : ""}`}>
+                    {items.map((item) => (
+                      <div key={item.name} className="mb-3">
+                        <Text strong>{item.name} ({item.unit})</Text>
+                        <div className="w-full bg-gray-200 rounded-full h-3 relative">
+  <div
+    className="bg-green-500 h-3 rounded-full"
+    style={{ width: `${(item.value / 100) * 100}%` }}
+  ></div>
+</div>
+<Text type="secondary" className="text-sm">{`Value: ${item.value} ${item.unit}`}</Text>
 
-        {Object.entries(selectedFuels).map(([fuel, data]) => (
-         
-          <Card
-            key={fuel}
-            title={fuel}
-            className="w-[300px] md:w-[400px] lg:w-[500px] m-4 shadow-md"
-          >
-            <p><strong>Value:</strong> {(data?.maxValue)|| "N/A"}</p>
-            <p><strong>Max Value:</strong> {(data?.maxValue)*3033.38067 || "N/A"}</p>
-            <p><strong>Unit:</strong> {data?.selectedUnit || "N/A"}</p>
-          </Card>
-        ))} 
-
-
-
+                      </div>
+                    ))}
+                  </Card>
+                ))}
+            </div>
+          )}
+        </div>
+      </Content>
     </Layout>
-
-   
-    
-    
-    
-    </>
-    
   );
 }
