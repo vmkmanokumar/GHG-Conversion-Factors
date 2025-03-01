@@ -11,49 +11,33 @@ export default function Parameters() {
     setSelectedFuels,
     fetchedParameters,
     setFetchedParameters,
-    activities,
-    setActivities,
   } = useScopeOne();
- const [userId,setUserId] = useState("")
 
-//  console.log("userName:",userId)
+  const [ activities,setActivities] = useState([])  
 
-//  console.log("fectchd parametres",fetchedParameters)
+  const [userId, setUserId] = useState("");
 
-console.log("selected fules cleck",selectedFuels)
-
-
-// Replace this with dynamic user ID
-
-useEffect(() => {
-  if (typeof window !== "undefined") {
-    const storedUserId = localStorage.getItem("username");
-    if (storedUserId) {
-      setUserId(storedUserId);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedUserId = localStorage.getItem("username");
+      if (storedUserId) {
+        setUserId(storedUserId);
+      }
     }
-  }
-}, []);  // Only run on mount to get userId
+  }, []);
 
-useEffect(() => {
-  if (userId) {
-    fetchData();
-    loadScopeOneDraft();
-  }
-}, [userId]); // Run only when userId is set
+  useEffect(() => {
+    if (userId) {
+      fetchData();
+      loadScopeOneDraft();
+    }
+  }, [userId]);
 
-
-
-  console.log("Fetched parameters:", activities);
-
-  // Fetch parameters from the API
+  // Fetch parameters from API
   const fetchData = async () => {
     try {
-      const ac = Object.values(selectedValuesScopeOne).map((items) => items);
-      const ScopeFactors = Object.keys(activities);
-      const scopeFactors = encodeURIComponent(ScopeFactors);
-      const activitie = encodeURIComponent(ac.flat());
-
-      console.log("Fetching Data for:", scopeFactors, activitie);
+      const scopeFactors = encodeURIComponent(Object.keys(selectedValuesScopeOne));
+      const activitie = encodeURIComponent(Object.values(selectedValuesScopeOne).flat());
 
       const response = await fetch(
         `https://ghg-conversion-factors-backend.vercel.app/parameters?scope=${scopeFactors}&params=${activitie}`,
@@ -63,26 +47,20 @@ useEffect(() => {
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
       const data = await response.json();
-      console.log("Fetched Data:", data);
-
       setFetchedParameters(data);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
 
-  // Fetch saved draft from backend
+  // Load saved draft
   const loadScopeOneDraft = async () => {
     try {
-    
-      const response = await fetch(
-        `http://127.0.0.1:5000/get_scope_one_draft2/${userId}`
-      );
+      const response = await fetch(`http://127.0.0.1:5000/get_scope_one_draft2/${userId}`);
 
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
       const data = await response.json();
-      console.log("Loaded Draft Data:", data);
 
       if (data && data.activities) {
         setActivities(data.activities);
@@ -95,13 +73,13 @@ useEffect(() => {
     }
   };
 
-  // Save draft to backend
+  // Save draft
   const saveScopeOneDraft = async (updatedFuels) => {
     try {
       const payload = {
         user_id: userId,
         activities: activities,
-        parameters: updatedFuels, // Sending selected values
+        parameters: updatedFuels, // Send only selected values
       };
 
       const response = await fetch(
@@ -120,47 +98,56 @@ useEffect(() => {
     }
   };
 
-  // Handle Checkbox/Radio Click - Stores Category Too
+  // Handle Checkbox/Radio Click - Stores Only Selected Values
   const handleClick = (type, parameter, item, category, selectedValue = null) => {
     setSelectedFuels((prev) => {
-      let updatedFuels;
+      let updatedFuels = { ...prev };
+
       if (type === "checkbox") {
         const isChecked = !prev[category]?.[item]?.[parameter]?.checked;
-        updatedFuels = {
-          ...prev,
-          [category]: {
-            ...prev[category],
-            [item]: {
-              ...prev[category]?.[item],
-              [parameter]: {
-                checked: isChecked,
-                selectedValue: prev[category]?.[item]?.[parameter]?.selectedValue,
+
+        if (isChecked) {
+          // Add to selectedFuels if checked
+          updatedFuels = {
+            ...prev,
+            [category]: {
+              ...prev[category],
+              [item]: {
+                ...prev[category]?.[item],
+                [parameter]: {
+                  checked: true,
+                  selectedValue: prev[category]?.[item]?.[parameter]?.selectedValue || "",
+                },
               },
             },
-          },
-        };
+          };
+        } else {
+          // Remove from selectedFuels if unchecked
+          const updatedCategory = { ...prev[category] };
+          delete updatedCategory[item]?.[parameter];
+
+          // Remove empty nested objects
+          if (Object.keys(updatedCategory[item] || {}).length === 0) {
+            delete updatedCategory[item];
+          }
+          if (Object.keys(updatedCategory).length === 0) {
+            delete updatedFuels[category];
+          } else {
+            updatedFuels[category] = updatedCategory;
+          }
+        }
       } else if (type === "radio") {
-        updatedFuels = {
-          ...prev,
-          [category]: {
-            ...prev[category],
-            [item]: {
-              ...prev[category]?.[item],
-              [parameter]: {
-                checked: prev[category]?.[item]?.[parameter]?.checked,
-                selectedValue,
-              },
-            },
-          },
-        };
+        if (prev[category]?.[item]?.[parameter]?.checked) {
+          updatedFuels[category][item][parameter].selectedValue = selectedValue;
+        }
       }
-      saveScopeOneDraft(updatedFuels); // Auto-save draft after change
+
+      saveScopeOneDraft(updatedFuels);
       return updatedFuels;
     });
   };
 
   useEffect(() => {
-    // setUserId(localStorage.getItem("username"))
     fetchData();
     loadScopeOneDraft();
   }, []);
@@ -168,7 +155,7 @@ useEffect(() => {
   return (
     <div className="flex flex-col justify-center items-center bg-[#effbf7] w-full md:w-[768px] lg:w-[1152px] md:mx-auto mt-10 md:mt-16 lg:mt-10 p-4 md:p-6 rounded-xl shadow-lg flex-grow min-h-[515px]">
       <div className="w-full mb-4">
-        <h1 className="text-2xl font-bold text-gray-800 mr-[1000]">Parameters</h1>
+        <h1 className="text-2xl font-bold text-gray-800">Parameters</h1>
       </div>
 
       <div className="w-full min-h-[250px] flex-grow text-[22px]">
@@ -177,7 +164,7 @@ useEffect(() => {
             {({ open }) => (
               <div className="bg-[#BFF1DF] w-full mt-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
                 <Disclosure.Button className="flex justify-between items-center w-full px-4 py-3 text-lg font-medium text-gray-700 focus:outline-none">
-                  <span>{category}</span> 
+                  <span>{category}</span>
                   <ChevronDown className={`w-5 h-5 transition-transform ${open ? "rotate-180" : "rotate-0"}`} />
                 </Disclosure.Button>
 
@@ -204,7 +191,7 @@ useEffect(() => {
 
                                 {selectedFuels[category]?.[item]?.[parameter]?.checked && (
                                   <Radio.Group
-                                    className="ml-10 mt-2 mr-[800]"
+                                    className="ml-10 mt-2"
                                     value={selectedFuels[category]?.[item]?.[parameter]?.selectedValue}
                                     onChange={(e) => handleClick("radio", parameter, item, category, e.target.value)}
                                   >

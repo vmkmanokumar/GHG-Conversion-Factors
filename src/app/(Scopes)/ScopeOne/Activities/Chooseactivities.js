@@ -7,8 +7,10 @@ import { ChevronDown } from "lucide-react";
 import { useScopeOne } from "../Context/ScopeOneContext";
 
 export default function ChooseActivities() {
-  const { checkedValuesScopeOne, selectedValuesScopeOne, setSelectedValuesScopeOne, activities, setActivities } =
+  const { checkedValuesScopeOne, selectedValuesScopeOne, setSelectedValuesScopeOne } =
     useScopeOne();
+
+    const [activities, setActivities] = useState([])
 
   const [userId, setUserId] = useState(null);
   const debounceSave = useRef(null);
