@@ -100,15 +100,13 @@ export default function Dashboard() {
 
   return (
     <Layout
-      className={`h-screen transition-all duration-300 ${
-        darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-black"
-      }`}
+      className={`h-screen transition-all duration-300 ${darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-black"
+        }`}
     >
       {/* Header */}
       <Header
-        className={`shadow-md flex items-center px-6 h-[80px] transition-all duration-300 ${
-          darkMode ? "bg-gray-800 text-white" : "bg-white text-black"
-        }`}
+        className={`shadow-md flex items-center px-6 h-[80px] transition-all duration-300 ${darkMode ? "bg-gray-800 text-white" : "bg-white text-black"
+          }`}
       >
         <Button
           icon={<ArrowLeftOutlined />}
@@ -136,14 +134,12 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <Content
-        className={`p-4 sm:p-6 transition-all duration-300 ${
-          darkMode ? "bg-gray-800 text-white" : "bg-green-50 text-black"
-        }`}
+        className={`p-4 sm:p-6 transition-all duration-300 ${darkMode ? "bg-gray-800 text-white" : "bg-green-50 text-black"
+          }`}
       >
         <div
-          className={`p-6 rounded-lg transition-all duration-300 ${
-            darkMode ? "bg-gray-800 text-white" : "bg-green-50 text-black"
-          }`}
+          className={`p-6 rounded-lg transition-all duration-300 ${darkMode ? "bg-gray-800 text-white" : "bg-green-50 text-black"
+            }`}
         >
           {/* Header Actions */}
           <div className="flex flex-wrap justify-between items-center mb-4">
@@ -180,11 +176,10 @@ export default function Dashboard() {
                     <Card
                       key={subCategory}
                       title={`${category}-${subCategory}`}
-                      className={`shadow-md transition-all duration-300 ${
-                        darkMode
+                      className={`shadow-md transition-all duration-300 ${darkMode
                           ? "bg-gray-700 text-white border-gray-600"
                           : "bg-[#EFFBF7] text-black"
-                      }`}
+                        }`}
                     >
                       {Object.entries(items).map(([itemName, itemData]) => (
                         <div key={itemName} className="mb-3">
@@ -193,7 +188,7 @@ export default function Dashboard() {
                           </Text>
                           <Tooltip
                             title={`Value: ${itemData.maxvalue} ${itemData.selectedValue}`}
-                            overlayClassName={darkMode ? "bg-gray-700 text-white" : ""}
+                            classNames={{ root: darkMode ? "bg-gray-700 text-white" : "" }}
                           >
                             <div className="w-full bg-gray-200 rounded-full h-[28] mt-2">
                               <div
@@ -204,6 +199,7 @@ export default function Dashboard() {
                               ></div>
                             </div>
                           </Tooltip>
+
                         </div>
                       ))}
                     </Card>
