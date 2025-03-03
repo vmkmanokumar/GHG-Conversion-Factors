@@ -101,7 +101,7 @@ export default function Dashboard() {
 
   return (
     <Layout
-      className={`h-screen transition-all duration-300 ${darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-black"
+      className={`h-screen transition-all  duration-300 ${darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-black"
         }`}
     >
       {/* Header */}
@@ -178,8 +178,8 @@ export default function Dashboard() {
                       key={subCategory}
                       title={`${category}-${subCategory}`}
                       className={`shadow-md transition-all duration-300 ${darkMode
-                          ? "bg-gray-700 text-white border-gray-600"
-                          : "bg-[#EFFBF7] text-black"
+                        ? "bg-gray-700 text-white border-gray-600"
+                        : "bg-[#EFFBF7] text-black"
                         }`}
                     >
                       {Object.entries(items).map(([itemName, itemData]) => (
@@ -191,14 +191,14 @@ export default function Dashboard() {
                             title={`Value: ${itemData.maxvalue} ${itemData.selectedValue}`}
                             classNames={{ root: darkMode ? "bg-gray-700 text-white" : "" }}
                           >
-                            <div className="w-full bg-gray-200 rounded-full h-[28] mt-2">
-                            <Progress
-  percent={(itemData.maxvalue / 100) * 100}
-  strokeColor="#22C55E" // Green color like Tailwind's 'bg-green-500'
-  showInfo={false} // Hide percentage text
-  status="active"
-  strokeWidth={28} // Adjusts the height
-/>
+                            <div className="w-full  rounded-full h-[28] mt-2">
+                              <Progress
+                                percent={(itemData.maxvalue / 100) * 100}
+                                strokeColor="#22C55E" // Green color like Tailwind's 'bg-green-500'
+                                showInfo={true} // Hide percentage text
+                                status="active"
+                                strokeWidth={28} // Adjusts the height
+                              />
 
                             </div>
                           </Tooltip>
