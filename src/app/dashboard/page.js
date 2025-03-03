@@ -6,6 +6,7 @@ import {
   Typography,
   Spin,
   Card,
+  Progress,
   Input,
   Tooltip,
   Switch,
@@ -191,12 +192,14 @@ export default function Dashboard() {
                             classNames={{ root: darkMode ? "bg-gray-700 text-white" : "" }}
                           >
                             <div className="w-full bg-gray-200 rounded-full h-[28] mt-2">
-                              <div
-                                className="bg-green-500 h-[28] rounded-full transition-all duration-300"
-                                style={{
-                                  width: `${(itemData.maxvalue / 100) * 100}%`,
-                                }}
-                              ></div>
+                            <Progress
+  percent={(itemData.maxvalue / 100) * 100}
+  strokeColor="#22C55E" // Green color like Tailwind's 'bg-green-500'
+  showInfo={false} // Hide percentage text
+  status="active"
+  strokeWidth={28} // Adjusts the height
+/>
+
                             </div>
                           </Tooltip>
 
