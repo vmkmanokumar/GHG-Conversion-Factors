@@ -19,6 +19,8 @@ export default function ScopeOneFactors({ pageChange }) {
   const [userId, setUserId] = useState("");
   const [loading, setLoading] = useState(true); // Add loading state
 
+  console.log(checkedValuesScopeOne)
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedUserId = localStorage.getItem("username");
@@ -56,7 +58,7 @@ export default function ScopeOneFactors({ pageChange }) {
       if (!response.ok) throw new Error("Failed to fetch saved data");
 
       const data = await response.json();
-      setCheckedValuesScopeOne(data.selected_activities || []);
+      // setCheckedValuesScopeOne(data.selected_activities || []);
     } catch (error) {
       console.error("Error loading saved scope factors:", error);
     }

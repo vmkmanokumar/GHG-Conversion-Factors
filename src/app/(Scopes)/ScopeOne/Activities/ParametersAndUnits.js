@@ -67,18 +67,6 @@ export default function ParametersAndUnits() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
   const getSaveParameters = useCallback(async () => {
     try {
       const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/getsaveParameters/vmkmano13@gmail.com", {
@@ -120,9 +108,6 @@ export default function ParametersAndUnits() {
   }, []); // No dependencies
   
 
-  useEffect(() => {
-    getSaveParameters();
-}, [getSaveParameters]);
 
   
 
@@ -162,7 +147,7 @@ export default function ParametersAndUnits() {
         const data = await response.json();
         console.log("Update successful:", data);
 
-        saveDraftData(); // ✅ Call `saveDraftData` only after success
+        // saveDraftData(); // ✅ Call `saveDraftData` only after success
     
     } catch (error) {
         console.error("Error updating selected values:", error);
@@ -170,9 +155,7 @@ export default function ParametersAndUnits() {
 }, [selectedFuels]); // ✅ Dependency on `selectedFuels`
 
 
-  useEffect(() => {
-    getSaveParameters();
-}, [getSaveParameters]); // Fetch saved data only once
+
 
 useEffect(() => {
     if (Object.keys(selectedFuels).length === 0) return; // Avoid unnecessary calls

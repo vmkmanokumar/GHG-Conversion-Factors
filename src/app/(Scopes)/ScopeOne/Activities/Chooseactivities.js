@@ -1,9 +1,11 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Disclosure } from "@headlessui/react";
+// import { Disclosure } from "@headlessui/react";
 import { Checkbox } from "antd";
+import { Disclosure } from "@headlessui/react";
 import { ChevronDown } from "lucide-react";
+import { motion } from "framer-motion";
 import { useScopeOne } from "../Context/ScopeOneContext";
 
 export default function ChooseActivities() {
@@ -103,7 +105,7 @@ export default function ChooseActivities() {
       if (!response.ok) throw new Error("Failed to fetch saved data");
 
       const data = await response.json();
-      setSelectedValuesScopeOne(data.activities || {});
+      // setSelectedValuesScopeOne(data.activities || {});  
     } catch (error) {
       console.error("Error loading saved activities:", error);
     }
@@ -140,22 +142,29 @@ export default function ChooseActivities() {
                     <span>{key}</span>
                     <ChevronDown className={`w-5 h-5 transition-transform ${open ? "rotate-180" : "rotate-0"}`} />
                   </Disclosure.Button>
-
-                  {/* Disclosure Panel for the Category */}
-                  <Disclosure.Panel className="p-4 w-full bg-[#effbf7] rounded-b-lg overflow-hidden">
-                    <div className="flex flex-wrap gap-4">
-                      {activities[key].map((item, idx) => (
-                        <div key={idx} className="flex items-center">
-                          <Checkbox
-                            checked={selectedValuesScopeOne[key]?.includes(item) || false}
-                            onChange={() => handleCheckboxChange(key, item)}
-                          >
-                            <span>{item}</span>
-                          </Checkbox>
-                        </div>
-                      ))}
-                    </div>
-                  </Disclosure.Panel>
+          
+                  {/* Smoothly Expanding Panel */}
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: open ? "auto" : 0, opacity: open ? 1 : 0 }}
+                    transition={{ duration: 0.4, ease: "easeInOut" }}
+                    className="overflow-hidden"
+                  >
+                    <Disclosure.Panel className="p-4 w-full bg-[#effbf7] rounded-b-lg">
+                      <div className="flex flex-wrap gap-4">
+                        {activities[key].map((item, idx) => (
+                          <div key={idx} className="flex items-center">
+                            <Checkbox
+                              checked={selectedValuesScopeOne[key]?.includes(item) || false}
+                              onChange={() => handleCheckboxChange(key, item)}
+                            >
+                              <span>{item}</span>
+                            </Checkbox>
+                          </div>
+                        ))}
+                      </div>
+                    </Disclosure.Panel>
+                  </motion.div>
                 </div>
               )}
             </Disclosure>
