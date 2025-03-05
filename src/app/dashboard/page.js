@@ -1,163 +1,217 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Button, Drawer, Avatar, Layout, Typography, Spin,Card } from "antd";
-import { UserOutlined, LogoutOutlined, MenuOutlined, IdcardOutlined } from "@ant-design/icons";
+import {
+  Button,
+  Layout,
+  Typography,
+  Spin,
+  Card,
+  Progress,
+  Input,
+  Tooltip,
+  Switch,
+} from "antd";
+import {
+  ArrowLeftOutlined,
+  DownloadOutlined,
+  SearchOutlined,
+  MoonOutlined,
+  SunOutlined,
+} from "@ant-design/icons";
 import { useRouter } from "next/navigation";
+import Papa from "papaparse";
 import Link from "next/link";
-import { useScopeOne } from "../(Scopes)/ScopeOne/Context/ScopeOneContext";
 
-const { Header } = Layout;
+const { Header, Content } = Layout;
 const { Title, Text } = Typography;
 
 export default function Dashboard() {
   const router = useRouter();
-  const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [username, setUsername] = useState("");
-  const [roles, setRoles] = useState("");
-
-  const {selectedFuels} = useScopeOne();
- 
-
+  const [search, setSearch] = useState("");
+  const [darkMode, setDarkMode] = useState(false);
+  const [data, setData] = useState(null);
 
   useEffect(() => {
-    const response = async () => {
+    const fetchData = async () => {
       try {
-        const res = await fetch("https://ghg-conversion-factors-backend.vercel.app/ShopeGetData", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(selectedFuels), // Corrected body
+        const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/getmasterData");
+        if (!response.ok) throw new Error("Failed to fetch data");
+
+        const res = await response.json();
+        console.log(res);
+
+        const transformedData = {};
+        res.forEach((item) => {
+          if (!transformedData[item.scopes]) {
+            transformedData[item.scopes] = {};
+          }
+          if (!transformedData[item.scopes][item.scope_factors]) {
+            transformedData[item.scopes][item.scope_factors] = {};
+          }
+
+          transformedData[item.scopes][item.scope_factors][item.parameters] = {
+            checked: true,
+            selectedValue: item.units,
+            maxvalue: item.maxvalues,
+          };
         });
-    
-        const result = await res.json();
-        console.log("Server Response:", result);
+
+        setData(transformedData);
       } catch (error) {
-        console.error("Error sending data:", error);
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
       }
     };
-  
-    // Call response only once when the component mounts or when selectedFuels change
-    if (selectedFuels) {
-      response();
-    }
-  }, [selectedFuels]);  // Dependency array ensures the call happens when selectedFuels is updated
-  
-  
-  //  selectedFuels is display like in page
 
-const fuelType = Object.keys(selectedFuels)[0]; // "Propane"
-const fuelValues = selectedFuels[fuelType];
-
-console.log(fuelType)
-
-// Print all key-value pairs of the nested object
-for (const key in fuelValues) {
-  console.log(`${key}:`, fuelValues[key]);
-}
-
-
-
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedUsername = localStorage.getItem("username");
-      const role = localStorage.getItem("roles");
-      setRoles(role || "N/A");
-      setUsername(storedUsername || "Guest");
-    }
+    fetchData();
   }, []);
 
-  const showUserDrawer = () => {
-    setOpen(true);
-    setLoading(true);
-    setTimeout(() => setLoading(false), 1000);
-  };
+  const toggleDarkMode = () => setDarkMode((prev) => !prev);
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("username");
-    router.push("/");
+  const downloadCSV = () => {
+    if (!data) return;
+
+    let csvData = [];
+    Object.entries(data).forEach(([category, subCategories]) => {
+      Object.entries(subCategories).forEach(([subCategory, items]) => {
+        Object.entries(items).forEach(([itemName, itemData]) => {
+          csvData.push({
+            Category: category,
+            SubCategory: subCategory,
+            Name: itemName,
+            Checked: itemData.checked,
+            Value: itemData.maxvalue,
+            Unit: itemData.selectedValue,
+          });
+        });
+      });
+    });
+
+    const csv = Papa.unparse(csvData);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute("download", "data.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
-    <>
+    <Layout
+      className={`h-screen transition-all  duration-300 ${darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-black"
+        }`}
+    >
+      {/* Header */}
+      <Header
+        className={`shadow-md flex items-center px-6 h-[80px] transition-all duration-300 ${darkMode ? "bg-gray-800 text-white" : "bg-white text-black"
+          }`}
+      >
+        <Button
+          icon={<ArrowLeftOutlined />}
+          type="text"
+          onClick={() => router.back()}
+          className={`text-xl mr-4 ${darkMode ? "text-white" : "text-gray-800"}`}
+        />
+        <Title level={3} className={`m-0 flex-1 ${darkMode ? "text-white" : ""}`}>
+          Dashboard
+        </Title>
 
-<Layout className="h-screen bg-gray-100">
-      <Header className="bg-[#27A376] h-[100px] flex justify-between items-center px-6 shadow-md">
-        <Title level={3} className="text-white">Dashboard</Title>
-        <div className="flex items-center gap-4">
-          <Avatar size="large" icon={<UserOutlined />} className="cursor-pointer shadow-md" onClick={showUserDrawer} />
-          <Button type="text" icon={<LogoutOutlined />} onClick={handleLogout} className="text-white hover:text-red-500">
-            Logout
-          </Button>
-        </div>
+        <Button type="link" className={darkMode ? "text-white" : ""}>
+          <Link href="/TemplateCreation">Create Template</Link>
+        </Button>
+
+        {/* Dark Mode Toggle */}
+        <Switch
+          checked={darkMode}
+          onChange={toggleDarkMode}
+          checkedChildren={<SunOutlined />}
+          unCheckedChildren={<MoonOutlined />}
+          className="ml-auto"
+        />
       </Header>
 
-      {/* User Drawer */}
-      <Drawer
-        title={<Title level={4} className="text-gray-700">User Info</Title>}
-        placement="right"
-        open={open}
-        onClose={() => setOpen(false)}
-        closable
+      {/* Main Content */}
+      <Content
+        className={`p-4 sm:p-6 transition-all duration-300 ${darkMode ? "bg-gray-800 text-white" : "bg-green-50 text-black"
+          }`}
       >
-        {loading ? (
-          <div className="flex flex-col items-center justify-center gap-4 mt-10">
-            <Spin size="large" />
-            <Text>Loading user details...</Text>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            <div className="flex items-center gap-3 p-3 bg-gray-100 rounded-lg">
-              <Avatar size={50} icon={<UserOutlined />} />
-              <div>
-                <Text className="text-gray-600 text-sm">Username</Text>
-                <Title level={5} className="m-0">{username}</Title>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3 p-3 bg-gray-100 rounded-lg">
-              <IdcardOutlined className="text-xl text-gray-600" />
-              <div className="flex items-center w-full">
-                <Text className="text-gray-600 text-sm mr-10">Role:</Text>
-                <Title level={5} className="m-0 text-gray-700">{roles}</Title>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3 p-3 bg-gray-100 rounded-lg">
-              <div className="flex items-center w-full">
-                <Link href="/TemplateCreation">Template Creation</Link>
-              </div>
+        <div
+          className={`p-6 rounded-lg transition-all duration-300 ${darkMode ? "bg-gray-800 text-white" : "bg-green-50 text-black"
+            }`}
+        >
+          {/* Header Actions */}
+          <div className="flex flex-wrap justify-between items-center mb-4">
+            <Title level={3} className={`text-center w-full sm:w-auto ${darkMode ? "text-white" : ""}`}>
+              Dashboard Data
+            </Title>
+            <div className="flex flex-wrap gap-3 w-full sm:w-auto">
+              <Input
+                placeholder="Search..."
+                prefix={<SearchOutlined className={darkMode ? "text-white" : "text-black"} />}
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className={`w-full sm:w-60 ${darkMode ? "bg-gray-700 text-white" : ""}`}
+              />
+              <Button type="primary" icon={<DownloadOutlined />} onClick={downloadCSV}>
+                Download CSV
+              </Button>
             </div>
           </div>
-        )}
-      </Drawer>
 
+          {/* Display Data */}
+          {loading ? (
+            <div className="flex justify-center items-center h-40">
+              <Spin size="large" />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Object.entries(data)
+                .filter(([category]) =>
+                  category.toLowerCase().includes(search.toLowerCase())
+                )
+                .map(([category, subCategories]) =>
+                  Object.entries(subCategories).map(([subCategory, items]) => (
+                    <Card
+                      key={subCategory}
+                      title={`${category}-${subCategory}`}
+                      className={`shadow-md transition-all duration-300 ${darkMode
+                        ? "bg-gray-700 text-white border-gray-600"
+                        : "bg-[#EFFBF7] text-black"
+                        }`}
+                    >
+                      {Object.entries(items).map(([itemName, itemData]) => (
+                        <div key={itemName} className="mb-3">
+                          <Text strong className={darkMode ? "text-white" : "text-black"}>
+                            {itemName} ({itemData.selectedValue})
+                          </Text>
+                          <Tooltip
+                            title={`Value: ${itemData.maxvalue} ${itemData.selectedValue}`}
+                            classNames={{ root: darkMode ? "bg-gray-700 text-white" : "" }}
+                          >
+                            <div className="w-full  rounded-full h-[28] mt-2">
+                              <Progress
+                                percent={(itemData.maxvalue / 100) * 100}
+                                strokeColor="#22C55E" // Green color like Tailwind's 'bg-green-500'
+                                showInfo={true} // Hide percentage text
+                                status="active"
+                                strokeWidth={28} // Adjusts the height
+                              />
 
-        {Object.entries(selectedFuels).map(([fuel, data]) => (
-         
-          <Card
-            key={fuel}
-            title={fuel}
-            className="w-[300px] md:w-[400px] lg:w-[500px] m-4 shadow-md"
-          >
-            <p><strong>Value:</strong> {(data?.maxValue)|| "N/A"}</p>
-            <p><strong>Max Value:</strong> {(data?.maxValue)*3033.38067 || "N/A"}</p>
-            <p><strong>Unit:</strong> {data?.selectedUnit || "N/A"}</p>
-          </Card>
-        ))} 
+                            </div>
+                          </Tooltip>
 
-
-
+                        </div>
+                      ))}
+                    </Card>
+                  ))
+                )}
+            </div>
+          )}
+        </div>
+      </Content>
     </Layout>
-
-   
-    
-    
-    
-    </>
-    
   );
 }

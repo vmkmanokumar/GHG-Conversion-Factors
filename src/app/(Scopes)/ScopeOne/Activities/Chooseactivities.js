@@ -1,25 +1,39 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Disclosure } from "@headlessui/react";
+import React, { useState, useEffect, useRef } from "react";
+// import { Disclosure } from "@headlessui/react";
 import { Checkbox } from "antd";
+import { Disclosure } from "@headlessui/react";
 import { ChevronDown } from "lucide-react";
+import { motion } from "framer-motion";
 import { useScopeOne } from "../Context/ScopeOneContext";
 
-
-
 export default function ChooseActivities() {
-  const { checkedValuesScopeOne, selectedValuesScopeOne, setSelectedValuesScopeOne,activities,setActivities} = useScopeOne();
-  
+  const { checkedValuesScopeOne, selectedValuesScopeOne, setSelectedValuesScopeOne } =
+    useScopeOne();
 
- 
+    const [activities, setActivities] = useState([])
+
+  const [userId, setUserId] = useState(null);
+  const debounceSave = useRef(null);
+
+  // Fetch `userId` only on the client-side
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setUserId(localStorage.getItem("username") || "");
+    }
+  }, []);
+
   console.log("From Activities Page - Checked Values:", activities);
 
   // Fetch available activities based on checked scope factors
   const FetchActivities = async () => {
-    try {
-      if (!checkedValuesScopeOne || checkedValuesScopeOne.length === 0) return;
+    if (!checkedValuesScopeOne || checkedValuesScopeOne.length === 0) {
+      console.log("No checked values, skipping fetch.");
+      return;
+    }
 
+    try {
       const checkedValuesStr = checkedValuesScopeOne.map(encodeURIComponent).join(",");
       console.log("Fetching activities for:", checkedValuesStr);
 
@@ -39,8 +53,10 @@ export default function ChooseActivities() {
     }
   };
 
-  // Save selected activities to PostgreSQL
+  // Save selected activities to PostgreSQL (Debounced)
   const saveActivitiesToDraft = async (updatedData) => {
+    if (!userId) return; // Avoid API call if userId is not set
+
     try {
       const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/save_scope_one_draft", {
         method: "POST",
@@ -59,7 +75,7 @@ export default function ChooseActivities() {
     }
   };
 
-  // Handle Checkbox Change (Save Immediately)
+  // Handle Checkbox Change (Debounced Save)
   const handleCheckboxChange = (category, item) => {
     setSelectedValuesScopeOne((prev) => {
       const updatedCategoryValues = prev[category] ? [...prev[category]] : [];
@@ -72,8 +88,9 @@ export default function ChooseActivities() {
 
       const updatedData = { ...prev, [category]: updatedCategoryValues };
 
-      // Save to the database immediately
-      saveActivitiesToDraft(updatedData);
+      // Debounce API call to avoid excessive requests
+      clearTimeout(debounceSave.current);
+      debounceSave.current = setTimeout(() => saveActivitiesToDraft(updatedData), 1000);
 
       return updatedData;
     });
@@ -81,27 +98,28 @@ export default function ChooseActivities() {
 
   // Fetch saved activities from PostgreSQL when page loads
   const fetchSavedActivities = async () => {
+    if (!userId) return; // Ensure userId is available
+
     try {
-      const userId = localStorage.getItem("username")
       const response = await fetch(`https://ghg-conversion-factors-backend.vercel.app/get_scope_one_draft/${userId}`);
       if (!response.ok) throw new Error("Failed to fetch saved data");
 
       const data = await response.json();
-      setSelectedValuesScopeOne(data.activities || {});
+      // setSelectedValuesScopeOne(data.activities || {});  
     } catch (error) {
       console.error("Error loading saved activities:", error);
     }
   };
 
   useEffect(() => {
-    
-    fetchSavedActivities();
-
-  }, []);
+    if (userId) {
+      fetchSavedActivities();
+    }
+  }, [userId]); // Fetch saved data when userId is available
 
   useEffect(() => {
     FetchActivities();
-  }, [checkedValuesScopeOne]);
+  }, [checkedValuesScopeOne]); // Fetch new activities when checkboxes change
 
   return (
     <div className="flex flex-col justify-center border-[#31CE95] items-center bg-[#effbf7] w-full md:w-[768px] lg:w-[1152px] md:mx-auto mt-10 md:mt-16 lg:mt-10 p-4 md:p-6 rounded-xl shadow-lg flex-grow min-h-[515px]">
@@ -124,22 +142,29 @@ export default function ChooseActivities() {
                     <span>{key}</span>
                     <ChevronDown className={`w-5 h-5 transition-transform ${open ? "rotate-180" : "rotate-0"}`} />
                   </Disclosure.Button>
-
-                  {/* Disclosure Panel for the Category */}
-                  <Disclosure.Panel className="p-4 w-full bg-[#effbf7] rounded-b-lg overflow-hidden">
-                    <div className="flex flex-wrap gap-4">
-                      {activities[key].map((item, idx) => (
-                        <div key={idx} className="flex items-center">
-                          <Checkbox
-                            checked={selectedValuesScopeOne[key]?.includes(item) || false}
-                            onChange={() => handleCheckboxChange(key, item)}
-                          >
-                            <span>{item}</span>
-                          </Checkbox>
-                        </div>
-                      ))}
-                    </div>
-                  </Disclosure.Panel>
+          
+                  {/* Smoothly Expanding Panel */}
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: open ? "auto" : 0, opacity: open ? 1 : 0 }}
+                    transition={{ duration: 0.4, ease: "easeInOut" }}
+                    className="overflow-hidden"
+                  >
+                    <Disclosure.Panel className="p-4 w-full bg-[#effbf7] rounded-b-lg">
+                      <div className="flex flex-wrap gap-4">
+                        {activities[key].map((item, idx) => (
+                          <div key={idx} className="flex items-center">
+                            <Checkbox
+                              checked={selectedValuesScopeOne[key]?.includes(item) || false}
+                              onChange={() => handleCheckboxChange(key, item)}
+                            >
+                              <span>{item}</span>
+                            </Checkbox>
+                          </div>
+                        ))}
+                      </div>
+                    </Disclosure.Panel>
+                  </motion.div>
                 </div>
               )}
             </Disclosure>

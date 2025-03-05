@@ -1,5 +1,4 @@
 "use client"
-import { FundTwoTone } from "@ant-design/icons";
 import { createContext, useContext, useState } from "react"
 
 
@@ -10,8 +9,9 @@ export function ScopeOneProvider({ children }) {
     const [checkedValuesScopeOne, setCheckedValuesScopeOne] = useState([]);
     const [selectedValuesScopeOne, setSelectedValuesScopeOne] = useState({});
     const [selectedFuels, setSelectedFuels] = useState({});
-    const [activities, setActivities] = useState({});
+    const [activities, setActivities] = useState([]);
     const [fetchedParameters, setFetchedParameters] = useState({});
+    const[userId,setUserId] = useState("")
 
     return (
 
