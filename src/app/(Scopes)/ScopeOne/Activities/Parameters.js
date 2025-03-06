@@ -16,7 +16,7 @@ export default function Parameters() {
 
   const [userId, setUserId] = useState("");
 
-  console.log(selectedFuels)
+  console.log("selec",selectedFuels)
 
   useEffect(() => {
     if (typeof window !== "undefined") {

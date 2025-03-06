@@ -1,8 +1,15 @@
 "use client";
 import React, { useState } from "react";
+import { useScopeOne } from "../Context/ScopeOneContext";
 
 export default function ParametersAndUnits() {
   const [templateName, setTemplateName] = useState("");
+   const {
+      selectedFuels,
+     
+    } = useScopeOne();
+
+    console.log("temp name page",selectedFuels)
 
   const handleSubmit = async () => {
     if (!templateName.trim()) {
@@ -11,10 +18,10 @@ export default function ParametersAndUnits() {
     }
 
     try {
-      const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/saveScope1", {
+      const response = await fetch("http://127.0.0.1:5000/saveScope1", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ scope: "Scope 1 Data", value: 12345 }),
+        body: JSON.stringify({ scope: "Scope 1 Data", value: selectedFuels }),
       });
 
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
