@@ -30,12 +30,12 @@ export default function FooterForScopes({ pageChange, setPageChange, changeShope
           </Button>
         )}
 
-        {pageChange > 0 && (
+        {pageChange > -1 && (
           <Button
             type="default"
             onClick={() => setPageChange(pageChange - 1)}
             className="bg-[#27A376] text-black border border-green-500 px-6 py-3 rounded-lg text-lg font-semibold flex items-center hover:bg-green-600 focus:ring-0"
-            disabled={pageChange <= 0} // Disable button when `pageChange` is 0
+            disabled={pageChange <= -1} // Disable button when `pageChange` is 0
           >
             <ArrowLeftOutlined className="text-black" />
           </Button>

@@ -7,6 +7,7 @@ import Parameters from "./Parameters";
 import { useEffect, useState } from "react";
 import ParametersAndUnits from "./ParametersAndUnits";
 import "./Styles/ScopeOneFactors.css";
+import CreateTempName from "./CreareTempName";
 
 export default function ScopeOneFactors({ pageChange }) {
   const {
@@ -102,6 +103,10 @@ export default function ScopeOneFactors({ pageChange }) {
 
   return (
     <>
+
+    {pageChange === -1 && (<CreateTempName></CreateTempName>)}
+
+
       {pageChange === 0 && (
         <div className="flex flex-col justify-center items-center bg-[#effbf7] border-[black] w-full md:w-[768px] lg:w-[1152px] md:mx-auto mt-10 md:mt-16 lg:mt-10 p-4 md:p-6 rounded-xl shadow-lg flex-grow min-h-[515px]">
           <div className="w-full md:w-[500px] max-w-2xl rounded-lg p-4 md:p-6">

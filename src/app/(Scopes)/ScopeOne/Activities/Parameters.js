@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Disclosure } from "@headlessui/react";
 import { ChevronDown } from "lucide-react";
-import { Checkbox, Radio } from "antd";
+import { Button, Checkbox, Radio } from "antd";
 import { useScopeOne } from "../Context/ScopeOneContext";
 import { motion } from "framer-motion";
 
@@ -12,11 +12,46 @@ export default function Parameters() {
     setSelectedFuels,
     fetchedParameters,
     setFetchedParameters,
+    templateName,
   } = useScopeOne();
 
   const [userId, setUserId] = useState("");
 
   console.log("selec",selectedFuels)
+
+  const handleSubmit = async () => {
+    if (!templateName.trim()) {
+      alert("Please enter a template name.");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://127.0.0.1:5000/saveScope1", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ scope:"Scope 1",username:userId, templatename:templateName ,templatesave: selectedFuels ,sfit:1}),
+      });
+
+      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+      const data = await response.json();
+      if(data){
+        alert("Template Name Already Exits")
+      }else{
+        console.log("Scope 1 saved successfully:", data);
+        alert("Scope 1 has been saved");
+      }
+      
+    // const confirmNavigation = window.confirm("Move to Scope 2 or Dashboard?");
+
+    // if (confirmNavigation) {
+    //   window.location.href = "/scope2";  // Change URL as needed
+    // }
+    } catch (error) {
+      console.error("Error saving Scope 1:", error);
+      alert("Failed to save. Please try again.");
+    }
+  };
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -176,6 +211,8 @@ export default function Parameters() {
             )}
           </Disclosure>
         ))}
+
+        <Button onClick={handleSubmit} className="mt-52 ml-[950]">Save Template</Button>
       </div>
     </div>
   );
