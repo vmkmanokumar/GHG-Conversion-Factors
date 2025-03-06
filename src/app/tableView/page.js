@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Table } from "antd"; // ✅ Import Ant Design Table
+import { Table, Button} from "antd"; // ✅ Import Ant Design Table
 import { useRouter } from "next/navigation";
 
 const TableView = () => {
@@ -40,6 +40,25 @@ const TableView = () => {
     fetchAllEntries();
   }, []);
 
+   // ✅ Handle Edit Value
+  const handleEditValue = (record) => {
+    console.log("Edit Value:", record);
+    // Implement logic to edit specific values
+  };
+
+  // ✅ Handle Edit
+  const handleEdit = (record) => {
+    console.log("Edit:", record);
+    // Implement logic to edit the whole row
+  };
+
+  // ✅ Handle Delete
+  const handleDelete = (record) => {
+    console.log("Delete:", record);
+    // Implement logic to delete the entry
+  }; 
+    
+    
   // ✅ Define Ant Design Table Columns
   const columns = [
     { title: "Email", dataIndex: "email", key: "email" },
@@ -48,6 +67,23 @@ const TableView = () => {
     { title: "Shift", dataIndex: "shift", key: "shift" },
     { title: "created_date", dataIndex: "created_date", key: "created_date" },
     { title: "modified_date", dataIndex: "modified_date", key: "modified_date" },
+    {
+        title: "Actions",
+        key: "actions",
+        render: (text, record) => (
+          <div className="flex space-x-2">
+            <Button type="primary" onClick={() => handleEditValue(record)}>
+              Edit Value
+            </Button>
+            <Button type="default" onClick={() => handleEdit(record)}>
+              Edit
+            </Button>
+            <Button type="danger" onClick={() => handleDelete(record)}>
+              Delete
+            </Button>
+          </div>
+        ),
+      },
   ];
 
   return (
