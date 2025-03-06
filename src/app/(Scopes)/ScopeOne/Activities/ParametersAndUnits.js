@@ -11,7 +11,7 @@ export default function ParametersAndUnits() {
     }
 
     try {
-      const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/saveScope1", {
+      const response = await fetch("http://127.0.0.1:5000/saveScope1", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ scope: "Scope 1 Data", value: 12345 }),
