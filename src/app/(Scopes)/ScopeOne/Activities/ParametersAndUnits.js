@@ -6,6 +6,7 @@ export default function ParametersAndUnits() {
   const [templateName, setTemplateName] = useState("");
    const {
       selectedFuels,
+      userId
      
     } = useScopeOne();
 
@@ -21,7 +22,7 @@ export default function ParametersAndUnits() {
       const response = await fetch("http://127.0.0.1:5000/saveScope1", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ scope: "Scope 1 Data", value: selectedFuels }),
+        body: JSON.stringify({ scope:"Scope 1",username:userId, templatename:templateName ,templatesave: selectedFuels ,sfit:1}),
       });
 
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
@@ -31,11 +32,10 @@ export default function ParametersAndUnits() {
       alert("Scope 1 has been saved");
 
     const confirmNavigation = window.confirm("Move to Scope 2 or Dashboard?");
+
     if (confirmNavigation) {
       window.location.href = "/scope2";  // Change URL as needed
     }
-
-
     } catch (error) {
       console.error("Error saving Scope 1:", error);
       alert("Failed to save. Please try again.");

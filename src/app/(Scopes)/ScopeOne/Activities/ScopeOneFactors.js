@@ -13,10 +13,12 @@ export default function ScopeOneFactors({ pageChange }) {
     checkedValuesScopeOne,
     setCheckedValuesScopeOne,
     activities,
-    setActivities,
+    setActivities,userId,setUserId
   } = useScopeOne();
+
+  console.log("scopeFacoter",userId);
   
-  const [userId, setUserId] = useState("");
+  // const [userId, setUserId] = useState("");
   const [loading, setLoading] = useState(true); // Add loading state
 
   console.log(checkedValuesScopeOne)

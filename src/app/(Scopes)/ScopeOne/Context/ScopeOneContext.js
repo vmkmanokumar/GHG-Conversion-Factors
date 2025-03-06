@@ -18,6 +18,7 @@ export function ScopeOneProvider({ children }) {
         <ScopeOneContext.Provider
 
             value={{
+                userId,setUserId,
                 checkedValuesScopeOne,
                 setCheckedValuesScopeOne,
                 selectedValuesScopeOne,

@@ -5,7 +5,7 @@ import Link from "next/link";
 export function TemplateCreation() {
   const options = [
     { icon: <FormOutlined />, text: "Create Template"  ,move : "/ScopeOne"},
-    { icon: <EditOutlined />, text: "Edit Template" ,move : "/ScopeOne"},
+    { icon: <EditOutlined />, text: "Edit Template" ,move : "/TemplateSelector"},
     { icon: <TableOutlined />, text: "Enter Actual Data" ,move : "/ScopeOne"},
     { icon: <FileDoneOutlined />, text: "Enter Target Data" ,move : "/ScopeOne" },
     { icon: <CheckCircleOutlined />, text: "Validate Actual Data" ,move : "/ScopeOne"},
