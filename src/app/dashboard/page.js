@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
 import { Layout, Button, Typography, Switch, Drawer, DatePicker, Card, Statistic, Menu } from "antd";
 import { MenuOutlined, ArrowLeftOutlined, SunOutlined, MoonOutlined, FormOutlined, EditOutlined, TableOutlined, FileDoneOutlined, CheckCircleOutlined } from "@ant-design/icons";
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
@@ -31,6 +31,13 @@ export default function Dashboard() {
   const router = useRouter();
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [dateRange, setDateRange] = useState([dayjs().startOf("month"), dayjs().endOf("month")]);
+    const [userId, setUserId] = useState("");
+    useEffect(() => {
+      if (typeof window !== "undefined") {
+        const userName = localStorage.getItem("username");
+        if (userName) setUserId(userName);
+      }
+    }, []);
 
   const filteredData = filterDataByDateRange(dummyData, dateRange[0], dateRange[1]);
 
@@ -53,10 +60,7 @@ export default function Dashboard() {
         <Button icon={<MenuOutlined />} type="text" onClick={() => setDrawerVisible(true)} className="text-xl mr-4 text-gray-800" />
         <Button icon={<ArrowLeftOutlined />} type="text" onClick={() => router.back()} className="text-xl mr-4 text-gray-800" />
         <Title level={3} className="m-0 flex-1">Dashboard</Title>
-        <span className="mr-4">Username</span>
-        <Button type="link">
-          <Link href="/TemplateSelection">Create Template</Link>
-        </Button>
+        <span className="mr-4">{userId}</span>
       </Header>
 
       <Drawer title="Menu" placement="left" onClose={() => setDrawerVisible(false)} visible={drawerVisible} className="bg-white">
