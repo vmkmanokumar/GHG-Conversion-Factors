@@ -8,17 +8,9 @@ const TableView = () => {
   const [allEntries, setAllEntries] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [userId, setUserId] = useState("");
+  const [loading, setLoading] = useState(true); // ✅ Loading state
   const router = useRouter();
 
-  const templateSaves = allEntries.map(entry => entry.templatesave);
-  console.log(templateSaves)  /// templated is there
-
-  const goToParameterAndUnit = () => {
-    localStorage.setItem("templateSaves", JSON.stringify(templateSaves)); // Store in localStorage
-    router.push("/ScopeOne/Activities/parameterAndUnit");
-  };
-
-  // ✅ Load selected template from localStorage
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedTemplate = localStorage.getItem("selectedTemplate");
@@ -47,27 +39,13 @@ const TableView = () => {
       }
     };
     fetchAllEntries();
-  }, [userId]); // Re-run when userId changes
+  }, [userId]);
 
-  // ✅ Handle Edit Value
-  const handleEditValue = (record) => {
-    console.log("Edit Value:", record);
-    // Implement logic to edit specific values
+  const goToParameterAndUnit = () => {
+    localStorage.setItem("templateSaves", JSON.stringify(allEntries.map(entry => entry.templatesave)));
+    router.push("/ScopeOne/Activities/parameterAndUnit");
   };
 
-  // ✅ Handle Edit
-  const handleEdit = (record) => {
-    console.log("Edit:", record);
-    // Implement logic to edit the whole row
-  };
-
-  // ✅ Handle Delete
-  const handleDelete = (record) => {
-    console.log("Delete:", record);
-    // Implement logic to delete the entry
-  };
-
-  // ✅ Define Ant Design Table Columns (Fixing Field Names)
   const columns = [
     { title: "User ID", dataIndex: "username", key: "username" },
     { title: "Template Name", dataIndex: "templatecontent", key: "templatecontent" },
@@ -104,7 +82,7 @@ const TableView = () => {
 
       {/* ✅ Show Skeleton while loading */}
       {loading ? (
-        <Skeleton active paragraph={{ rows: 5 }} className="w-full" />
+        <Skeleton active paragraph={{ rows: 8 }} className="w-full" />
       ) : (
         <Table
           dataSource={allEntries}
