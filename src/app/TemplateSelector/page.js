@@ -1,15 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation"; // ✅ Import Next.js router
-import { Button, Skeleton } from "antd"; // ✅ Import Ant Design Skeleton
+import { useRouter } from "next/navigation";
+import { Button, Skeleton, message, Checkbox } from "antd";
 
 const TemplateSelector = () => {
-  const [templates, setTemplates] = useState([]); // Store fetched templates
-  const [selected, setSelected] = useState(null); // Track selected template
+  const [templates, setTemplates] = useState([]);
+  const [selected, setSelected] = useState(null);
   const [userId, setUserId] = useState("");
-  const [loading, setLoading] = useState(true); // ✅ Loading state
-  const router = useRouter(); // ✅ Initialize router
+  const [loading, setLoading] = useState(true);
+  const [showCheckboxes, setShowCheckboxes] = useState(false);
+  const [selectedTemplates, setSelectedTemplates] = useState([]);
+  const router = useRouter();
 
   // Load user ID from localStorage
   useEffect(() => {
@@ -27,9 +29,9 @@ const TemplateSelector = () => {
 
     const fetchTemplates = async () => {
       try {
-        setLoading(true); // ✅ Start loading
+        setLoading(true);
         const response = await fetch(
-          `https://ghg-conversion-factors-backend.vercel.app/getTemplates?username=${userId}`,
+          `http://127.0.0.1:5000/getTemplates?username=${userId}`,
           { method: "GET" }
         );
 
@@ -39,18 +41,59 @@ const TemplateSelector = () => {
       } catch (error) {
         console.error("Error fetching templates:", error);
       } finally {
-        setLoading(false); // ✅ Stop loading
+        setLoading(false);
       }
     };
 
     fetchTemplates();
   }, [userId]);
 
+  // ✅ Handle checkbox selection
+  const handleCheckboxChange = (template) => {
+    setSelectedTemplates((prev) =>
+      prev.includes(template)
+        ? prev.filter((t) => t !== template)
+        : [...prev, template]
+    );
+  };
+
+  // ✅ Handle Delete multiple templates
+  const handleDeleteTemplates = async () => {
+    if (selectedTemplates.length === 0) {
+      message.error("Please select at least one template to delete.");
+      return;
+    }
+  
+    if (!window.confirm("Are you sure you want to delete the selected templates?")) return;
+  
+    try {
+      const response = await fetch("http://127.0.0.1:5000/deleteTemplates", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: userId, templates: selectedTemplates }), // ✅ Ensure correct format
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        message.success("Templates deleted successfully!");
+        setTemplates(templates.filter((t) => !selectedTemplates.includes(t)));
+        setSelectedTemplates([]); // Clear selection
+      } else {
+        message.error("Error: " + data.error);
+      }
+    } catch (error) {
+      console.error("Error deleting templates:", error);
+      message.error("An error occurred while deleting the templates.");
+    }
+  };
+  
+
   // ✅ Handle Next button click
   const handleNext = () => {
     if (selected) {
-      localStorage.setItem("selectedTemplate", selected); // ✅ Store template in localStorage
-      router.push("/tableView"); // ✅ Navigate to the table page
+      localStorage.setItem("selectedTemplate", selected);
+      router.push("/tableView");
     } else {
       alert("Please select a template before proceeding!");
     }
@@ -61,21 +104,31 @@ const TemplateSelector = () => {
       <h2 className="text-lg font-semibold mb-4">Choose a saved template</h2>
       <div className="w-80">
         {loading ? (
-          // ✅ Show Skeleton while loading
           <Skeleton active paragraph={{ rows: 8 }} className="w-full" />
         ) : (
-          templates.map((template) => (
-            <button
-              key={template}
-              onClick={() => setSelected(template)}
-              className={`w-full px-4 py-2 border rounded-lg text-left mb-2 transition-all ${
-                selected === template
-                  ? "border-green-500 text-black bg-green-100"
-                  : "border-gray-300 text-gray-700"
-              }`}
+          templates.map((temp) => (
+            <div
+              key={temp}
+              className="flex justify-between items-center w-full mb-2 border rounded-lg p-2"
             >
-              {template}
-            </button>
+              <button
+                onClick={() => setSelected(temp)}
+                className={`flex-1 text-left px-2 transition-all ${
+                  selected === temp
+                    ? "border-green-500 text-black bg-green-100"
+                    : "border-gray-300 text-gray-700"
+                }`}
+              >
+                {temp}
+              </button>
+
+              {showCheckboxes && (
+                <Checkbox
+                  checked={selectedTemplates.includes(temp)}
+                  onChange={() => handleCheckboxChange(temp)}
+                />
+              )}
+            </div>
           ))
         )}
       </div>
@@ -86,10 +139,26 @@ const TemplateSelector = () => {
         </div>
       )}
 
-      {/* ✅ Next Button */}
-      <Button onClick={handleNext} type="primary" size="large" className="mt-4">
-        Next
-      </Button>
+      {/* ✅ Show Delete button at the bottom */}
+      <div className="flex gap-2 mt-4">
+        <Button
+          onClick={() => setShowCheckboxes(!showCheckboxes)}
+          type="default"
+          size="large"
+        >
+          {showCheckboxes ? "Cancel" : "Delete"}
+        </Button>
+
+        {showCheckboxes && (
+          <Button onClick={handleDeleteTemplates} danger size="large">
+            Confirm Delete
+          </Button>
+        )}
+
+        <Button onClick={handleNext} type="primary" size="large">
+          Next
+        </Button>
+      </div>
     </div>
   );
 };

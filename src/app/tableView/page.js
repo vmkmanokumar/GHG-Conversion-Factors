@@ -82,7 +82,7 @@ const TableView = () => {
 
       {/* ✅ Show Skeleton while loading */}
       {loading ? (
-        <Skeleton active paragraph={{ rows: 5 }} className="w-full" />
+        <Skeleton active paragraph={{ rows: 8 }} className="w-full" />
       ) : (
         <Table
           dataSource={allEntries}
