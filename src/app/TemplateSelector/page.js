@@ -31,7 +31,7 @@ const TemplateSelector = () => {
       try {
         setLoading(true);
         const response = await fetch(
-          `http://127.0.0.1:5000/getTemplates?username=${userId}`,
+          `https://ghg-conversion-factors-backend.vercel.app/getTemplates?username=${userId}`,
           { method: "GET" }
         );
 
@@ -67,7 +67,7 @@ const TemplateSelector = () => {
     if (!window.confirm("Are you sure you want to delete the selected templates?")) return;
   
     try {
-      const response = await fetch("http://127.0.0.1:5000/deleteTemplates", {
+      const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/deleteTemplates", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: userId, templates: selectedTemplates }), // ✅ Ensure correct format
