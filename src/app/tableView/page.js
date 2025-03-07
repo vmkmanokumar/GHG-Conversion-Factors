@@ -41,7 +41,7 @@ const TableView = () => {
     const fetchAllEntries = async () => {
       try {
         const response = await fetch(
-          `http://127.0.0.1:5000/getAllEntries?username=${userId}&templatecontent=${selectedTemplate}`
+          `https://ghg-conversion-factors-backend.vercel.app/getAllEntries?username=${userId}&templatecontent=${selectedTemplate}`
         );
 
         if (!response.ok) {
