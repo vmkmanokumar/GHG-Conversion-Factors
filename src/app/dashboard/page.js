@@ -58,8 +58,8 @@ export default function Dashboard() {
     <Layout className="h-screen bg-white text-black">
       <Header className="shadow-md flex items-center px-6 h-[80px] bg-white text-black">
         <Button icon={<MenuOutlined />} type="text" onClick={() => setDrawerVisible(true)} className="text-xl mr-4 text-gray-800" />
-        <Button icon={<ArrowLeftOutlined />} type="text" onClick={() => router.back()} className="text-xl mr-4 text-gray-800" />
-        <Title level={3} className="m-0 flex-1">Dashboard</Title>
+        {/* <Button icon={<ArrowLeftOutlined />} type="text" onClick={() => router.back()} className="text-xl mr-4 text-gray-800" /> */}
+        <Title level={3} className="m-0 flex-1 mt-3">Dashboard</Title>
         <span className="mr-4">{userId}</span>
       </Header>
 
