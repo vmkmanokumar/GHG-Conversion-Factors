@@ -1,129 +1,98 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Table, Button } from "antd"; // ✅ Import Ant Design Table
+import { Table, Button, Space, Skeleton } from "antd"; // ✅ Import Skeleton
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 
 const TableView = () => {
   const [allEntries, setAllEntries] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [userId, setUserId] = useState("");
+  const [loading, setLoading] = useState(true); // ✅ Loading state
   const router = useRouter();
 
-  const templateSaves = allEntries.map(entry => entry.templatesave);
-  console.log(templateSaves)  /// templated is there
-
-  const goToParameterAndUnit = () => {
-    localStorage.setItem("templateSaves", JSON.stringify(templateSaves)); // Store in localStorage
-    router.push("/ScopeOne/Activities/parameterAndUnit");
-  };
-
-  // ✅ Load selected template from localStorage
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedTemplate = localStorage.getItem("selectedTemplate");
       const userName = localStorage.getItem("username");
-      if (storedTemplate) {
-        setSelectedTemplate(storedTemplate);
-      }
-      if (userName) {
-        setUserId(userName);
-      }
+      if (storedTemplate) setSelectedTemplate(storedTemplate);
+      if (userName) setUserId(userName);
     }
   }, []);
 
-
-  // ✅ Fetch all entries when the component mounts
   useEffect(() => {
-    if (!userId) return; // Prevent API call if userId is missing
-
+    if (!userId) return;
     const fetchAllEntries = async () => {
       try {
+        setLoading(true); // ✅ Start loading
         const response = await fetch(
           `https://ghg-conversion-factors-backend.vercel.app/getAllEntries?username=${userId}&templatecontent=${selectedTemplate}`
         );
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
         const data = await response.json();
-        console.log("Fetched Data:", data.entries);
-
-        // ✅ Update state with fetched data
         setAllEntries(data.entries || []);
       } catch (error) {
         console.error("Error fetching all entries:", error);
+      } finally {
+        setLoading(false); // ✅ Stop loading
       }
     };
-
     fetchAllEntries();
-  }, [userId]); // Re-run when userId changes
+  }, [userId]);
 
-  // ✅ Handle Edit Value
-  const handleEditValue = (record) => {
-    console.log("Edit Value:", record);
-    // Implement logic to edit specific values
+  const goToParameterAndUnit = () => {
+    localStorage.setItem("templateSaves", JSON.stringify(allEntries.map(entry => entry.templatesave)));
+    router.push("/ScopeOne/Activities/parameterAndUnit");
   };
 
-  // ✅ Handle Edit
-  const handleEdit = (record) => {
-    console.log("Edit:", record);
-    // Implement logic to edit the whole row
-  };
-
-  // ✅ Handle Delete
-  const handleDelete = (record) => {
-    console.log("Delete:", record);
-    // Implement logic to delete the entry
-  };
-
-  // ✅ Define Ant Design Table Columns (Fixing Field Names)
   const columns = [
-    { title: "User ID", dataIndex: "username", key: "username" }, // Change "email" to "username"
+    { title: "User ID", dataIndex: "username", key: "username" },
     { title: "Template Name", dataIndex: "templatecontent", key: "templatecontent" },
     { title: "Created By", dataIndex: "createdBy", key: "createdBy" },
     { title: "Shift", dataIndex: "shift", key: "shift" },
     { title: "Created Date", dataIndex: "created_date", key: "created_date" },
     { title: "Modified Date", dataIndex: "modified_date", key: "modified_date" },
-    { title: "modifiedBy", dataIndex: "modifiedBy", key: "modifiedBy" },
-    { title: "Total CO2 (kg)", dataIndex: "total_kg_co2", key: "total_kg_co2" },
+    { title: "Modified By", dataIndex: "modifiedBy", key: "modifiedBy" },
+    { title: "Total CO₂ (kg)", dataIndex: "total_kg_co2", key: "total_kg_co2" },
     {
       title: "Actions",
       key: "actions",
-      render: (text, record) => (
-        <div className="flex space-x-2">
-          <Button type="primary" onClick={() => goToParameterAndUnit(record)}>
-           
-                Go to Parameter and Unit
-          
+      render: (_, record) => (
+        <Space direction="vertical" size="small">
+          <Button type="primary" block onClick={() => goToParameterAndUnit(record)}>
+            Go to Parameter and Unit
           </Button>
-          <Button type="default" onClick={() => handleEdit(record)}>
+          <Button type="default" block>
             Edit
           </Button>
-          <Button danger onClick={() => handleDelete(record)}>
+          <Button danger block>
             Delete
           </Button>
-        </div>
+        </Space>
       ),
     },
   ];
 
   return (
-    <div className="flex flex-col items-center mt-10 w-full px-10">
-      <h2 className="text-lg font-semibold mb-4">
+    <div className="flex flex-col items-center mt-6 w-full px-4 sm:px-10">
+      <h2 className="text-lg sm:text-xl font-semibold mb-4 text-center">
         Viewing Entries for: <strong>{selectedTemplate || "No Template Selected"}</strong>
       </h2>
 
-      {/* ✅ Table Component */}
-      <Table
-        dataSource={allEntries}
-        columns={columns}
-        rowKey="username" // Ensure unique row key
-        pagination={{ pageSize: 5 }}
-        className="w-full"
-      />
+      {/* ✅ Show Skeleton while loading */}
+      {loading ? (
+        <Skeleton active paragraph={{ rows: 5 }} className="w-full" />
+      ) : (
+        <Table
+          dataSource={allEntries}
+          columns={columns}
+          rowKey="username"
+          pagination={{ pageSize: 5 }}
+          scroll={{ x: "max-content" }} // Enables horizontal scroll on small screens
+          className="w-full"
+        />
+      )}
     </div>
   );
 };
