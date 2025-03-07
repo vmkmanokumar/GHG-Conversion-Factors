@@ -12,7 +12,7 @@ export default function Parameters() {
     setSelectedFuels,
     fetchedParameters,
     setFetchedParameters,
-    templateName,
+    templatecontent,
   } = useScopeOne();
 
   const [userId, setUserId] = useState("");
@@ -20,7 +20,7 @@ export default function Parameters() {
   console.log("selec",selectedFuels)
 
   const handleSubmit = async () => {
-    if (!templateName.trim()) {
+    if (!templatecontent.trim()) {
       alert("Please enter a template name.");
       return;
     }
@@ -29,28 +29,23 @@ export default function Parameters() {
       const response = await fetch("http://127.0.0.1:5000/saveScope1", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ scope:"Scope 1",username:userId, templatename:templateName ,templatesave: selectedFuels ,sfit:1}),
+        body: JSON.stringify({ scope: "Scope 1", username: userId, templatecontent: templatecontent, templatesave: selectedFuels, shift_number: 1 }),
       });
-
-      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-
+    
       const data = await response.json();
-      if(data){
-        alert("Template Name Already Exits")
-      }else{
+    
+      if (data.message == false) {  // Check if response is an error
+        alert(data.error); // Show error message
+      } else {
         console.log("Scope 1 saved successfully:", data);
         alert("Scope 1 has been saved");
       }
-      
-    // const confirmNavigation = window.confirm("Move to Scope 2 or Dashboard?");
-
-    // if (confirmNavigation) {
-    //   window.location.href = "/scope2";  // Change URL as needed
-    // }
+    
     } catch (error) {
       console.error("Error saving Scope 1:", error);
       alert("Failed to save. Please try again.");
     }
+    
   };
 
   useEffect(() => {
