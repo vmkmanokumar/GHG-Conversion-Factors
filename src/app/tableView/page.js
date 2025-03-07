@@ -2,17 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { Table, Button } from "antd"; // ✅ Import Ant Design Table
-import { useRouter } from "next/navigation";
 
 const TableView = () => {
   const [allEntries, setAllEntries] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [userId, setUserId] = useState("");
-  const router = useRouter();
 
   const templateSaves = allEntries.map(entry => entry.templatesave);
   console.log(templateSaves)  /// templated is there
-
 
 
   // ✅ Load selected template from localStorage
@@ -65,7 +62,11 @@ const TableView = () => {
   // ✅ Handle Edit
   const handleEdit = (record) => {
     console.log("Edit:", record);
-    // Implement logic to edit the whole row
+    
+    localStorage.setItem("selectedTemplate", record.templateName);
+
+    // Redirect using window.location.href
+    window.location.href = "/ScopeOne";
   };
 
   // ✅ Handle Delete
