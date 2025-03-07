@@ -67,9 +67,9 @@ export default function Dashboard() {
         {/* <Button icon={<ArrowLeftOutlined />} type="text" onClick={() => router.back()} className="text-xl mr-4 text-gray-800" /> */}
         <Title level={3} className="mt-3 flex-1">Dashboard</Title>
         <span className="mr-4">{userId}</span>
-        <Button type="link">
+        {/* <Button type="link">
           <Link href="/TemplateSelection">Create Template</Link>
-        </Button>
+        </Button> */}
       </Header>
 
       {/* Drawer for Sidebar */}
