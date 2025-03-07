@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Table, Button } from "antd"; // ✅ Import Ant Design Table
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const TableView = () => {
   const [allEntries, setAllEntries] = useState([]);
@@ -13,7 +14,10 @@ const TableView = () => {
   const templateSaves = allEntries.map(entry => entry.templatesave);
   console.log(templateSaves)  /// templated is there
 
-
+  const goToParameterAndUnit = () => {
+    localStorage.setItem("templateSaves", JSON.stringify(templateSaves)); // Store in localStorage
+    router.push("/ScopeOne/Activities/parameterAndUnit");
+  };
 
   // ✅ Load selected template from localStorage
   useEffect(() => {
@@ -28,6 +32,7 @@ const TableView = () => {
       }
     }
   }, []);
+
 
   // ✅ Fetch all entries when the component mounts
   useEffect(() => {
@@ -89,8 +94,10 @@ const TableView = () => {
       key: "actions",
       render: (text, record) => (
         <div className="flex space-x-2">
-          <Button type="primary" onClick={() => handleEditValue(record)}>
-            Edit Value
+          <Button type="primary" onClick={() => goToParameterAndUnit(record)}>
+           
+                Go to Parameter and Unit
+          
           </Button>
           <Button type="default" onClick={() => handleEdit(record)}>
             Edit

@@ -3,7 +3,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { Disclosure } from "@headlessui/react";
 import { ChevronDown } from "lucide-react";
 import { Input, Select } from "antd";
-import { useScopeOne } from "../Context/ScopeOneContext";
+import { useScopeOne } from "../../Context/ScopeOneContext";
 
 const { Option } = Select;
 
@@ -29,7 +29,20 @@ export default function ParametersAndUnits() {
     };
 
     fetchBiogasData();
+
   }, []);
+
+  useEffect(() => {
+    const templateSave = localStorage.getItem("templateSaves");
+    console.log("values",JSON.parse(templateSave))
+    if (templateSave) {
+      setSelectedFuels(JSON.parse(templateSave)[0]);  // ✅ Parse JSON before setting
+    }
+  }, []);
+
+ 
+
+
 
   // ✅ Move `saveDraftData` outside `updateSelectedValues`
   const saveDraftData = async () => {
@@ -140,10 +153,7 @@ export default function ParametersAndUnits() {
 
 
 
-useEffect(() => {
-    if (Object.keys(selectedFuels).length === 0) return; // Avoid unnecessary calls
-    updateSelectedValues();
-}, [selectedFuels]); // Run when `selectedFuels` updates
+
 
 
   const handleChange = (category, item, parameter, field, value) => {
