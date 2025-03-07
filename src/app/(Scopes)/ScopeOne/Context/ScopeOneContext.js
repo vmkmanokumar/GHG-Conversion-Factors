@@ -12,7 +12,7 @@ export function ScopeOneProvider({ children }) {
     const [activities, setActivities] = useState([]);
     const [fetchedParameters, setFetchedParameters] = useState({});
     const[userId,setUserId] = useState("")
-    const [templateName, setTemplateName] = useState("");
+    const [templatecontent, settemplatecontent] = useState("");
 
     return (
 
@@ -20,7 +20,7 @@ export function ScopeOneProvider({ children }) {
 
             value={{
                 userId,setUserId,
-                templateName, setTemplateName,
+                templatecontent, settemplatecontent,
                 checkedValuesScopeOne,
                 setCheckedValuesScopeOne,
                 selectedValuesScopeOne,

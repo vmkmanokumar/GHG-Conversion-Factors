@@ -8,37 +8,47 @@ const TableView = () => {
   const [allEntries, setAllEntries] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const router = useRouter();
+  const [userId,setUserId] = useState("")
+
+  console.log("userid",userId)
 
   // ✅ Load selected template from localStorage
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedTemplate = localStorage.getItem("selectedTemplate");
+      const userName = localStorage.getItem("username")
       if (storedTemplate) {
         setSelectedTemplate(storedTemplate);
+      }
+      if(userName){
+        setUserId(userName)
       }
     }
   }, []);
 
   // ✅ Fetch all entries when the component mounts
   useEffect(() => {
+    if (!userId) return;  // Prevent API call if userId is missing
+  
     const fetchAllEntries = async () => {
-        try {
-          const response = await fetch("http://127.0.0.1:5000/getAllEntries");
-      
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-      
-          const data = await response.json();
-          console.log("Fetched Data:", data);
-          setAllEntries(data.entries || []);
-        } catch (error) {
-          console.error("Error fetching all entries:", error);
+      try {
+        const response = await fetch(`http://127.0.0.1:5000/getAllEntries?username=${userId}`);
+    
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
         }
-      };
-
+    
+        const data = await response.json();
+        console.log("Fetched Data:", data);
+        setAllEntries(data.entries || []);
+      } catch (error) {
+        console.error("Error fetching all entries:", error);
+      }
+    };
+  
     fetchAllEntries();
-  }, []);
+  }, [userId]);  // Re-run when userId changes
+  
 
    // ✅ Handle Edit Value
   const handleEditValue = (record) => {
@@ -62,7 +72,7 @@ const TableView = () => {
   // ✅ Define Ant Design Table Columns
   const columns = [
     { title: "Email", dataIndex: "email", key: "email" },
-    { title: "Template Name", dataIndex: "templateName", key: "templateName" },
+    { title: "Template Name", dataIndex: "templatecontent", key: "templatecontent" },
     { title: "Created By", dataIndex: "createdBy", key: "createdBy" },
     { title: "Shift", dataIndex: "shift", key: "shift" },
     { title: "created_date", dataIndex: "created_date", key: "created_date" },

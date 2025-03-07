@@ -5,7 +5,7 @@ import { useScopeOne } from "../Context/ScopeOneContext";
 export default function CreateTempName() {
    const {
       selectedFuels,
-      templateName, setTemplateName
+      templatecontent, settemplatecontent
     } = useScopeOne();
 
     console.log("temp name page",selectedFuels)
@@ -19,8 +19,8 @@ export default function CreateTempName() {
         type="text"
         placeholder="Template Name"
         className="w-full px-4 py-2 border rounded-md text-lg focus:outline-none focus:border-emerald-500"
-        value={templateName}
-        onChange={(e) => setTemplateName(e.target.value)}
+        value={templatecontent}
+        onChange={(e) => settemplatecontent(e.target.value)}
       />
     </div>
   );
