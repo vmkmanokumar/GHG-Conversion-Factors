@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Table, Button } from "antd"; // ✅ Import Ant Design Table
+import { useRouter } from "next/navigation";
 
 const TableView = () => {
   const [allEntries, setAllEntries] = useState([]);
@@ -10,6 +11,7 @@ const TableView = () => {
 
   const templateSaves = allEntries.map(entry => entry.templatesave);
   console.log(templateSaves)  /// templated is there
+
 
 
   // ✅ Load selected template from localStorage
@@ -26,6 +28,7 @@ const TableView = () => {
     }
   }, []);
 
+
   // ✅ Fetch all entries when the component mounts
   useEffect(() => {
     if (!userId) return; // Prevent API call if userId is missing
@@ -33,7 +36,7 @@ const TableView = () => {
     const fetchAllEntries = async () => {
       try {
         const response = await fetch(
-          `http://127.0.0.1:5000/getAllEntries?username=${userId}&templatecontent=${selectedTemplate}`
+          `https://ghg-conversion-factors-backend.vercel.app/getAllEntries?username=${userId}&templatecontent=${selectedTemplate}`
         );
 
         if (!response.ok) {
@@ -90,8 +93,10 @@ const TableView = () => {
       key: "actions",
       render: (text, record) => (
         <div className="flex space-x-2">
-          <Button type="primary" onClick={() => handleEditValue(record)}>
-            Edit Value
+          <Button type="primary" onClick={() => goToParameterAndUnit(record)}>
+           
+                Go to Parameter and Unit
+          
           </Button>
           <Button type="default" onClick={() => handleEdit(record)}>
             Edit

@@ -5,7 +5,7 @@ import Chooseactivities from "./Chooseactivities";
 import { useScopeOne } from "../Context/ScopeOneContext";
 import Parameters from "./Parameters";
 import { useEffect, useState } from "react";
-import ParametersAndUnits from "./ParametersAndUnits";
+import ParametersAndUnits from "./parameterAndUnit/page";
 import "./Styles/ScopeOneFactors.css";
 import CreateTempName from "./CreareTempName";
 

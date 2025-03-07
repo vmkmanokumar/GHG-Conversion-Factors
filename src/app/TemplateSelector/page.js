@@ -27,7 +27,7 @@ const TemplateSelector = () => {
     const fetchTemplates = async () => {
       try {
         const response = await fetch(
-          `http://127.0.0.1:5000/getTemplates?username=${userId}`,
+          `https://ghg-conversion-factors-backend.vercel.app/getTemplates?username=${userId}`,
           { method: "GET" }
         );
 
