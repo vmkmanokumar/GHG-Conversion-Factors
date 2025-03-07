@@ -11,7 +11,7 @@ import ScopeOneSelection from "./ScopeOneSelectionPage";
 
 
 export default function ScopeOneSelectionpage() {
-  const [pageChange, setPageChange] = useState(0);
+  const [pageChange, setPageChange] = useState(-1);
 
 
   const [changeShope, setChangeShope] = useState(0)

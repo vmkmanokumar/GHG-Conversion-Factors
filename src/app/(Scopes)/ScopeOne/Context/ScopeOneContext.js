@@ -12,12 +12,15 @@ export function ScopeOneProvider({ children }) {
     const [activities, setActivities] = useState([]);
     const [fetchedParameters, setFetchedParameters] = useState({});
     const[userId,setUserId] = useState("")
+    const [templateName, setTemplateName] = useState("");
 
     return (
 
         <ScopeOneContext.Provider
 
             value={{
+                userId,setUserId,
+                templateName, setTemplateName,
                 checkedValuesScopeOne,
                 setCheckedValuesScopeOne,
                 selectedValuesScopeOne,
