@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState,useEffect } from "react";
+import React, { useState } from "react";
 import { Layout, Button, Typography, Switch, Drawer, DatePicker, Card, Statistic, Menu } from "antd";
 import { MenuOutlined, ArrowLeftOutlined, SunOutlined, MoonOutlined, FormOutlined, EditOutlined, TableOutlined, FileDoneOutlined, CheckCircleOutlined } from "@ant-design/icons";
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
@@ -28,7 +28,6 @@ const filterDataByDateRange = (data, startDate, endDate) => {
 };
 
 export default function Dashboard() {
-  const [userId,setUserId] = useState("")
   const router = useRouter();
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [dateRange, setDateRange] = useState([dayjs().startOf("month"), dayjs().endOf("month")]);
@@ -48,68 +47,40 @@ export default function Dashboard() {
     return { date: item.date, cumulativeGoods, cumulativeCO2 };
   });
 
-
-
-    useEffect(() => {
-      if (typeof window !== "undefined") {
-        const userName = localStorage.getItem("username");
-        if (userName) {
-          setUserId(userName);
-        }
-      }
-    }, []);
-
   return (
     <Layout className="h-screen bg-white text-black">
-      {/* Navbar */}
       <Header className="shadow-md flex items-center px-6 h-[80px] bg-white text-black">
         <Button icon={<MenuOutlined />} type="text" onClick={() => setDrawerVisible(true)} className="text-xl mr-4 text-gray-800" />
-        {/* <Button icon={<ArrowLeftOutlined />} type="text" onClick={() => router.back()} className="text-xl mr-4 text-gray-800" /> */}
-        <Title level={3} className="mt-3 flex-1">Dashboard</Title>
-        <span className="mr-4">{userId}</span>
-        {/* <Button type="link">
+        <Button icon={<ArrowLeftOutlined />} type="text" onClick={() => router.back()} className="text-xl mr-4 text-gray-800" />
+        <Title level={3} className="m-0 flex-1">Dashboard</Title>
+        <span className="mr-4">Username</span>
+        <Button type="link">
           <Link href="/TemplateSelection">Create Template</Link>
-        </Button> */}
+        </Button>
       </Header>
 
-      {/* Drawer for Sidebar */}
       <Drawer title="Menu" placement="left" onClose={() => setDrawerVisible(false)} visible={drawerVisible} className="bg-white">
         <Menu>
-          <Menu.Item icon={<FormOutlined />}>
-            <Link href="/ScopeOne">Create Template</Link>
-          </Menu.Item>
-          <Menu.Item icon={<EditOutlined />}>
-            <Link href="/TemplateSelector">Edit Template</Link>
-          </Menu.Item>
-          <Menu.Item icon={<TableOutlined />}>
-            <Link href="/ScopeOne">Enter Actual Data</Link>
-          </Menu.Item>
-          <Menu.Item icon={<FileDoneOutlined />}>
-            <Link href="/ScopeOne">Enter Target Data</Link>
-          </Menu.Item>
-          <Menu.Item icon={<CheckCircleOutlined />}>
-            <Link href="/ScopeOne">Validate Actual Data</Link>
-          </Menu.Item>
-          <Menu.Item icon={<CheckCircleOutlined />}>
-            <Link href="/ScopeOne">Validate Target Data</Link>
-          </Menu.Item>
+          <Menu.Item icon={<FormOutlined />}><Link href="/ScopeOne">Create Template</Link></Menu.Item>
+          <Menu.Item icon={<EditOutlined />}><Link href="/TemplateSelector">Edit Template</Link></Menu.Item>
+          <Menu.Item icon={<TableOutlined />}><Link href="/ScopeOne">Enter Actual Data</Link></Menu.Item>
+          <Menu.Item icon={<FileDoneOutlined />}><Link href="/ScopeOne">Enter Target Data</Link></Menu.Item>
+          <Menu.Item icon={<CheckCircleOutlined />}><Link href="/ScopeOne">Validate Actual Data</Link></Menu.Item>
+          <Menu.Item icon={<CheckCircleOutlined />}><Link href="/ScopeOne">Validate Target Data</Link></Menu.Item>
         </Menu>
       </Drawer>
 
-      {/* Content */}
       <Content className="p-4 sm:p-6 bg-white text-black">
         <h2>CO₂ Emission Dashboard</h2>
         <RangePicker defaultValue={dateRange} onChange={(dates) => setDateRange(dates || [dayjs().startOf("month"), dayjs().endOf("month")])} />
 
-        {/* Statistics Cards */}
-        <div style={{ display: "flex", gap: 20, marginTop: 20 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginTop: 20 }}>
           <Card className="bg-white"><Statistic title="Total Goods Produced" value={totalGoods} /></Card>
           <Card className="bg-white"><Statistic title="Total CO₂ Emitted (kg)" value={totalCO2} /></Card>
           <Card className="bg-white"><Statistic title="Scope 1 Emissions" value={totalScope1} /></Card>
           <Card className="bg-white"><Statistic title="Scope 2 Emissions" value={totalScope2} /></Card>
         </div>
 
-        {/* Bar Chart */}
         <h3>Daily Goods Produced vs CO₂ Emitted</h3>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={filteredData}>
@@ -123,7 +94,6 @@ export default function Dashboard() {
           </BarChart>
         </ResponsiveContainer>
 
-        {/* Line Chart */}
         <h3>Cumulative Goods Produced & CO₂ Emissions</h3>
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={cumulativeData}>
