@@ -1,216 +1,141 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import {
-  Button,
-  Layout,
-  Typography,
-  Spin,
-  Card,
-  Progress,
-  Input,
-  Tooltip,
-  Switch,
-} from "antd";
-import {
-  ArrowLeftOutlined,
-  DownloadOutlined,
-  SearchOutlined,
-  MoonOutlined,
-  SunOutlined,
-} from "@ant-design/icons";
+
+import React, { useState,useEffect } from "react";
+import { Layout, Button, Typography, Switch, Drawer, DatePicker, Card, Statistic, Menu } from "antd";
+import { MenuOutlined, ArrowLeftOutlined, SunOutlined, MoonOutlined, FormOutlined, EditOutlined, TableOutlined, FileDoneOutlined, CheckCircleOutlined } from "@ant-design/icons";
+import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
-import Papa from "papaparse";
 import Link from "next/link";
 
 const { Header, Content } = Layout;
-const { Title, Text } = Typography;
+const { Title } = Typography;
+const { RangePicker } = DatePicker;
+
+const dummyData = [
+  { date: "2025-03-01", goodsProduced: 100, co2Emitted: 200, scope1: 120, scope2: 80 },
+  { date: "2025-03-02", goodsProduced: 150, co2Emitted: 250, scope1: 140, scope2: 110 },
+  { date: "2025-03-03", goodsProduced: 180, co2Emitted: 300, scope1: 160, scope2: 140 },
+  { date: "2025-03-04", goodsProduced: 200, co2Emitted: 350, scope1: 180, scope2: 170 },
+  { date: "2025-03-05", goodsProduced: 220, co2Emitted: 380, scope1: 200, scope2: 180 },
+];
+
+const filterDataByDateRange = (data, startDate, endDate) => {
+  return data.filter((item) => {
+    const itemDate = dayjs(item.date);
+    return itemDate.isAfter(startDate.subtract(1, "day")) && itemDate.isBefore(endDate.add(1, "day"));
+  });
+};
 
 export default function Dashboard() {
+  const [userId,setUserId] = useState("")
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
-  const [darkMode, setDarkMode] = useState(false);
-  const [data, setData] = useState(null);
+  const [drawerVisible, setDrawerVisible] = useState(false);
+  const [dateRange, setDateRange] = useState([dayjs().startOf("month"), dayjs().endOf("month")]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/getmasterData");
-        if (!response.ok) throw new Error("Failed to fetch data");
+  const filteredData = filterDataByDateRange(dummyData, dateRange[0], dateRange[1]);
 
-        const res = await response.json();
-        console.log(res);
+  const totalGoods = filteredData.reduce((sum, item) => sum + item.goodsProduced, 0);
+  const totalCO2 = filteredData.reduce((sum, item) => sum + item.co2Emitted, 0);
+  const totalScope1 = filteredData.reduce((sum, item) => sum + item.scope1, 0);
+  const totalScope2 = filteredData.reduce((sum, item) => sum + item.scope2, 0);
 
-        const transformedData = {};
-        res.forEach((item) => {
-          if (!transformedData[item.scopes]) {
-            transformedData[item.scopes] = {};
-          }
-          if (!transformedData[item.scopes][item.scope_factors]) {
-            transformedData[item.scopes][item.scope_factors] = {};
-          }
+  let cumulativeGoods = 0;
+  let cumulativeCO2 = 0;
+  const cumulativeData = filteredData.map((item) => {
+    cumulativeGoods += item.goodsProduced;
+    cumulativeCO2 += item.co2Emitted;
+    return { date: item.date, cumulativeGoods, cumulativeCO2 };
+  });
 
-          transformedData[item.scopes][item.scope_factors][item.parameters] = {
-            checked: true,
-            selectedValue: item.units,
-            maxvalue: item.maxvalues,
-          };
-        });
 
-        setData(transformedData);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
+
+    useEffect(() => {
+      if (typeof window !== "undefined") {
+        const userName = localStorage.getItem("username");
+        if (userName) {
+          setUserId(userName);
+        }
       }
-    };
-
-    fetchData();
-  }, []);
-
-  const toggleDarkMode = () => setDarkMode((prev) => !prev);
-
-  const downloadCSV = () => {
-    if (!data) return;
-
-    let csvData = [];
-    Object.entries(data).forEach(([category, subCategories]) => {
-      Object.entries(subCategories).forEach(([subCategory, items]) => {
-        Object.entries(items).forEach(([itemName, itemData]) => {
-          csvData.push({
-            Category: category,
-            SubCategory: subCategory,
-            Name: itemName,
-            Checked: itemData.checked,
-            Value: itemData.maxvalue,
-            Unit: itemData.selectedValue,
-          });
-        });
-      });
-    });
-
-    const csv = Papa.unparse(csvData);
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.setAttribute("download", "data.csv");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+    }, []);
 
   return (
-    <Layout
-      className={`h-screen transition-all  duration-300 ${darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-black"
-        }`}
-    >
-      {/* Header */}
-      <Header
-        className={`shadow-md flex items-center px-6 h-[80px] transition-all duration-300 ${darkMode ? "bg-gray-800 text-white" : "bg-white text-black"
-          }`}
-      >
-        <Button
-          icon={<ArrowLeftOutlined />}
-          type="text"
-          onClick={() => router.back()}
-          className={`text-xl mr-4 ${darkMode ? "text-white" : "text-gray-800"}`}
-        />
-        <Title level={3} className={`m-0 flex-1 ${darkMode ? "text-white" : ""}`}>
-          Dashboard
-        </Title>
-
-        <Button type="link" className={darkMode ? "text-white" : ""}>
-          <Link href="/TemplateCreation">Create Template</Link>
+    <Layout className="h-screen bg-white text-black">
+      {/* Navbar */}
+      <Header className="shadow-md flex items-center px-6 h-[80px] bg-white text-black">
+        <Button icon={<MenuOutlined />} type="text" onClick={() => setDrawerVisible(true)} className="text-xl mr-4 text-gray-800" />
+        {/* <Button icon={<ArrowLeftOutlined />} type="text" onClick={() => router.back()} className="text-xl mr-4 text-gray-800" /> */}
+        <Title level={3} className="mt-3 flex-1">Dashboard</Title>
+        <span className="mr-4">{userId}</span>
+        <Button type="link">
+          <Link href="/TemplateSelection">Create Template</Link>
         </Button>
-
-        {/* Dark Mode Toggle */}
-        <Switch
-          checked={darkMode}
-          onChange={toggleDarkMode}
-          checkedChildren={<SunOutlined />}
-          unCheckedChildren={<MoonOutlined />}
-          className="ml-auto"
-        />
       </Header>
 
-      {/* Main Content */}
-      <Content
-        className={`p-4 sm:p-6 transition-all duration-300 ${darkMode ? "bg-gray-800 text-white" : "bg-green-50 text-black"
-          }`}
-      >
-        <div
-          className={`p-6 rounded-lg transition-all duration-300 ${darkMode ? "bg-gray-800 text-white" : "bg-green-50 text-black"
-            }`}
-        >
-          {/* Header Actions */}
-          <div className="flex flex-wrap justify-between items-center mb-4">
-            <Title level={3} className={`text-center w-full sm:w-auto ${darkMode ? "text-white" : ""}`}>
-              Dashboard Data
-            </Title>
-            <div className="flex flex-wrap gap-3 w-full sm:w-auto">
-              <Input
-                placeholder="Search..."
-                prefix={<SearchOutlined className={darkMode ? "text-white" : "text-black"} />}
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className={`w-full sm:w-60 ${darkMode ? "bg-gray-700 text-white" : ""}`}
-              />
-              <Button type="primary" icon={<DownloadOutlined />} onClick={downloadCSV}>
-                Download CSV
-              </Button>
-            </div>
-          </div>
+      {/* Drawer for Sidebar */}
+      <Drawer title="Menu" placement="left" onClose={() => setDrawerVisible(false)} visible={drawerVisible} className="bg-white">
+        <Menu>
+          <Menu.Item icon={<FormOutlined />}>
+            <Link href="/ScopeOne">Create Template</Link>
+          </Menu.Item>
+          <Menu.Item icon={<EditOutlined />}>
+            <Link href="/TemplateSelector">Edit Template</Link>
+          </Menu.Item>
+          <Menu.Item icon={<TableOutlined />}>
+            <Link href="/ScopeOne">Enter Actual Data</Link>
+          </Menu.Item>
+          <Menu.Item icon={<FileDoneOutlined />}>
+            <Link href="/ScopeOne">Enter Target Data</Link>
+          </Menu.Item>
+          <Menu.Item icon={<CheckCircleOutlined />}>
+            <Link href="/ScopeOne">Validate Actual Data</Link>
+          </Menu.Item>
+          <Menu.Item icon={<CheckCircleOutlined />}>
+            <Link href="/ScopeOne">Validate Target Data</Link>
+          </Menu.Item>
+        </Menu>
+      </Drawer>
 
-          {/* Display Data */}
-          {loading ? (
-            <div className="flex justify-center items-center h-40">
-              <Spin size="large" />
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {Object.entries(data)
-                .filter(([category]) =>
-                  category.toLowerCase().includes(search.toLowerCase())
-                )
-                .map(([category, subCategories]) =>
-                  Object.entries(subCategories).map(([subCategory, items]) => (
-                    <Card
-                      key={subCategory}
-                      title={`${category}-${subCategory}`}
-                      className={`shadow-md transition-all duration-300 ${darkMode
-                        ? "bg-gray-700 text-white border-gray-600"
-                        : "bg-[#EFFBF7] text-black"
-                        }`}
-                    >
-                      {Object.entries(items).map(([itemName, itemData]) => (
-                        <div key={itemName} className="mb-3">
-                          <Text strong className={darkMode ? "text-white" : "text-black"}>
-                            {itemName} ({itemData.selectedValue})
-                          </Text>
-                          <Tooltip
-                            title={`Value: ${itemData.maxvalue} ${itemData.selectedValue}`}
-                            classNames={{ root: darkMode ? "bg-gray-700 text-white" : "" }}
-                          >
-                            <div className="w-full  rounded-full h-[28] mt-2">
-                              <Progress
-                                percent={(itemData.maxvalue / 100) * 100}
-                                strokeColor="#22C55E" // Green color like Tailwind's 'bg-green-500'
-                                showInfo={true} // Hide percentage text
-                                status="active"
-                                strokeWidth={28} // Adjusts the height
-                              />
+      {/* Content */}
+      <Content className="p-4 sm:p-6 bg-white text-black">
+        <h2>CO₂ Emission Dashboard</h2>
+        <RangePicker defaultValue={dateRange} onChange={(dates) => setDateRange(dates || [dayjs().startOf("month"), dayjs().endOf("month")])} />
 
-                            </div>
-                          </Tooltip>
-
-                        </div>
-                      ))}
-                    </Card>
-                  ))
-                )}
-            </div>
-          )}
+        {/* Statistics Cards */}
+        <div style={{ display: "flex", gap: 20, marginTop: 20 }}>
+          <Card className="bg-white"><Statistic title="Total Goods Produced" value={totalGoods} /></Card>
+          <Card className="bg-white"><Statistic title="Total CO₂ Emitted (kg)" value={totalCO2} /></Card>
+          <Card className="bg-white"><Statistic title="Scope 1 Emissions" value={totalScope1} /></Card>
+          <Card className="bg-white"><Statistic title="Scope 2 Emissions" value={totalScope2} /></Card>
         </div>
+
+        {/* Bar Chart */}
+        <h3>Daily Goods Produced vs CO₂ Emitted</h3>
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={filteredData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="date" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey="goodsProduced" fill="#8884d8" name="Goods Produced" />
+            <Bar dataKey="co2Emitted" fill="#82ca9d" name="CO₂ Emitted" />
+          </BarChart>
+        </ResponsiveContainer>
+
+        {/* Line Chart */}
+        <h3>Cumulative Goods Produced & CO₂ Emissions</h3>
+        <ResponsiveContainer width="100%" height={300}>
+          <LineChart data={cumulativeData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="date" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Line type="monotone" dataKey="cumulativeGoods" stroke="#8884d8" name="Cumulative Goods" />
+            <Line type="monotone" dataKey="cumulativeCO2" stroke="#82ca9d" name="Cumulative CO₂" />
+          </LineChart>
+        </ResponsiveContainer>
       </Content>
     </Layout>
   );
