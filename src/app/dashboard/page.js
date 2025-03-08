@@ -108,8 +108,8 @@ export default function Dashboard() {
   {[
     { title: "Total Goods Produced", key: "goodsProduced", value: totalGoods, color: "#72b2f2" },
     { title: "Total CO₂ Emitted (kg)", key: "co2Emitted", value: totalCO2, color: "#f87171" },
-    { title: "Scope 1 Emissions", key: "scope1", value: totalScope1, color: "#f1f57f"},
-    { title: "Scope 2 Emissions", key: "scope2", value: totalScope2, color: "#f1f57f" },
+    { title: "Scope 1 Emissions", key: "scope1", value: totalScope1, color: "#ffff80"},
+    { title: "Scope 2 Emissions", key: "scope2", value: totalScope2, color: "#ffff80" },
   ].map((item) => (
     <Card
       key={item.key}
@@ -117,14 +117,14 @@ export default function Dashboard() {
       style={{ backgroundColor: item.color }}
     >
       {/* Chart Container - Ensure interaction */}
-      <div className="absolute inset-0 z-0 pointer-events-auto mt-10 opacity-50">
+      <div className="absolute inset-0 z-0 pointer-events-auto mt-10 opacity-20">
         <ResponsiveContainer width="100%" height={120}> {/* Fixed height */}
           {item.key === "co2Emitted" ? (
             // AreaChart for "Total CO₂ Emitted (kg)"
             <AreaChart data={filteredData}>
               <defs>
                 <linearGradient id="colorCO2" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="white" stopOpacity={1.8} />
+                  <stop offset="5%" stopColor="black" stopOpacity={1.8} />
                   <stop offset="95%" stopColor="white" stopOpacity={0} />
                 </linearGradient>
               </defs>
@@ -143,7 +143,7 @@ export default function Dashboard() {
                         return null;
                       }}
                     />
-              <Area type="monotone" dataKey="co2Emitted" stroke="white" fill="url(#colorCO2)" strokeWidth={2} />
+              <Area type="monotone" dataKey="co2Emitted" stroke="black" fill="url(#colorCO2)" strokeWidth={2} />
             </AreaChart>
           ) : (
             // LineChart for other categories
@@ -163,7 +163,7 @@ export default function Dashboard() {
                         return null;
                       }}
                     />
-              <Line type="monotone" dataKey={item.key} stroke="white" strokeWidth={2} />
+              <Line type="monotone" dataKey={item.key} stroke="black" strokeWidth={2} />
             </LineChart>
           )}
         </ResponsiveContainer>
@@ -223,8 +223,8 @@ export default function Dashboard() {
           <YAxis />
           <Tooltip />
           <Legend />
-          <Line type="monotone" dataKey="cumulativeGoods" stroke="#72b2f2" name="Cumulative Goods" strokeWidth={2} />
-          <Line type="monotone" dataKey="cumulativeCO2" stroke="#f87171" name="Cumulative CO₂" strokeWidth={2} />
+          <Line type="monotone" dataKey="cumulativeGoods" stroke="#72b2f2" name="Cumulative Goods" strokeWidth={3.5} />
+          <Line type="monotone" dataKey="cumulativeCO2" stroke="#f87171" name="Cumulative CO₂" strokeWidth={3.5} />
         </LineChart>
       </ResponsiveContainer>
     </div>
