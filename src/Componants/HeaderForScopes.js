@@ -1,43 +1,44 @@
-"use client"
+"use client";
 
 import { useState } from "react";
-import { Row, Col, Flex } from "antd";
+import { Row, Col, Flex, Popover, Steps, ConfigProvider } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import { ConfigProvider, Steps } from 'antd';
 import { useRouter } from "next/navigation";
 
+export default function HeaderForScopes({ changeShope }) {
+  const router = useRouter();
+  const [activeScope, setActiveScope] = useState(0); // Track active scope
 
-export default function HeaderForScopes({changeShope}){
+  console.log(activeScope);
 
-    const router = useRouter();
-
-    const [activeScope, setActiveScope] = useState(0); // State to track the active scope
-        
-    console.log(activeScope)
-
-    const customDot = (dot, { status, index }) => (
+  // Custom popover dot for steps
+  const customDot = (dot, { status, index }) => (
+    <Popover content={<span>Scope {index + 1} - {status}</span>}>
       <div
-      style={{
-        backgroundColor: '#98E6CA', // Green color for finished steps
-        width: '15px',  // Bigger dot size
-        height: '15px',  // Bigger dot size
-        borderRadius: '50%',  // Make the dot circular
-      }}
+        style={{
+          width: "18px", // Increased size
+          height: "18px", // Increased size
+          borderRadius: "50%", // Circular shape
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          position: "relative",
+          top: "-5px", // Moves dot slightly up
+        }}
       >
         {dot}
       </div>
-    );
+    </Popover>
+  );
 
+  const handleScopeClick = (index) => {
+    setActiveScope(index);
+  };
 
-    const handleScopeClick = (index) => {
-        setActiveScope(index); 
-      };
-
-    return(
-
-        <>
-
-    <div
+  return (
+    <>
+      {/* Header Section */}
+      <div
         className="flex justify-center mt-10 sm:mt-20"
         style={{ width: "100%" }}
       >
@@ -52,14 +53,15 @@ export default function HeaderForScopes({changeShope}){
           <Row justify="center">
             <Col xs={24} sm={24} md={24} lg={24} xl={24}>
               <Flex align="center" gap={20} justify="center">
-                <ArrowLeftOutlined onClick={()=>router.push('/dashboard')}
+                <ArrowLeftOutlined
+                  onClick={() => router.push('/dashboard')}
                   style={{
                     fontSize: "28px",
                     fontWeight: "bold",
                     cursor: "pointer",
                   }}
                 />
-                <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold">
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">
                   Choose Scope Factors and Activities
                 </h1>
               </Flex>
@@ -68,7 +70,7 @@ export default function HeaderForScopes({changeShope}){
         </div>
       </div>
 
-      {/* Scope Section */}
+      {/* Scope Selection */}
       <Flex
         justify="center"
         className="sm:mt-24 text-base sm:text-lg md:text-xl mt-10 cursor-pointer"
@@ -79,62 +81,41 @@ export default function HeaderForScopes({changeShope}){
           justify="center"
           style={{ width: "100%", maxWidth: "1200px" }}
         >
-          <Col xs={8} sm={8} md={8} lg={8} xl={8}>
-            <div style={{ textAlign: "center" }}>
-              <h1
-                className="text-lg sm:text-xl"
-                style={{ color: activeScope === 0 ? "#008D87" : "black" }} // Green if Scope 1 is active
-                onClick={() => handleScopeClick(0)}
-              >
-                Scope 1
-              </h1>
-            </div>
-          </Col>
-          <Col xs={8} sm={8} md={8} lg={8} xl={8}>
-            <div style={{ textAlign: "center" }}>
-              <h1
-                className="text-lg sm:text-xl"
-                style={{ color: activeScope === 1 ? "#008D87" : "black" }} // Green if Scope 2 is active
-                onClick={() => handleScopeClick(1)}
-              >
-                Scope 2
-              </h1>
-            </div>
-          </Col>
-          <Col xs={8} sm={8} md={8} lg={8} xl={8}>
-            <div style={{ textAlign: "center" }}>
-              <h1
-                className="text-lg sm:text-xl"
-                style={{ color: activeScope === 2 ? "#008D87" : "black" }} // Green if Scope 3 is active
-                onClick={() => handleScopeClick(2)}
-              >
-                Scope 3
-              </h1>
-            </div>
-          </Col>
+          {["Scope 1", "Scope 2", "Scope 3"].map((scope, index) => (
+            <Col key={index} xs={8} sm={8} md={8} lg={8} xl={8}>
+              <div style={{ textAlign: "center" }}>
+                <h1
+                  className="text-lg sm:text-xl"
+                  style={{ color: activeScope === index ? "#008D87" : "black" }}
+                  onClick={() => handleScopeClick(index)}
+                >
+                  {scope}
+                </h1>
+              </div>
+            </Col>
+          ))}
         </Row>
-      </Flex>   
+      </Flex>
 
+      {/* Steps Indicator with Popover */}
       <div className="w-full md:w-[1000px] lg:w-[1000px] ml-auto mr-auto mt-10 sm:block hidden">
-  <ConfigProvider
-    theme={{
-      token: {
-        colorPrimary: '#27A376', // Green color
-      },
-    }}
-  >
-    <Steps
-      current={changeShope}
-      items={[{}, {}, {}]}
-      className="w-full md:w-[1000px] lg:w-[1000px] ml-auto mr-auto mt-10"
-      progressDot={customDot}
-    />
-  </ConfigProvider>
-</div>  
-
-
-        </>
-
-    )
-
+        <ConfigProvider
+          theme={{
+            token: {
+              colorPrimary: "#27A376", // Green color
+            },
+          }}
+        >
+          <Steps
+            current={changeShope}
+            items={[{}, {}, {}]}
+            className="w-full md:w-[1000px] lg:w-[1000px] ml-auto mr-auto mt-10"
+            progressDot={customDot} // Popover dots
+          />
+        </ConfigProvider>
+      </div>
+    </>
+  );
 }
+
+

@@ -63,18 +63,18 @@ const TemplateSelector = () => {
       message.error("Please select at least one template to delete.");
       return;
     }
-  
+
     if (!window.confirm("Are you sure you want to delete the selected templates?")) return;
-  
+
     try {
       const response = await fetch("http://127.0.0.1:5000/deleteTemplates", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: userId, templates: selectedTemplates }), // ✅ Ensure correct format
       });
-  
+
       const data = await response.json();
-  
+
       if (response.ok) {
         message.success("Templates deleted successfully!");
         setTemplates(templates.filter((t) => !selectedTemplates.includes(t)));
@@ -87,7 +87,7 @@ const TemplateSelector = () => {
       message.error("An error occurred while deleting the templates.");
     }
   };
-  
+
 
   // ✅ Handle Next button click
   const handleNext = () => {
@@ -109,15 +109,14 @@ const TemplateSelector = () => {
           templates.map((temp) => (
             <div
               key={temp}
-              className="flex justify-between items-center w-full mb-2 border rounded-lg p-2"
+              className={`flex justify-between items-center w-full mb-2 border-2 rounded-lg p-3 transition-all ${selected === temp
+                  ? "border-green-500 bg-green-100 shadow-md"
+                  : "border-gray-300 bg-white"
+                }`}
+              onClick={() => setSelected(temp)} // ✅ Clicking the whole div selects it
             >
               <button
-                onClick={() => setSelected(temp)}
-                className={`flex-1 text-left px-2 transition-all ${
-                  selected === temp
-                    ? "border-green-500 text-black bg-green-100"
-                    : "border-gray-300 text-gray-700"
-                }`}
+                className="flex-1 text-left px-2 bg-transparent focus:outline-none"
               >
                 {temp}
               </button>
@@ -133,11 +132,6 @@ const TemplateSelector = () => {
         )}
       </div>
 
-      {selected && (
-        <div className="mt-4 text-sm text-gray-700">
-          Selected Template: <strong>{selected}</strong>
-        </div>
-      )}
 
       {/* ✅ Show Delete button at the bottom */}
       <div className="flex gap-2 mt-4">

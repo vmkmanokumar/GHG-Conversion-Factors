@@ -3,77 +3,81 @@ import { Button } from "antd";
 
 export default function FooterForScopes({ pageChange, setPageChange, changeShope, setChangeShope }) {
 
-  console.log("ChangeShop", changeShope);
+  console.log("ChangeShope:", changeShope);
+  console.log("PageChange:", pageChange);
 
   return (
     <>
-      <div className="flex justify-center  gap-4 mt-6 w-full"> {/* Change justify-center to justify-start and width to w-full */}
-        {/* Show "Previous Page" button only if `pageChange` is greater than 0 and `changeShope` is 1 */}
-        {changeShope === 1 && (
+      <div className="flex justify-center sm:justify-start flex-wrap gap-3 sm:gap-4 mt-6 w-full px-4">
+        
+        {/* Move to Previous Scope */}
+        {changeShope > 0 && (
           <Button
             onClick={() => setChangeShope(changeShope - 1)}
-            className="bg-[#27A376] text-black border border-green-500 px-6 py-3 rounded-lg text-lg font-semibold flex hover:bg-green-600 focus:ring-0"
+            className="bg-[#27A376] text-black border border-green-500 
+                      px-4 sm:px-6 py-2 sm:py-3 rounded-lg 
+                      text-sm sm:text-lg font-semibold flex items-center 
+                      hover:bg-green-600 focus:ring-0"
           >
-            <ArrowLeftOutlined /> Move to Scope 1
+            <ArrowLeftOutlined className="mr-2" /> Move to Scope {changeShope}
           </Button>
         )}
 
-        {pageChange === 0 && changeShope === 2 && (
+        {/* Move to Previous Page */}
+        {pageChange > 0 && (
           <Button
-            onClick={() => {
-              setChangeShope(1);
-              setPageChange(0);
-            }}
-            className="bg-[#27A376] text-black border border-green-500 px-6 py-3 rounded-lg text-lg font-semibold flex items-center hover:bg-green-600 focus:ring-0"
-          >
-            <ArrowLeftOutlined /> Move to Scope 2
-          </Button>
-        )}
-
-        {pageChange > -1 && (
-          <Button
-            type="default"
             onClick={() => setPageChange(pageChange - 1)}
-            className="bg-[#27A376] text-black border border-green-500 px-6 py-3 rounded-lg text-lg font-semibold flex items-center hover:bg-green-600 focus:ring-0"
-            disabled={pageChange <= -1} // Disable button when `pageChange` is 0
+            className="bg-[#27A376] text-black border border-green-500 
+                      px-3 sm:px-5 py-2 sm:py-3 rounded-lg 
+                      text-sm sm:text-lg font-semibold flex items-center 
+                      hover:bg-green-600 focus:ring-0"
           >
-            <ArrowLeftOutlined className="text-black" />
+            <ArrowLeftOutlined />
           </Button>
         )}
 
-        {/* Show "Next Page" button only if `pageChange` is less than 3 */}
-        {pageChange < 3 && (
+        {/* Move to Next Page */}
+        {pageChange < 2 && (
           <Button
             onClick={() => setPageChange(pageChange + 1)}
-            className="bg-[#27A376] text-black border border-green-500 px-6 py-3 rounded-lg text-lg font-semibold flex items-center hover:bg-green-600 focus:ring-0"
-            disabled={pageChange >= 6} // Disable button when `pageChange` reaches 6
+            className="bg-[#27A376] text-black border border-green-500 
+                      px-3 sm:px-5 py-2 sm:py-3 rounded-lg 
+                      text-sm sm:text-lg font-semibold flex items-center 
+                      hover:bg-green-600 focus:ring-0"
           >
             <ArrowRightOutlined />
           </Button>
         )}
 
-        {/* Show "Move to Scope 2" button when `pageChange` is 3 and `changeShope` is 1 */}
-        {pageChange === 3 && changeShope === 0 && (
+        {/* Move to Scope 2 */}
+        {pageChange === 2 && changeShope === 0 && (
           <Button
             onClick={() => {
               setChangeShope(changeShope + 1);
               setPageChange(0);
             }}
-            className="bg-[#27A376] text-black border border-green-500 px-6 py-3 rounded-lg text-lg font-semibold flex items-center hover:bg-green-600 focus:ring-0"
+            className="bg-[#27A376] text-black border border-green-500 
+                      px-4 sm:px-6 py-2 sm:py-3 rounded-lg 
+                      text-sm sm:text-lg font-semibold flex items-center 
+                      hover:bg-green-600 focus:ring-0"
           >
-            Move to Scope 2 <ArrowRightOutlined />
+            Move to Scope 2 <ArrowRightOutlined className="ml-2" />
           </Button>
         )}
 
+        {/* Move to Scope 3 */}
         {pageChange === 3 && changeShope === 1 && (
           <Button
             onClick={() => {
               setChangeShope(changeShope + 1);
               setPageChange(0);
             }}
-            className="bg-[#27A376] text-black border border-green-500 px-6 py-3 rounded-lg text-lg font-semibold flex items-center hover:bg-green-600 focus:ring-0"
+            className="bg-[#27A376] text-black border border-green-500 
+                      px-4 sm:px-6 py-2 sm:py-3 rounded-lg 
+                      text-sm sm:text-lg font-semibold flex items-center 
+                      hover:bg-green-600 focus:ring-0"
           >
-            Move to Scope 3 <ArrowRightOutlined />
+            Move to Scope 3 <ArrowRightOutlined className="ml-2" />
           </Button>
         )}
       </div>

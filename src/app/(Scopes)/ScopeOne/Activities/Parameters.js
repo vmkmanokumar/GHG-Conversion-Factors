@@ -13,11 +13,12 @@ export default function Parameters() {
     fetchedParameters,
     setFetchedParameters,
     templatecontent,
+    selectedShift,
   } = useScopeOne();
 
   const [userId, setUserId] = useState("");
 
-  console.log("selec",selectedFuels)
+  console.log("selec", selectedFuels)
 
   const handleSubmit = async () => {
     if (!templatecontent.trim()) {
@@ -29,23 +30,23 @@ export default function Parameters() {
       const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/saveScope1", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ scope: "Scope 1", username: userId, templatecontent: templatecontent, templatesave: selectedFuels, shift_number: 1 }),
+        body: JSON.stringify({ scope: "Scope 1", username: userId, templatecontent: templatecontent, templatesave: selectedFuels, shift_number: selectedShift }),
       });
-    
+
       const data = await response.json();
-    
+
       if (data.message == false) {  // Check if response is an error
         alert(data.error); // Show error message
       } else {
         console.log("Scope 1 saved successfully:", data);
         alert("Scope 1 has been saved");
       }
-    
+
     } catch (error) {
       console.error("Error saving Scope 1:", error);
       alert("Failed to save. Please try again.");
     }
-    
+
   };
 
   useEffect(() => {
@@ -127,12 +128,15 @@ export default function Parameters() {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center bg-[#effbf7] w-full md:w-[768px] lg:w-[1152px] md:mx-auto mt-10 md:mt-16 lg:mt-10 p-4 md:p-6 rounded-xl shadow-lg flex-grow min-h-[515px]">
+    <div className="flex flex-col h-full justify-between items-center bg-[#effbf7] w-full md:w-[768px] lg:w-[1152px] md:mx-auto mt-10 md:mt-16 lg:mt-10 p-4 md:p-6 rounded-xl shadow-lg flex-grow min-h-[515px]">
+
+      {/* Title */}
       <div className="w-full mb-4">
-        <h1 className="text-2xl font-bold text-gray-800">Parameters</h1>
+        <h1 className="text-2xl font-bold">Parameters</h1>
       </div>
 
-      <div className="w-full min-h-[250px] flex-grow text-[22px]">
+      {/* Content Wrapper with flex-grow to push button down */}
+      <div className="w-full flex-grow min-h-[250px] text-[22px] overflow-auto">
         {Object.keys(fetchedParameters).map((category) => (
           <Disclosure key={category}>
             {({ open }) => (
@@ -206,9 +210,19 @@ export default function Parameters() {
             )}
           </Disclosure>
         ))}
-
-        <Button onClick={handleSubmit} className="mt-52 ml-[950]">Save Template</Button>
       </div>
+
+      {/* Save Template Button Fixed at Bottom */}
+      <div className="w-full flex justify-center mt-auto pt-6">
+        <Button
+          onClick={handleSubmit}
+          className="bg-[#91e6c7] text-black font-semibold text-lg md:text-xl py-2 px-6 md:py-3 md:px-8 rounded-lg shadow-md hover:bg-green-600 transition-all duration-300 w-full md:w-auto"
+        >
+          Save Template
+        </Button>
+      </div>
+
     </div>
+
   );
 }

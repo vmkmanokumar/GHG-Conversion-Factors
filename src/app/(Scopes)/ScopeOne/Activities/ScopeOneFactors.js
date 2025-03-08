@@ -119,7 +119,7 @@ export default function ScopeOneFactors({ pageChange }) {
               <p>Loading...</p>
             ) : activities.length > 0 ? (
               <Checkbox.Group onChange={handleCheckboxChange} value={checkedValuesScopeOne}>
-                <div className="flex flex-col gap-4 md:gap-5 lg:gap-6 mt-4 md:mt-6 lg:mt-8">
+                <div className="flex flex-col gap-4 md:gap-5 lg:gap-6 mt-4 md:mt-6 lg:mt-8 font-sherif">
                   {activities.map((item) => (
                     <Checkbox key={item.value} value={item.value} className="text-[22px]">
                       {item.name}
@@ -135,7 +135,7 @@ export default function ScopeOneFactors({ pageChange }) {
       )}
       {pageChange === 1 && <Chooseactivities />}
       {pageChange === 2 && <Parameters />}
-      {pageChange === 3 && <ParametersAndUnits />}
+      {/* {pageChange === 3 && <ParametersAndUnits />} */}
     </>
   );
 }

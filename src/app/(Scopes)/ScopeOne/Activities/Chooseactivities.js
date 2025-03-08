@@ -125,7 +125,7 @@ export default function ChooseActivities() {
     <div className="flex flex-col justify-center border-[#31CE95] items-center bg-[#effbf7] w-full md:w-[768px] lg:w-[1152px] md:mx-auto mt-10 md:mt-16 lg:mt-10 p-4 md:p-6 rounded-xl shadow-lg flex-grow min-h-[515px]">
       {/* Title */}
       <div className="w-full mb-4">
-        <h1 className="text-2xl font-bold text-gray-800">Activities</h1>
+        <h1 className="text-2xl font-black">Activities</h1>
       </div>
 
       {/* Disclosure Section */}
