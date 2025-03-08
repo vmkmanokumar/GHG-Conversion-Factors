@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Layout, Button, Typography, Drawer, DatePicker, Card, Statistic, Menu } from "antd";
+import { Layout, Button, Typography, Drawer, DatePicker, Card, Statistic, Menu, Flex } from "antd";
 import { MenuOutlined, FormOutlined, EditOutlined, TableOutlined, FileDoneOutlined, CheckCircleOutlined } from "@ant-design/icons";
-import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from "recharts";
+import { BarChart, Bar, LineChart, Line, XAxis,AreaChart,Area, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from "recharts";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -42,8 +42,8 @@ const dummyData = [
   { date: "2025-03-26", goodsProduced: 360, co2Emitted: 480, scope1: 340, scope2: 300 },
   { date: "2025-03-27", goodsProduced: 400, co2Emitted: 520, scope1: 370, scope2: 330 },
   { date: "2025-03-28", goodsProduced: 380, co2Emitted: 500, scope1: 360, scope2: 320 },
-  { date: "2025-03-29", goodsProduced: 420, co2Emitted: 840, scope1: 390, scope2: 350 },
-  { date: "2025-03-30", goodsProduced: 400, co2Emitted: 820, scope1: 380, scope2: 340 },
+  { date: "2025-03-29", goodsProduced: 420, co2Emitted: 540, scope1: 390, scope2: 350 },
+  { date: "2025-03-30", goodsProduced: 400, co2Emitted: 520, scope1: 380, scope2: 340 },
 ];
 
 const filterDataByDateRange = (data, startDate, endDate) => {
@@ -100,70 +100,139 @@ export default function Dashboard() {
         </Menu>
       </Drawer>
 
-      <Content className="p-4 sm:p-6 bg-white text-black">
+      <Content className="p-4 sm:p-6 bg-white text-black ">
         <h2 className="text-lg sm:text-xl">CO₂ Emission Dashboard</h2>
         <RangePicker className="mt-5 w-full sm:w-auto" defaultValue={dateRange} onChange={(dates) => setDateRange(dates || [dayjs().startOf("month"), dayjs().endOf("month")])} />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-5">
-          {[
-            { title: "Total Goods Produced", key: "goodsProduced", value: totalGoods },
-            { title: "Total CO₂ Emitted (kg)", key: "co2Emitted", value: totalCO2 },
-            { title: "Scope 1 Emissions", key: "scope1", value: totalScope1 },
-            { title: "Scope 2 Emissions", key: "scope2", value: totalScope2 },
-          ].map((item) => (
-            <Card
-              key={item.key}
-              className={`p-4 text-white rounded-lg shadow-lg ${
-                item.value < 200 ? "bg-[#82ca9d]" : item.value < 400 ? "bg-yellow-400" : "bg-red-400"
-              }`}
-            >
-              <Statistic
-                title={<span style={{ fontSize: "26px", fontWeight: "bold", color: "black" }}>{item.title}</span>}
-                value={item.value}
-                valueStyle={{ fontSize: "45px", color: "white" }}
-                className="font-semibold"
-              />
-            </Card>
-          ))}
-        </div>
-
-        <h3 className="text-lg sm:text-xl mt-8">Daily Goods Produced vs CO₂ Emitted</h3>
-        <ResponsiveContainer width="100%" height={300} className="mt-5">
-          <BarChart data={filteredData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey="goodsProduced" fill="#8884d8" name="Goods Produced" />
-            <Bar dataKey="co2Emitted" name="CO₂ Emitted">
-              {filteredData.map((entry, index) => {
-                let color = "#00c49f"; // Default green
-                if (entry.co2Emitted > 800) {
-                  color = "red";
-                } else if (entry.co2Emitted > 400) {
-                  color = "orange";
-                } else if (entry.co2Emitted > 200) {
-                  color = "yellow";
-                }
-                return <Cell key={`cell-${index}`} fill={color} />;
-              })}
-            </Bar>
-          </BarChart>
+        <div className="grid grid-cols-4 gap-5 mt-5">
+  {[
+    { title: "Total Goods Produced", key: "goodsProduced", value: totalGoods, color: "#72b2f2" },
+    { title: "Total CO₂ Emitted (kg)", key: "co2Emitted", value: totalCO2, color: "#f87171" },
+    { title: "Scope 1 Emissions", key: "scope1", value: totalScope1, color: "#f1f57f"},
+    { title: "Scope 2 Emissions", key: "scope2", value: totalScope2, color: "#f1f57f" },
+  ].map((item) => (
+    <Card
+      key={item.key}
+      className="relative p-5 text-white rounded-lg shadow-lg overflow-hidden"
+      style={{ backgroundColor: item.color }}
+    >
+      {/* Chart Container - Ensure interaction */}
+      <div className="absolute inset-0 z-0 pointer-events-auto mt-10 opacity-50">
+        <ResponsiveContainer width="100%" height={120}> {/* Fixed height */}
+          {item.key === "co2Emitted" ? (
+            // AreaChart for "Total CO₂ Emitted (kg)"
+            <AreaChart data={filteredData}>
+              <defs>
+                <linearGradient id="colorCO2" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="white" stopOpacity={1.8} />
+                  <stop offset="95%" stopColor="white" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <XAxis dataKey="date" hide />
+              <YAxis hide />
+              <Tooltip
+                      content={({ active, payload, label }) => {
+                        if (active && payload && payload.length) {
+                          return (
+                            <div className="bg-gray-800 p-2 rounded shadow-lg">
+                              <p className="text-sm">{`Date: ${label}`}</p>
+                              <p className="text-sm">{`${item.title}: ${payload[0].value}`}</p>
+                            </div>
+                          );
+                        }
+                        return null;
+                      }}
+                    />
+              <Area type="monotone" dataKey="co2Emitted" stroke="white" fill="url(#colorCO2)" strokeWidth={2} />
+            </AreaChart>
+          ) : (
+            // LineChart for other categories
+            <LineChart data={filteredData}>
+              <XAxis dataKey="date" hide />
+              <YAxis hide />
+              <Tooltip
+                      content={({ active, payload, label }) => {
+                        if (active && payload && payload.length) {
+                          return (
+                            <div className="bg-gray-800 text-white p-2 rounded shadow-lg">
+                              <p className="text-sm">{`Date: ${label}`}</p>
+                              <p className="text-sm">{`${item.title}: ${payload[0].value}`}</p>
+                            </div>
+                          );
+                        }
+                        return null;
+                      }}
+                    />
+              <Line type="monotone" dataKey={item.key} stroke="white" strokeWidth={2} />
+            </LineChart>
+          )}
         </ResponsiveContainer>
+      </div>
 
-        <h3 className="text-lg sm:text-xl mt-8">Cumulative Goods Produced & CO₂ Emissions</h3>
-        <ResponsiveContainer width="100%" height={300} className="mt-5">
-          <LineChart data={cumulativeData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Line type="monotone" dataKey="cumulativeGoods" stroke="#8884d8" name="Cumulative Goods" />
-            <Line type="monotone" dataKey="cumulativeCO2" stroke="#82ca9d" name="Cumulative CO₂" />
-          </LineChart>
-        </ResponsiveContainer>
+      {/* Card Content */}
+      <div className="relative z-10">
+        <Statistic
+          title={<span style={{ fontSize: "24px", color: "black" }}>{item.title}</span>}
+          value={item.value}
+          valueStyle={{ fontSize: "36px", color: "black", fontWeight: "bold" }}
+          className="font-semibold"
+        />
+      </div>
+    </Card>
+  ))}
+</div>
+
+
+
+
+<Flex className="w-full p-5 flex flex-col lg:flex-row gap-10 mt-10">
+  {/* Daily Goods Produced vs CO₂ Emitted */}
+  <div className="w-full lg:w-1/2">
+    <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4">
+      Daily Goods Produced vs CO₂ Emitted
+    </h3>
+    <div className="bg-white p-4 rounded-lg shadow-lg">
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart data={filteredData}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="date" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="goodsProduced" fill="#72b2f2" name="Goods Produced" />
+          <Bar dataKey="co2Emitted" name="CO₂ Emitted" fill="#f87171">
+            {filteredData.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill="#f87171" />
+            ))}
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  </div>
+
+  {/* Cumulative Goods Produced & CO₂ Emissions */}
+  <div className="w-full lg:w-1/2">
+    <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4">
+      Cumulative Goods Produced & CO₂ Emissions 
+    </h3>
+    <div className="bg-white p-4 rounded-lg shadow-lg">
+      <ResponsiveContainer width="100%" height={300}>
+        <LineChart data={cumulativeData}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="date"/>
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Line type="monotone" dataKey="cumulativeGoods" stroke="#72b2f2" name="Cumulative Goods" strokeWidth={2} />
+          <Line type="monotone" dataKey="cumulativeCO2" stroke="#f87171" name="Cumulative CO₂" strokeWidth={2} />
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
+  </div>
+</Flex>
+
+
+   
       </Content>
     </Layout>
   );
