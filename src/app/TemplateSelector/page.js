@@ -31,7 +31,7 @@ const TemplateSelector = () => {
       try {
         setLoading(true);
         const response = await fetch(
-          `http://127.0.0.1:5000/getTemplates?username=${userId}`,
+          `https://ghg-conversion-factors-backend.vercel.app/getTemplates?username=${userId}`,
           { method: "GET" }
         );
 
@@ -67,7 +67,7 @@ const TemplateSelector = () => {
     if (!window.confirm("Are you sure you want to delete the selected templates?")) return;
 
     try {
-      const response = await fetch("http://127.0.0.1:5000/deleteTemplates", {
+      const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/deleteTemplates", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: userId, templates: selectedTemplates }), // ✅ Ensure correct format
@@ -109,6 +109,7 @@ const TemplateSelector = () => {
           templates.map((temp) => (
             <div
               key={temp}
+<<<<<<< HEAD
               className={`flex justify-between items-center w-full mb-2 border-2 rounded-lg p-3 transition-all ${selected === temp
                   ? "border-green-500 bg-green-100 shadow-md"
                   : "border-gray-300 bg-white"
@@ -117,9 +118,20 @@ const TemplateSelector = () => {
             >
               <button
                 className="flex-1 text-left px-2 bg-transparent focus:outline-none"
+=======
+              className="flex justify-between items-center w-full mb-2 rounded-lg p-2"
+            >
+              <button
+                onClick={() => setSelected(temp)}
+                className={`w-full py-2 px-6 text-left transition-all rounded-md ${selected === temp
+                    ? "border border-green-500 bg-green-100 text-black"
+                    : "text-gray-700 border border-gray-300"
+                  }`}
+>>>>>>> origin/main
               >
                 {temp}
               </button>
+
 
               {showCheckboxes && (
                 <Checkbox

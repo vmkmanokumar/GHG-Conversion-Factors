@@ -7,10 +7,10 @@ import { useRouter } from "next/navigation";
 const TableView = () => {
   const [allEntries, setAllEntries] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
-  const [userId, setUserId] = useState("");
+  
   const [loading, setLoading] = useState(true); // ✅ Loading state
   const router = useRouter();
-
+  const [userId, setUserId] = useState("");
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedTemplate = localStorage.getItem("selectedTemplate");
