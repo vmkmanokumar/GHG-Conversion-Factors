@@ -2,24 +2,27 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Disclosure } from "@headlessui/react";
 import { ChevronDown } from "lucide-react";
-import { Input, Select } from "antd";
+import { Input, Select, Button } from "antd";
+import { motion } from "framer-motion";
 import { useScopeOne } from "../../Context/ScopeOneContext";
 
 const { Option } = Select;
 
 export default function ParametersAndUnits() {
-  const { selectedFuels, setSelectedFuels, userId,setUserId } = useScopeOne();
-  const [biogas, setBiogas] = useState([]); // Fix: Change to an array
+  const { selectedFuels, setSelectedFuels } = useScopeOne();
+  const [biogas, setBiogas] = useState([]);
 
   console.log("Selected Fuels:", selectedFuels);
 
-  // ✅ Fetch biogas data only once
   useEffect(() => {
     const fetchBiogasData = async () => {
       try {
-        const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/biogasData");
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-        
+        const response = await fetch(
+          "https://ghg-conversion-factors-backend.vercel.app/biogasData"
+        );
+        if (!response.ok)
+          throw new Error(`HTTP error! Status: ${response.status}`);
+
         const data = await response.json();
         setBiogas(data);
         console.log("Biogas Data:", data);
@@ -29,29 +32,25 @@ export default function ParametersAndUnits() {
     };
 
     fetchBiogasData();
-
   }, []);
 
   useEffect(() => {
     const templateSave = localStorage.getItem("templateSaves");
-    console.log("values",JSON.parse(templateSave))
     if (templateSave) {
-      setSelectedFuels(JSON.parse(templateSave)[0]);  // ✅ Parse JSON before setting
+      setSelectedFuels(JSON.parse(templateSave)[0]);
     }
   }, []);
 
- 
-
-
-
-  // ✅ Move `saveDraftData` outside `updateSelectedValues`
   const saveDraftData = async () => {
     try {
-      const response = await fetch(`https://ghg-conversion-factors-backend.vercel.app/saveParameter/vmkmano13@gmail.com`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(selectedFuels),
-      });
+      const response = await fetch(
+        `https://ghg-conversion-factors-backend.vercel.app/saveParameter/vmkmano13@gmail.com`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(selectedFuels),
+        }
+      );
 
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
@@ -61,100 +60,6 @@ export default function ParametersAndUnits() {
       console.error("Error saving draft:", error);
     }
   };
-
-
-  const getSaveParameters = useCallback(async () => {
-    try {
-      const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/getsaveParameters/vmkmano13@gmail.com", {
-        method: "GET",
-      });
-  
-      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-  
-      const data = await response.json();
-      console.log("Getting logs:", data.valuesunit);
-  
-      // Merge only `maxValue` into existing `selectedFuels`
-      setSelectedFuels((prev) => {
-        const updatedFuels = { ...prev };
-  
-        Object.keys(data.valuesunit).forEach((category) => {
-          if (!updatedFuels[category]) updatedFuels[category] = {};
-  
-          Object.keys(data.valuesunit[category]).forEach((item) => {
-            if (!updatedFuels[category][item]) updatedFuels[category][item] = {};
-  
-            Object.keys(data.valuesunit[category][item]).forEach((parameter) => {
-              if (!updatedFuels[category][item][parameter]) {
-                updatedFuels[category][item][parameter] = {};
-              }
-  
-              // Update only `maxValue`
-              updatedFuels[category][item][parameter].maxValue =
-                data.valuesunit[category][item][parameter].maxValue;
-            });
-          });
-        });
-  
-        return updatedFuels;
-      });
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  }, []); // No dependencies
-  
-
-
-  
-
-  // ✅ Prevent infinite loop with `useCallback`
-  const updateSelectedValues = useCallback(async () => {
-    if (Object.keys(selectedFuels).length === 0) return; // Avoid unnecessary calls
-
-    try {
-        const scopeList = [];
-
-        for (const category in selectedFuels) {
-            for (const item in selectedFuels[category]) {
-                for (const parameter in selectedFuels[category][item]) {
-                    if (selectedFuels[category][item][parameter].checked) {
-                        scopeList.push({
-                            scope: category,
-                            param: parameter,
-                            item: item,
-                            unit: selectedFuels[category][item][parameter]?.selectedValue,
-                            maxValue: selectedFuels[category][item][parameter]?.maxValue || "",  // ✅ Include maxValue
-                        });
-                    }
-                }
-            }
-        }
-
-        console.log("Scope List:", scopeList);
-
-        const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/selectedvalues", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(scopeList),
-        });
-
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-
-        const data = await response.json();
-        console.log("Update successful:", data);
-
-        // saveDraftData(); // ✅ Call `saveDraftData` only after success
-    
-    } catch (error) {
-        console.error("Error updating selected values:", error);
-    }
-}, [selectedFuels]); // ✅ Dependency on `selectedFuels`
-
-
-
-
-
-
 
   const handleChange = (category, item, parameter, field, value) => {
     setSelectedFuels((prev) => ({
@@ -173,88 +78,130 @@ export default function ParametersAndUnits() {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center bg-[#effbf7] w-full md:w-[768px] lg:w-[1152px] md:mx-auto mt-10 p-4 md:p-6 rounded-xl shadow-lg min-h-[515px]">
-      <div className="w-full mb-[300]">
-        <div className="w-full mb-4">
-          <h1 className="text-2xl font-bold text-gray-800 mr-[700]">Parameters Maximum Value</h1>
-        </div>
+    <div className="flex flex-col h-full justify-between items-center bg-[#effbf7] w-full md:w-[768px] lg:w-[1152px] md:mx-auto mt-10 md:mt-16 lg:mt-10 p-4 md:p-6 rounded-xl shadow-lg flex-grow min-h-[515px]">
+      {/* Title */}
+      <div className="w-full mb-4">
+        <h1 className="text-2xl font-bold text-gray-800">Parameters Maximum Value</h1>
+      </div>
 
-        <div className="w-full text-[22px]">
-          {Object.keys(selectedFuels).map((category) => (
-            <Disclosure key={category}>
-              {({ open }) => (
-                <div className="bg-[#BFF1DF] w-full mt-4 rounded-lg shadow-sm">
-                  <Disclosure.Button className="flex justify-between items-center w-full px-4 py-3 text-lg font-medium text-gray-700">
-                    <span>{category}</span>
-                    <ChevronDown className={`w-5 h-5 ${open ? "rotate-180" : "rotate-0"}`} />
-                  </Disclosure.Button>
+      {/* Content Wrapper */}
+      <div className="w-full flex-grow min-h-[250px] text-[22px] overflow-auto">
+        {Object.keys(selectedFuels).map((category) => (
+          <Disclosure key={category}>
+            {({ open }) => (
+              <div className="bg-[#BFF1DF] w-full mt-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                {/* Category Dropdown */}
+                <Disclosure.Button className="flex justify-between items-center w-full px-4 py-3 text-lg font-medium text-gray-700 focus:outline-none">
+                  <span>{category}</span>
+                  <ChevronDown
+                    className={`w-5 h-5 transition-transform ${open ? "rotate-180" : "rotate-0"}`}
+                  />
+                </Disclosure.Button>
 
-                  <Disclosure.Panel className="p-4 bg-[#effbf7] rounded-b-lg">
+                {/* Smooth Transition Panel */}
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: open ? "auto" : 0, opacity: open ? 1 : 0 }}
+                  transition={{ duration: 0.4, ease: "easeInOut" }}
+                  className="overflow-hidden"
+                >
+                  <Disclosure.Panel className="p-4 w-full bg-[#effbf7] rounded-b-lg">
                     {Object.keys(selectedFuels[category]).map((item, idx) => (
                       <Disclosure key={idx}>
                         {({ open }) => (
-                          <div className="mt-2">
-                            <Disclosure.Button className="flex justify-between items-center w-full px-3 py-2 bg-[#BFF1DF] text-gray-600 rounded-md">
-                              <span>{item}</span>
-                              <ChevronDown className={`w-4 h-4 ${open ? "rotate-180" : "rotate-0"}`} />
+                          <div className="w-full mt-2">
+                            {/* Item Dropdown */}
+                            <Disclosure.Button className="flex justify-between items-center w-full px-3 py-2 text-gray-600 bg-[#BFF1DF] rounded-md focus:outline-none transition-all duration-300">
+                              <span className="text-base">{item}</span>
+                              <ChevronDown
+                                className={`w-4 h-4 transition-transform ${open ? "rotate-180" : "rotate-0"}`}
+                              />
                             </Disclosure.Button>
 
-                            <Disclosure.Panel className="p-2 bg-[#effbf7] rounded-md mt-1 text-gray-500">
-                              {Object.keys(selectedFuels[category][item])
-                                .filter((parameter) => selectedFuels[category][item][parameter]?.checked)
-                                .map((parameter) => {
-                                  const fuelData = biogas.find((b) => b.name === parameter);
+                            {/* Smooth Transition for Item Panel */}
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: open ? "auto" : 0, opacity: open ? 1 : 0 }}
+                              transition={{ duration: 0.3, ease: "easeInOut" }}
+                              className="overflow-hidden"
+                            >
+                              <Disclosure.Panel className="p-2 bg-[#effbf7] rounded-md mt-1 text-gray-500">
+                                {Object.keys(selectedFuels[category][item])
+                                  .filter((parameter) => selectedFuels[category][item][parameter]?.checked)
+                                  .map((parameter) => {
+                                    const fuelData = biogas.find((b) => b.name === parameter);
 
-                                  return (
-                                    <div key={parameter} className="p-0 shadow-md">
-                                      <Disclosure>
-                                        {({ open }) => (
-                                          <div>
-                                            <Disclosure.Button className="flex justify-between items-center w-full mt-2 px-3 py-2 bg-[#CBF4E5] text-gray-700 rounded-md">
-                                              <span className="text-sm">{parameter}</span>
-                                              <ChevronDown className={`w-4 h-4 ${open ? "rotate-180" : "rotate-0"}`} />
-                                            </Disclosure.Button>
-
-                                            <Disclosure.Panel className="p-2 bg-white rounded-lg mt-1">
-                                              <div className="flex items-center gap-4">
-                                                <Input
-                                                  placeholder="Enter max value"
-                                                  className="w-[344px] border-emerald-400"
-                                                  value={selectedFuels[category]?.[item]?.[parameter]?.maxValue || ""}
-                                                  onChange={(e) => handleChange(category, item, parameter, "maxValue", e.target.value)}
+                                    return (
+                                      <div key={parameter} className="p-0 shadow-md">
+                                        <Disclosure>
+                                          {({ open }) => (
+                                            <div>
+                                              {/* Parameter Dropdown */}
+                                              <Disclosure.Button className="flex justify-between items-center w-full mt-2 px-3 py-2 bg-[#CBF4E5] text-gray-700 rounded-md">
+                                                <span className="text-sm">{parameter}</span>
+                                                <ChevronDown
+                                                  className={`w-4 h-4 transition-transform ${open ? "rotate-180" : "rotate-0"}`}
                                                 />
+                                              </Disclosure.Button>
 
-                                                <Select
-                                                  className="w-[410px] border-black"
-                                                  placeholder="Select unit"
-                                                  value={selectedFuels[category]?.[item]?.[parameter]?.selectedValue || undefined}
-                                                  onChange={(unit) => handleChange(category, item, parameter, "selectedValue", unit)}
-                                                >
-                                                  {fuelData?.values?.map((unit) => (
-                                                    <Option key={unit} value={unit}>
-                                                      {unit}
-                                                    </Option>
-                                                  ))}
-                                                </Select>
-                                              </div>
-                                            </Disclosure.Panel>
-                                          </div>
-                                        )}
-                                      </Disclosure>
-                                    </div>
-                                  );
-                                })}
-                            </Disclosure.Panel>
+                                              {/* Parameter Panel */}
+                                              <Disclosure.Panel className="p-2 bg-white rounded-lg mt-1">
+                                                <div className="flex items-center gap-4">
+                                                  {/* Max Value Input */}
+                                                  <Input
+                                                    placeholder="Enter max value"
+                                                    className="w-[344px] border-emerald-400"
+                                                    value={selectedFuels[category]?.[item]?.[parameter]?.maxValue || ""}
+                                                    onChange={(e) =>
+                                                      handleChange(category, item, parameter, "maxValue", e.target.value)
+                                                    }
+                                                  />
+
+                                                  {/* Unit Selection */}
+                                                  <Select
+                                                    className="w-[410px] border-black"
+                                                    placeholder="Select unit"
+                                                    value={selectedFuels[category]?.[item]?.[parameter]?.selectedValue || undefined}
+                                                    onChange={(unit) =>
+                                                      handleChange(category, item, parameter, "selectedValue", unit)
+                                                    }
+                                                  >
+                                                    {fuelData?.values?.map((unit) => (
+                                                      <Option key={unit} value={unit}>
+                                                        {unit}
+                                                      </Option>
+                                                    ))}
+                                                  </Select>
+                                                </div>
+                                              </Disclosure.Panel>
+                                            </div>
+                                          )}
+                                        </Disclosure>
+                                      </div>
+                                    );
+                                  })}
+                              </Disclosure.Panel>
+                            </motion.div>
                           </div>
                         )}
                       </Disclosure>
                     ))}
                   </Disclosure.Panel>
-                </div>
-              )}
-            </Disclosure>
-          ))}
-        </div>
+                </motion.div>
+              </div>
+            )}
+          </Disclosure>
+        ))}
+      </div>
+
+      {/* Save Changes Button */}
+      <div className="w-full flex justify-center mt-auto pt-6">
+        <Button
+          onClick={saveDraftData}
+          className="bg-[#91e6c7] text-black font-bold text-lg md:text-xl py-2 px-6 md:py-6 md:px-6 rounded-lg shadow-md hover:bg-white transition-all duration-300 w-full md:w-auto"
+        >
+          Save Changes
+        </Button>
       </div>
     </div>
   );

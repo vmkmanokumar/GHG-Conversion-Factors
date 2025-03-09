@@ -109,6 +109,16 @@ const TemplateSelector = () => {
           templates.map((temp) => (
             <div
               key={temp}
+<<<<<<< HEAD
+              className={`flex justify-between items-center w-full mb-2 border-2 rounded-lg p-3 transition-all ${selected === temp
+                  ? "border-green-500 bg-green-100 shadow-md"
+                  : "border-gray-300 bg-white"
+                }`}
+              onClick={() => setSelected(temp)} // ✅ Clicking the whole div selects it
+            >
+              <button
+                className="flex-1 text-left px-2 bg-transparent focus:outline-none"
+=======
               className="flex justify-between items-center w-full mb-2 rounded-lg p-2"
             >
               <button
@@ -117,6 +127,7 @@ const TemplateSelector = () => {
                     ? "border border-green-500 bg-green-100 text-black"
                     : "text-gray-700 border border-gray-300"
                   }`}
+>>>>>>> origin/main
               >
                 {temp}
               </button>
@@ -133,11 +144,6 @@ const TemplateSelector = () => {
         )}
       </div>
 
-      {selected && (
-        <div className="mt-4 text-sm text-gray-700">
-          Selected Template: <strong>{selected}</strong>
-        </div>
-      )}
 
       {/* ✅ Show Delete button at the bottom */}
       <div className="flex gap-2 mt-4">
