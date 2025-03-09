@@ -210,19 +210,6 @@ export default function Parameters() {
             )}
           </Disclosure>
         ))}
-<<<<<<< HEAD
-=======
-
-<div className="w-full flex justify-center md:justify-end mt-[300]">
-<Button 
-  onClick={handleSubmit} 
-  type="primary" 
-  className="!bg-green-600 !border-green-700 !text-white"
->
-  Save Template
-</Button>
-</div>
->>>>>>> origin/main
       </div>
 
       {/* Save Template Button Fixed at Bottom */}

@@ -109,7 +109,6 @@ const TemplateSelector = () => {
           templates.map((temp) => (
             <div
               key={temp}
-<<<<<<< HEAD
               className={`flex justify-between items-center w-full mb-2 border-2 rounded-lg p-3 transition-all ${selected === temp
                   ? "border-green-500 bg-green-100 shadow-md"
                   : "border-gray-300 bg-white"
@@ -118,16 +117,6 @@ const TemplateSelector = () => {
             >
               <button
                 className="flex-1 text-left px-2 bg-transparent focus:outline-none"
-=======
-              className="flex justify-between items-center w-full mb-2 rounded-lg p-2"
-            >
-              <button
-                onClick={() => setSelected(temp)}
-                className={`w-full py-2 px-6 text-left transition-all rounded-md ${selected === temp
-                    ? "border border-green-500 bg-green-100 text-black"
-                    : "text-gray-700 border border-gray-300"
-                  }`}
->>>>>>> origin/main
               >
                 {temp}
               </button>
