@@ -7,6 +7,7 @@ import { BarChart, Bar, LineChart, Line, XAxis,AreaChart,Area, YAxis, CartesianG
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import TemplateSelector from "../TemplateSelector/page";
 
 const { Header, Content } = Layout;
 const { Title } = Typography;
@@ -56,6 +57,7 @@ const filterDataByDateRange = (data, startDate, endDate) => {
 export default function Dashboard() {
   const router = useRouter();
   const [drawerVisible, setDrawerVisible] = useState(false);
+  const [openEditTemplate, setOpenEditTemplate] = useState(false);
   const [dateRange, setDateRange] = useState([dayjs().startOf("month"), dayjs().endOf("month")]);
   const [userId, setUserId] = useState("");
 
@@ -81,6 +83,10 @@ export default function Dashboard() {
     return { date: item.date, cumulativeGoods, cumulativeCO2 };
   });
 
+  const onClose = () => {
+    setOpenEditTemplate(false);
+  };
+
   return (
     <Layout className="h-screen bg-white text-black">
       <Header className="shadow-md flex items-center px-4 sm:px-6 h-[80px] bg-white text-black">
@@ -92,7 +98,7 @@ export default function Dashboard() {
       <Drawer title="Menu" placement="left" onClose={() => setDrawerVisible(false)} visible={drawerVisible} className="bg-white">
         <Menu>
           <Menu.Item icon={<FormOutlined />}><Link href="/ScopeOne">Create Template</Link></Menu.Item>
-          <Menu.Item icon={<EditOutlined />}><Link href="/TemplateSelector">Edit Template</Link></Menu.Item>
+          <Menu.Item icon={<EditOutlined />} onClick={()=>setOpenEditTemplate(true)}>Edit Template</Menu.Item>
           <Menu.Item icon={<TableOutlined />}><Link href="/ScopeOne">Enter Actual Data</Link></Menu.Item>
           <Menu.Item icon={<FileDoneOutlined />}><Link href="/ScopeOne">Enter Target Data</Link></Menu.Item>
           <Menu.Item icon={<CheckCircleOutlined />}><Link href="/ScopeOne">Validate Actual Data</Link></Menu.Item>
@@ -231,7 +237,15 @@ export default function Dashboard() {
   </div>
 </Flex>
 
-
+      <Drawer
+        title="Edit Template"
+        placement={"right"}
+        closable={false}
+        onClose={onClose}
+        open={openEditTemplate}
+      >
+        <TemplateSelector/>
+        </Drawer>
    
       </Content>
     </Layout>
