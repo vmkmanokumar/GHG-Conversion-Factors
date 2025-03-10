@@ -13,7 +13,9 @@ export function ScopeOneProvider({ children }) {
     const [fetchedParameters, setFetchedParameters] = useState({});
     const[userId,setUserId] = useState("")
     const [templatecontent, settemplatecontent] = useState("");
-    const [selectedShift, setSelectedShift] = useState(""); // 🔹 Add shift state
+    const [selectedShift, setSelectedShift] = useState("");
+     // 🔹 Add shift state
+     const [editTemplate, setEditTemplate] = useState("Edit");
 
     return (
 
@@ -32,7 +34,8 @@ export function ScopeOneProvider({ children }) {
                 activities,
                 setActivities,
                 fetchedParameters,
-                setFetchedParameters
+                setFetchedParameters,
+                editTemplate, setEditTemplate
             }}>
             {children}
 

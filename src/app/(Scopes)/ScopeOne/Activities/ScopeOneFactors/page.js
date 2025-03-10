@@ -1,13 +1,13 @@
 "use client";
 
 import { Checkbox } from "antd";
-import Chooseactivities from "./Chooseactivities";
-import { useScopeOne } from "../Context/ScopeOneContext";
-import Parameters from "./Parameters";
+import Chooseactivities from "../Chooseactivities";
+import { useScopeOne } from "../../Context/ScopeOneContext";
+import Parameters from "../Parameters";
 import { useEffect, useState } from "react";
-import ParametersAndUnits from "./parameterAndUnit/page";
-import "./Styles/ScopeOneFactors.css";
-import CreateTempName from "./CreareTempName";
+import ParametersAndUnits from "../parameterAndUnit/page";
+import "../Styles/ScopeOneFactors.css";
+import CreateTempName from "../CreareTempName";
 
 export default function ScopeOneFactors({ pageChange }) {
   const {

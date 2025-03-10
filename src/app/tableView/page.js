@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Table, Button, Space, Skeleton } from "antd"; // ✅ Import Skeleton
 import { useRouter } from "next/navigation";
+import NavBar from "@/Componants/NavBar";
 
 const TableView = () => {
   const [allEntries, setAllEntries] = useState([]);
@@ -11,6 +12,8 @@ const TableView = () => {
   const [loading, setLoading] = useState(true); // ✅ Loading state
   const router = useRouter();
   const [userId, setUserId] = useState("");
+
+  console.log("Id number",allEntries.map((err)=>err.id))
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedTemplate = localStorage.getItem("selectedTemplate");
@@ -46,6 +49,16 @@ const TableView = () => {
     router.push("/ScopeOne/Activities/parameterAndUnit");
   };
 
+  const goToUpdateParameter = () => {
+    localStorage.setItem(
+      "UpdateingTemp", 
+      JSON.stringify(allEntries.map(entry => entry.templatesave))
+    );
+    localStorage.setItem("templatename",  JSON.stringify(allEntries.map(entry => entry.templatecontent)));
+  
+    router.push("/ScopeOne");
+  };
+  
   const columns = [
     { title: "User ID", dataIndex: "username", key: "username" },
     { title: "Template Name", dataIndex: "templatecontent", key: "templatecontent" },
@@ -59,15 +72,12 @@ const TableView = () => {
       title: "Actions",
       key: "actions",
       render: (_, record) => (
-        <Space direction="vertical" size="small">
+        <Space direction="horizontal" size="small">
           <Button type="primary" block onClick={() => goToParameterAndUnit(record)}>
             Go to Parameter and Unit
           </Button>
-          <Button type="default" block>
+          <Button type="primary" block onClick={()=>goToUpdateParameter()}>
             Edit
-          </Button>
-          <Button danger block>
-            Delete
           </Button>
         </Space>
       ),
@@ -75,6 +85,8 @@ const TableView = () => {
   ];
 
   return (
+    <>
+    <NavBar></NavBar>
     <div className="flex flex-col items-center mt-6 w-full px-4 sm:px-10">
       <h2 className="text-lg sm:text-xl font-semibold mb-4 text-center">
         Viewing Entries for: <strong>{selectedTemplate || "No Template Selected"}</strong>
@@ -94,6 +106,7 @@ const TableView = () => {
         />
       )}
     </div>
+    </>
   );
 };
 

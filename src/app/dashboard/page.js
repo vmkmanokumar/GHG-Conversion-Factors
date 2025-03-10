@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Layout, Button, Typography, Drawer, DatePicker, Card, Statistic, Menu, Flex } from "antd";
+import { Layout, Button, Typography, Drawer, DatePicker, Card, Statistic, Menu, Flex,Avatar ,Popover} from "antd";
 import { MenuOutlined, FormOutlined, EditOutlined, TableOutlined, FileDoneOutlined, CheckCircleOutlined } from "@ant-design/icons";
 import { BarChart, Bar, LineChart, Line, XAxis,AreaChart,Area, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from "recharts";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import TemplateSelector from "../TemplateSelector/page";
+
+import NavBar from "@/Componants/NavBar";
 
 const { Header, Content } = Layout;
 const { Title } = Typography;
@@ -59,14 +60,7 @@ export default function Dashboard() {
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [openEditTemplate, setOpenEditTemplate] = useState(false);
   const [dateRange, setDateRange] = useState([dayjs().startOf("month"), dayjs().endOf("month")]);
-  const [userId, setUserId] = useState("");
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const userName = localStorage.getItem("username");
-      if (userName) setUserId(userName);
-    }
-  }, []);
 
   const filteredData = filterDataByDateRange(dummyData, dateRange[0], dateRange[1]);
 
@@ -83,19 +77,13 @@ export default function Dashboard() {
     return { date: item.date, cumulativeGoods, cumulativeCO2 };
   });
 
-  const onClose = () => {
-    setOpenEditTemplate(false);
-  };
+
 
   return (
     <Layout className="h-screen bg-white text-black">
-      <Header className="shadow-md flex items-center px-4 sm:px-6 h-[80px] bg-white text-black">
-        <Button icon={<MenuOutlined />} type="text" onClick={() => setDrawerVisible(true)} className="text-xl mr-4 text-gray-800" />
-        <Title level={3} className="m-0 flex-1 mt-3 text-lg sm:text-xl">Dashboard</Title>
-        <span className="mr-4 text-sm sm:text-base">{userId}</span>
-      </Header>
-
-      <Drawer title="Menu" placement="left" onClose={() => setDrawerVisible(false)} visible={drawerVisible} className="bg-white">
+  
+      <NavBar></NavBar>
+      <Drawer title="Menu" placement="left" onClose={() => setDrawerVisible(false)} open={drawerVisible} className="bg-white">
         <Menu>
           <Menu.Item icon={<FormOutlined />}><Link href="/ScopeOne">Create Template</Link></Menu.Item>
           <Menu.Item icon={<EditOutlined />} onClick={()=>setOpenEditTemplate(true)}>Edit Template</Menu.Item>
@@ -105,9 +93,9 @@ export default function Dashboard() {
           <Menu.Item icon={<CheckCircleOutlined />}><Link href="/ScopeOne">Validate Target Data</Link></Menu.Item>
         </Menu>
       </Drawer>
-
+{/* <h1>hahkdj</h1> */}
       <Content className="p-4 sm:p-6 bg-white text-black ">
-        <h2 className="text-lg sm:text-xl">CO₂ Emission Dashboard</h2>
+        <h2 className="text-lg font-semibold sm:text-xl ">CO₂ Emission Dashboard</h2>
         <RangePicker className="mt-5 w-full sm:w-auto" defaultValue={dateRange} onChange={(dates) => setDateRange(dates || [dayjs().startOf("month"), dayjs().endOf("month")])} />
 
         <div className="grid grid-cols-4 gap-5 mt-5">
@@ -237,15 +225,6 @@ export default function Dashboard() {
   </div>
 </Flex>
 
-      <Drawer
-        title="Edit Template"
-        placement={"right"}
-        closable={false}
-        onClose={onClose}
-        open={openEditTemplate}
-      >
-        <TemplateSelector/>
-        </Drawer>
    
       </Content>
     </Layout>

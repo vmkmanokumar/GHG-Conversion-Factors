@@ -8,7 +8,10 @@ export default function CreateTempName() {
     settemplatecontent,
     selectedShift,
     setSelectedShift,
+    editTemplate, setEditTemplate
   } = useScopeOne();
+
+  
 
   return (
     <div className="flex flex-col justify-center items-center bg-[#effbf7] w-full max-w-4xl mx-auto mt-6 p-10 rounded-4xl shadow-lg min-h-[550px]">

@@ -1,5 +1,5 @@
 "use client"
-import ScopeOneFactors from "./Activities/ScopeOneFactors";
+import ScopeOneFactors from "./Activities/ScopeOneFactors/page";
 
 
 export default function ScopeOneSelection({pageChange,onChange}){
