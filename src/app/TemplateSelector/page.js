@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Button, Skeleton, message, Checkbox } from "antd";
+import { Button, Skeleton, message, Checkbox,Modal } from "antd";
 
 const TemplateSelector = () => {
   const [templates, setTemplates] = useState([]);
@@ -12,6 +12,7 @@ const TemplateSelector = () => {
   const [showCheckboxes, setShowCheckboxes] = useState(false);
   const [selectedTemplates, setSelectedTemplates] = useState([]);
   const router = useRouter();
+  const [messageApi, contextHolder] = message.useMessage();
 
   // Load user ID from localStorage
   useEffect(() => {
@@ -22,6 +23,13 @@ const TemplateSelector = () => {
       }
     }
   }, []);
+
+  const error = () => {
+    messageApi.open({
+      type: 'error',
+      content: 'This is an error message',
+    });
+  };
 
   // Fetch templates after userId is set
   useEffect(() => {
@@ -57,14 +65,31 @@ const TemplateSelector = () => {
     );
   };
 
+  const handleDelete = () => {
+    Modal.confirm({
+      title: "Are you sure you want to delete the selected templates?",
+      content: "This action cannot be undone.",
+      okText: "Yes, Delete",
+      cancelText: "Cancel",
+      okType: "danger",
+      onOk() {
+        console.log("Templates deleted");
+        // Your delete logic here
+      },
+      onCancel() {
+        console.log("Delete canceled");
+      },
+    });
+  };
+
   // ✅ Handle Delete multiple templates
   const handleDeleteTemplates = async () => {
     if (selectedTemplates.length === 0) {
-      message.error("Please select at least one template to delete.");
+      error();
       return;
     }
 
-    if (!window.confirm("Are you sure you want to delete the selected templates?")) return;
+    if (handleDelete()) return;
 
     try {
       const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/deleteTemplates", {
@@ -85,7 +110,7 @@ const TemplateSelector = () => {
     } catch (error) {
       console.error("Error deleting templates:", error);
       message.error("An error occurred while deleting the templates.");
-    }
+    }   
   };
 
 

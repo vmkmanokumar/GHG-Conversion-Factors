@@ -96,8 +96,16 @@ export default function Dashboard() {
 {/* <h1>hahkdj</h1> */}
       <Content className="p-4 sm:p-6 bg-white text-black ">
         <h2 className="text-lg font-semibold sm:text-xl ">CO₂ Emission Dashboard</h2>
-        <RangePicker className="mt-5 w-full sm:w-auto" defaultValue={dateRange} onChange={(dates) => setDateRange(dates || [dayjs().startOf("month"), dayjs().endOf("month")])} />
-
+        <div className="flex justify-center sm:justify-start mt-5">
+      <RangePicker
+        className="w-full sm:w-auto p-2 border border-gray-300 rounded-lg shadow-md hover:border-blue-500 focus:border-blue-600 transition duration-300 ease-in-out"
+        defaultValue={dateRange}
+        onChange={(dates) =>
+          setDateRange(dates || [dayjs().startOf("month"), dayjs().endOf("month")])
+        }
+        allowClear
+      />
+    </div>
         <div className="grid grid-cols-4 gap-5 mt-5">
   {[
     { title: "Total Goods Produced", key: "goodsProduced", value: totalGoods, color: "#72b2f2" },
@@ -111,15 +119,15 @@ export default function Dashboard() {
       style={{ backgroundColor: item.color }}
     >
       {/* Chart Container - Ensure interaction */}
-      <div className="absolute inset-0 z-0 pointer-events-auto mt-10 opacity-20">
+      <div className="absolute inset-0 z-0 pointer-events-auto mt-10 opacity-90">
         <ResponsiveContainer width="100%" height={120}> {/* Fixed height */}
           {item.key === "co2Emitted" ? (
             // AreaChart for "Total CO₂ Emitted (kg)"
-            <AreaChart data={filteredData}>
+            <AreaChart data={filteredData} className="mt-10 w-[100] ">
               <defs>
-                <linearGradient id="colorCO2" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="black" stopOpacity={1.8} />
-                  <stop offset="95%" stopColor="white" stopOpacity={0} />
+                <linearGradient id="colorCO2" x1="1" y1="0" x2="10" y2="10" className="">
+                  <stop offset="0%" stopColor=" #ff9999" stopOpacity={1} />
+                  <stop offset="95%" stopColor="black" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <XAxis dataKey="date" hide />
@@ -128,7 +136,7 @@ export default function Dashboard() {
                       content={({ active, payload, label }) => {
                         if (active && payload && payload.length) {
                           return (
-                            <div className="bg-gray-800 p-2 rounded shadow-lg">
+                            <div className="bg-gray-800 p-2 rounded shadow-lg opacity-80">
                               <p className="text-sm">{`Date: ${label}`}</p>
                               <p className="text-sm">{`${item.title}: ${payload[0].value}`}</p>
                             </div>
@@ -137,7 +145,7 @@ export default function Dashboard() {
                         return null;
                       }}
                     />
-              <Area type="monotone" dataKey="co2Emitted" stroke="black" fill="url(#colorCO2)" strokeWidth={2} />
+              <Area type="monotone" dataKey="co2Emitted" stroke="#ff9999" fill="url(#colorCO2)" strokeWidth={2} />
             </AreaChart>
           ) : (
             // LineChart for other categories
@@ -157,7 +165,7 @@ export default function Dashboard() {
                         return null;
                       }}
                     />
-              <Line type="monotone" dataKey={item.key} stroke="black" strokeWidth={2} />
+              <Line type="monotone" dataKey={item.key} stroke="white" strokeWidth={2} />
             </LineChart>
           )}
         </ResponsiveContainer>

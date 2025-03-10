@@ -52,10 +52,10 @@ export default function NavBar(){
 
         <>
         
-        <Header className="drop-shadow-md flex items-center px-4 sm:px-6 h-[80px] bg-white text-black">
-        <Button icon={<MenuOutlined />} type="text" onClick={() => setDrawerVisible(true)} className="text-xl mr-4 text-gray-800" />
-        <Title level={3} className="m-0 flex-1 mt-3 text-lg sm:text-xl">Dashboard</Title>
-        <Popover content={popoverContent} trigger="hover">
+        <Header className="drop-shadow-md  m-10 flex items-center px-4 sm:px-6 h-[100px] bg-white text-black">
+        <Button icon={<MenuOutlined />} type="text" onClick={() => setDrawerVisible(true)} className="text-xl mr-4 mt-1 text-gray-800" />
+        <Title level={3} className="ml-10 flex-1 mt-4 text-lg sm:text-xl">Dashboard</Title>
+        <Popover content={popoverContent} trigger="hover" className="mt-4 mr-5">
       <span className="mr-4 text-sm sm:text-base shadow-xl rounded-full size-10 cursor-pointer">
         <Avatar
           style={{ backgroundColor: "blue", verticalAlign: "middle", cursor: "pointer" }}

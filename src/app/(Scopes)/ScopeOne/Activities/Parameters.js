@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Disclosure } from "@headlessui/react";
 import { ChevronDown } from "lucide-react";
-import { Button, Checkbox, Radio } from "antd";
+import { Button, Checkbox, Radio, message } from "antd";
 import { useScopeOne } from "../Context/ScopeOneContext";
 import { motion } from "framer-motion";
 
@@ -16,13 +16,14 @@ export default function Parameters() {
     selectedShift,
   } = useScopeOne();
 
+  const [messageApi, contextHolder] = message.useMessage();
   const [userId, setUserId] = useState("");
 
-  console.log("selec", selectedFuels)
+  console.log("Selected Fuels:", selectedFuels);
 
   const handleSubmit = async () => {
     if (!templatecontent.trim()) {
-      alert("Please enter a template name.");
+      messageApi.warning("Please enter a template name.");
       return;
     }
 
@@ -30,23 +31,27 @@ export default function Parameters() {
       const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/saveScope1", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ scope: "Scope 1", username: userId, templatecontent: templatecontent, templatesave: selectedFuels, shift_number: selectedShift }),
+        body: JSON.stringify({ 
+          scope: "Scope 1", 
+          username: userId, 
+          templatecontent, 
+          templatesave: selectedFuels, 
+          shift_number: selectedShift 
+        }),
       });
 
       const data = await response.json();
 
       if (data.message == false) {  // Check if response is an error
-        alert(data.error); // Show error message
+        messageApi.error(data.error); // Show error message
       } else {
         console.log("Scope 1 saved successfully:", data);
-        alert("Scope 1 has been saved");
+        messageApi.success("Scope 1 has been saved");
       }
-
     } catch (error) {
       console.error("Error saving Scope 1:", error);
-      alert("Failed to save. Please try again.");
+      messageApi.error("Failed to save. Please try again.");
     }
-
   };
 
   useEffect(() => {
@@ -61,7 +66,6 @@ export default function Parameters() {
   useEffect(() => {
     if (userId) {
       fetchData();
-      // loadScopeOneDraft();
     }
   }, [userId]);
 
@@ -128,101 +132,78 @@ export default function Parameters() {
   };
 
   return (
-    <div className="flex flex-col h-full justify-between items-center bg-[#effbf7] w-full md:w-[768px] lg:w-[1152px] md:mx-auto mt-10 md:mt-16 lg:mt-10 p-4 md:p-6 rounded-xl shadow-lg flex-grow min-h-[515px]">
+    <>
+      {contextHolder} {/* Ant Design Message Context */}
+      <div className="flex flex-col h-full justify-between items-center bg-[#effbf7] w-full md:w-[768px] lg:w-[1152px] md:mx-auto mt-10 md:mt-16 lg:mt-10 p-4 md:p-6 rounded-xl shadow-lg flex-grow min-h-[515px]">
 
-      {/* Title */}
-      <div className="w-full mb-4">
-        <h1 className="text-2xl font-bold">Parameters</h1>
+        {/* Title */}
+        <div className="w-full mb-4">
+          <h1 className="text-2xl font-bold">Parameters</h1>
+        </div>
+
+        {/* Content Wrapper */}
+        <div className="w-full flex-grow min-h-[250px] text-[22px] overflow-auto">
+          {Object.keys(fetchedParameters).map((category) => (
+            <Disclosure key={category}>
+              {({ open }) => (
+                <div className="bg-[#BFF1DF] w-full mt-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                  <Disclosure.Button className="flex justify-between items-center w-full px-4 py-3 text-lg font-medium text-gray-700 focus:outline-none">
+                    <span>{category}</span>
+                    <ChevronDown className={`w-5 h-5 transition-transform ${open ? "rotate-180" : "rotate-0"}`} />
+                  </Disclosure.Button>
+
+                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: open ? "auto" : 0, opacity: open ? 1 : 0 }} transition={{ duration: 0.4, ease: "easeInOut" }} className="overflow-hidden">
+                    <Disclosure.Panel className="p-4 w-full bg-[#effbf7] rounded-b-lg">
+                      {Object.keys(fetchedParameters[category])?.map((item, idx) => (
+                        <Disclosure key={idx}>
+                          {({ open }) => (
+                            <div className="w-full mt-2">
+                              <Disclosure.Button className="flex justify-between items-center w-full px-3 py-2 text-gray-600 bg-[#BFF1DF] rounded-md focus:outline-none transition-all duration-300">
+                                <span className="text-base">{item}</span>
+                                <ChevronDown className={`w-4 h-4 transition-transform ${open ? "rotate-180" : "rotate-0"}`} />
+                              </Disclosure.Button>
+
+                              <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: open ? "auto" : 0, opacity: open ? 1 : 0 }} transition={{ duration: 0.3, ease: "easeInOut" }} className="overflow-hidden">
+                                <Disclosure.Panel className="p-2 bg-[#effbf7] rounded-md mt-1 text-gray-500">
+                                  {Object.keys(fetchedParameters[category][item])?.map((parameter, idx) => (
+                                    <div key={`${parameter}-${idx}`} className="flex flex-col p-2 rounded-lg">
+                                      <Checkbox checked={selectedFuels[category]?.[item]?.[parameter]?.checked || false} onChange={() => handleClick("checkbox", parameter, item, category)} className="font-semibold text-gray-700">
+                                        {parameter}
+                                      </Checkbox>
+
+                                      {selectedFuels[category]?.[item]?.[parameter]?.checked && (
+                                        <Radio.Group className="ml-10 mt-2" value={selectedFuels[category]?.[item]?.[parameter]?.selectedValue} onChange={(e) => handleClick("radio", parameter, item, category, e.target.value)}>
+                                          {fetchedParameters[category][item][parameter]?.units.map((unit, radioIdx) => (
+                                            <Radio key={`${parameter}-${unit}-${radioIdx}`} value={unit}>
+                                              {unit}
+                                            </Radio>
+                                          ))}
+                                        </Radio.Group>
+                                      )}
+                                    </div>
+                                  ))}
+                                </Disclosure.Panel>
+                              </motion.div>
+                            </div>
+                          )}
+                        </Disclosure>
+                      ))}
+                    </Disclosure.Panel>
+                  </motion.div>
+                </div>
+              )}
+            </Disclosure>
+          ))}
+        </div>
+
+        {/* Save Button */}
+        <div className="w-full flex justify-center mt-auto pt-6">
+          <Button onClick={handleSubmit} className="bg-[#91e6c7] text-black font-semibold text-lg py-2 px-6 rounded-lg shadow-md hover:bg-green-600 transition-all duration-300">
+            Save Template
+          </Button>
+        </div>
+
       </div>
-
-      {/* Content Wrapper with flex-grow to push button down */}
-      <div className="w-full flex-grow min-h-[250px] text-[22px] overflow-auto">
-        {Object.keys(fetchedParameters).map((category) => (
-          <Disclosure key={category}>
-            {({ open }) => (
-              <div className="bg-[#BFF1DF] w-full mt-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                {/* Main Category Button */}
-                <Disclosure.Button className="flex justify-between items-center w-full px-4 py-3 text-lg font-medium text-gray-700 focus:outline-none">
-                  <span>{category}</span>
-                  <ChevronDown className={`w-5 h-5 transition-transform ${open ? "rotate-180" : "rotate-0"}`} />
-                </Disclosure.Button>
-
-                {/* Smooth Transition for Panel */}
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: open ? "auto" : 0, opacity: open ? 1 : 0 }}
-                  transition={{ duration: 0.4, ease: "easeInOut" }}
-                  className="overflow-hidden"
-                >
-                  <Disclosure.Panel className="p-4 w-full bg-[#effbf7] rounded-b-lg">
-                    {Object.keys(fetchedParameters[category])?.map((item, idx) => (
-                      <Disclosure key={idx}>
-                        {({ open }) => (
-                          <div className="w-full mt-2">
-                            {/* Subcategory Button */}
-                            <Disclosure.Button className="flex justify-between items-center w-full px-3 py-2 text-gray-600 bg-[#BFF1DF] rounded-md focus:outline-none transition-all duration-300">
-                              <span className="text-base">{item}</span>
-                              <ChevronDown className={`w-4 h-4 transition-transform ${open ? "rotate-180" : "rotate-0"}`} />
-                            </Disclosure.Button>
-
-                            {/* Smooth Transition for Subcategory Panel */}
-                            <motion.div
-                              initial={{ height: 0, opacity: 0 }}
-                              animate={{ height: open ? "auto" : 0, opacity: open ? 1 : 0 }}
-                              transition={{ duration: 0.3, ease: "easeInOut" }}
-                              className="overflow-hidden"
-                            >
-                              <Disclosure.Panel className="p-2 bg-[#effbf7] rounded-md mt-1 text-gray-500">
-                                {Object.keys(fetchedParameters[category][item])?.map((parameter, idx) => (
-                                  <div key={`${parameter}-${idx}`} className="flex flex-col p-2 rounded-lg">
-                                    <Checkbox
-                                      checked={selectedFuels[category]?.[item]?.[parameter]?.checked || false}
-                                      onChange={() => handleClick("checkbox", parameter, item, category)}
-                                      className="font-semibold text-gray-700"
-                                    >
-                                      {parameter}
-                                    </Checkbox>
-
-                                    {selectedFuels[category]?.[item]?.[parameter]?.checked && (
-                                      <Radio.Group
-                                        className="ml-10 mt-2"
-                                        value={selectedFuels[category]?.[item]?.[parameter]?.selectedValue}
-                                        onChange={(e) => handleClick("radio", parameter, item, category, e.target.value)}
-                                      >
-                                        {fetchedParameters[category][item][parameter]?.units.map((unit, radioIdx) => (
-                                          <Radio key={`${parameter}-${unit}-${radioIdx}`} value={unit}>
-                                            {unit}
-                                          </Radio>
-                                        ))}
-                                      </Radio.Group>
-                                    )}
-                                  </div>
-                                ))}
-                              </Disclosure.Panel>
-                            </motion.div>
-                          </div>
-                        )}
-                      </Disclosure>
-                    ))}
-                  </Disclosure.Panel>
-                </motion.div>
-              </div>
-            )}
-          </Disclosure>
-        ))}
-      </div>
-
-      {/* Save Template Button Fixed at Bottom */}
-      <div className="w-full flex justify-center mt-auto pt-6">
-        <Button
-          onClick={handleSubmit}
-          className="bg-[#91e6c7] text-black font-semibold text-lg md:text-xl py-2 px-6 md:py-3 md:px-8 rounded-lg shadow-md hover:bg-green-600 transition-all duration-300 w-full md:w-auto"
-        >
-          Save Template
-        </Button>
-      </div>
-
-    </div>
-
+    </>
   );
 }
