@@ -12,6 +12,8 @@ export default function ParametersAndUnits() {
   const { selectedFuels, setSelectedFuels } = useScopeOne();
   const [biogas, setBiogas] = useState([]);
 
+
+
   console.log("Selected Fuels:", selectedFuels);
 
   useEffect(() => {
@@ -78,7 +80,7 @@ export default function ParametersAndUnits() {
   };
 
   return (
-    <div className="flex flex-col h-full justify-between items-center bg-[#effbf7] w-full md:w-[768px] lg:w-[1152px] md:mx-auto mt-10 md:mt-16 lg:mt-10 p-4 md:p-6 rounded-xl shadow-lg flex-grow min-h-[515px]">
+    <div className="flex flex-col  justify-between items-center bg-[#effbf7] w-full md:w-[768px] lg:w-[652px] md:mx-auto mt-10 md:mt-16 lg:mt-10 p-4 md:p-6 rounded-xl shadow-lg flex-grow min-h-[515px]">
       {/* Title */}
       <div className="w-full mb-4">
         <h1 className="text-2xl font-bold text-gray-800">Parameters Maximum Value</h1>
@@ -89,7 +91,7 @@ export default function ParametersAndUnits() {
         {Object.keys(selectedFuels).map((category) => (
           <Disclosure key={category}>
             {({ open }) => (
-              <div className="bg-[#BFF1DF] w-full mt-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+              <div className="bg-[#BFF1DF] w-full mt-4 rounded-lg shadow-sm  transition-shadow">
                 {/* Category Dropdown */}
                 <Disclosure.Button className="flex justify-between items-center w-full px-4 py-3 text-lg font-medium text-gray-700 focus:outline-none">
                   <span>{category}</span>
@@ -125,27 +127,25 @@ export default function ParametersAndUnits() {
                               transition={{ duration: 0.3, ease: "easeInOut" }}
                               className="overflow-hidden"
                             >
-                              <Disclosure.Panel className="p-2 bg-[#effbf7] rounded-md mt-1 text-gray-500">
+                              <Disclosure.Panel className="p-2 bg-[#effbf7] mt-1 text-gray-500">
                                 {Object.keys(selectedFuels[category][item])
                                   .filter((parameter) => selectedFuels[category][item][parameter]?.checked)
                                   .map((parameter) => {
                                     const fuelData = biogas.find((b) => b.name === parameter);
 
                                     return (
-                                      <div key={parameter} className="p-0 shadow-md">
+                                      <div key={parameter} className="p-0">
                                         <Disclosure>
                                           {({ open }) => (
                                             <div>
                                               {/* Parameter Dropdown */}
-                                              <Disclosure.Button className="flex justify-between items-center w-full mt-2 px-3 py-2 bg-[#CBF4E5] text-gray-700 rounded-md">
+                                              <Disclosure.Button className="flex justify-between items-center w-full mt-2 px-3 py-2 bg-[#CBF4E5] text-gray-700">
                                                 <span className="text-sm">{parameter}</span>
-                                                <ChevronDown
-                                                  className={`w-4 h-4 transition-transform ${open ? "rotate-180" : "rotate-0"}`}
-                                                />
+                        
                                               </Disclosure.Button>
 
                                               {/* Parameter Panel */}
-                                              <Disclosure.Panel className="p-2 bg-white rounded-lg mt-1">
+                                              <div className="p-2 bg-[#CBF4E5]">
                                                 <div className="flex items-center gap-4">
                                                   {/* Max Value Input */}
                                                   <Input
@@ -159,7 +159,7 @@ export default function ParametersAndUnits() {
 
                                                   {/* Unit Selection */}
                                                   <Select
-                                                    className="w-[410px] border-black"
+                                                    className="w-[410px] border-black m-1"
                                                     placeholder="Select unit"
                                                     value={selectedFuels[category]?.[item]?.[parameter]?.selectedValue || undefined}
                                                     onChange={(unit) =>
@@ -173,7 +173,7 @@ export default function ParametersAndUnits() {
                                                     ))}
                                                   </Select>
                                                 </div>
-                                              </Disclosure.Panel>
+                                              </div>
                                             </div>
                                           )}
                                         </Disclosure>
@@ -195,14 +195,21 @@ export default function ParametersAndUnits() {
       </div>
 
       {/* Save Changes Button */}
-      <div className="w-full flex justify-center mt-auto pt-6">
-        <Button
-          onClick={saveDraftData}
-          className="bg-[#91e6c7] text-black font-bold text-lg md:text-xl py-2 px-6 md:py-6 md:px-6 rounded-lg shadow-md hover:bg-white transition-all duration-300 w-full md:w-auto"
-        >
-          Save Changes
-        </Button>
-      </div>
+      <div className="w-full flex justify-center mt-auto">
+  <button
+    onClick={saveDraftData}
+    className="px-6 py-3 md:px-8 md:py-3 
+               text-lg md:text-xl font-medium text-white 
+               bg-green-500 rounded-md shadow-md 
+               hover:bg-green-600 transition-all duration-300"
+  >
+    Save Changes
+  </button>
+</div>
+
+
     </div>
   );
 }
+
+

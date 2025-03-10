@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Table, Button, Space, Skeleton } from "antd"; // ✅ Import Skeleton
+import { Table, Button, Space, Skeleton ,Drawer} from "antd"; // ✅ Import Skeleton
 import { useRouter } from "next/navigation";
 import NavBar from "@/Componants/NavBar";
+import ParametersAndUnits from "../(Scopes)/ScopeOne/Activities/parameterAndUnit/page";
 
 const TableView = () => {
   const [allEntries, setAllEntries] = useState([]);
@@ -12,6 +13,18 @@ const TableView = () => {
   const [loading, setLoading] = useState(true); // ✅ Loading state
   const router = useRouter();
   const [userId, setUserId] = useState("");
+
+
+  const [open, setOpen] = useState(false);
+  const [size, setSize] = useState();
+
+  // const showLargeDrawer = () => {
+  //   setSize('large');
+  //   setOpen(true);
+  // };
+  const onClose = () => {
+    setOpen(false);
+  };
 
   console.log("Id number",allEntries.map((err)=>err.id))
   useEffect(() => {
@@ -44,9 +57,11 @@ const TableView = () => {
     fetchAllEntries();
   }, [userId]);
 
-  const goToParameterAndUnit = () => {
+  const showLargeDrawer = () => {
     localStorage.setItem("templateSaves", JSON.stringify(allEntries.map(entry => entry.templatesave)));
-    router.push("/ScopeOne/Activities/parameterAndUnit");
+    setSize('large');
+    setOpen(true);
+    // router.push("/ScopeOne/Activities/parameterAndUnit");
   };
 
   const goToUpdateParameter = () => {
@@ -54,7 +69,8 @@ const TableView = () => {
       "UpdateingTemp", 
       JSON.stringify(allEntries.map(entry => entry.templatesave))
     );
-    localStorage.setItem("templatename",  JSON.stringify(allEntries.map(entry => entry.templatecontent)));
+    localStorage.setItem("templatecontent",  JSON.stringify(allEntries.map(entry => entry.templatecontent)));
+    localStorage.setItem("templatID",  JSON.stringify(allEntries.map(entry => entry.id)));
   
     router.push("/ScopeOne");
   };
@@ -73,7 +89,7 @@ const TableView = () => {
       key: "actions",
       render: (_, record) => (
         <Space direction="horizontal" size="small">
-          <Button type="primary" block onClick={() => goToParameterAndUnit(record)}>
+          <Button type="primary" block onClick={() => showLargeDrawer()}>
             Go to Parameter and Unit
           </Button>
           <Button type="primary" block onClick={()=>goToUpdateParameter()}>
@@ -106,6 +122,24 @@ const TableView = () => {
         />
       )}
     </div>
+
+    <Drawer
+        title={`${size} Drawer`}
+        placement="right"
+        size={size}
+        onClose={onClose}
+        open={open}
+        extra={
+          <Space>
+            <Button onClick={onClose}>Cancel</Button>
+            <Button type="primary" onClick={onClose}>
+              OK
+            </Button>
+          </Space>
+        }
+      >
+        <ParametersAndUnits></ParametersAndUnits>
+      </Drawer>
     </>
   );
 };

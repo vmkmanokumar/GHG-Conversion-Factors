@@ -14,7 +14,7 @@ export default function ScopeOneFactors({ pageChange }) {
     checkedValuesScopeOne,
     setCheckedValuesScopeOne,
     activities,
-    setActivities,userId,setUserId
+    setActivities,userId,setUserId,editTemplate, setEditTemplate
   } = useScopeOne();
 
   console.log("scopeFacoter",userId);
