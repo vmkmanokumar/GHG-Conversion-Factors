@@ -15,7 +15,7 @@ export function ScopeOneProvider({ children }) {
     const [templatecontent, settemplatecontent] = useState("");
     const [selectedShift, setSelectedShift] = useState("");
      // 🔹 Add shift state
-     const [editTemplate, setEditTemplate] = useState("Edit");
+     const [editTemplate, setEditTemplate] = useState("Create");
 
     return (
 

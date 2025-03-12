@@ -29,7 +29,7 @@ export default function ScopeOneSelectionpage() {
     {changeShope === 1 && <ScopeTwoSelection pageChange={pageChange} />}
     {changeShope === 2 && <ScopeThreeSelection pageChange={pageChange} />}
   </Col>
-
+    
   <Col span={25}>
     <FooterForScopes pageChange={pageChange} setPageChange={setPageChange} changeShope={changeShope} setChangeShope={setChangeShope} />
   </Col>

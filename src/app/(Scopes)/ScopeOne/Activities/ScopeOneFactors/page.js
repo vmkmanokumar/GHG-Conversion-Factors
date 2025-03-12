@@ -17,7 +17,8 @@ export default function ScopeOneFactors({ pageChange }) {
     setActivities,userId,setUserId,editTemplate, setEditTemplate
   } = useScopeOne();
 
-  console.log("scopeFacoter",userId);
+  console.log(editTemplate)
+
   
   // const [userId, setUserId] = useState("");
   const [loading, setLoading] = useState(true); // Add loading state
@@ -29,7 +30,21 @@ export default function ScopeOneFactors({ pageChange }) {
       const storedUserId = localStorage.getItem("username");
       if (storedUserId) setUserId(storedUserId);
     }
+    if(editTemplate === "Edit"){
+      const UpdateingTemp = localStorage.getItem("UpdateingTemp") 
+
+      if(UpdateingTemp){
+        const parse = JSON.parse(UpdateingTemp)
+        const temp =  Object.entries(parse).map(key => key)
+        console.log(temp)
+      }
+
+    }
+
+
   }, []);
+
+
 
   const fetchFactors = async () => {
     try {

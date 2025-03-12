@@ -1,6 +1,7 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { useScopeOne } from "../Context/ScopeOneContext";
+// import { aw } from "framer-motion/dist/types.d-6pKw1mTI";
 
 export default function CreateTempName() {
   const {
@@ -8,8 +9,24 @@ export default function CreateTempName() {
     settemplatecontent,
     selectedShift,
     setSelectedShift,
+    userId,
     editTemplate, setEditTemplate
   } = useScopeOne();
+
+
+  console.log("edit temp",editTemplate)
+
+  
+  useEffect(() => {
+    if (editTemplate === "Edit") {
+      const storedData = localStorage.getItem("templatecontent");
+
+      if (storedData) {
+        const parsedData = JSON.parse(storedData); // Convert to array
+        settemplatecontent(parsedData); // Store full array in state
+      }
+    }
+  }, [editTemplate])
 
   
 

@@ -5,8 +5,14 @@ import { Table, Button, Space, Skeleton ,Drawer} from "antd"; // ✅ Import Skel
 import { useRouter } from "next/navigation";
 import NavBar from "@/Componants/NavBar";
 import ParametersAndUnits from "../(Scopes)/ScopeOne/Activities/parameterAndUnit/page";
+import { useScopeOne } from "../(Scopes)/ScopeOne/Context/ScopeOneContext";
 
 const TableView = () => {
+
+  const { editTemplate, setEditTemplate} = useScopeOne();
+
+  
+
   const [allEntries, setAllEntries] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   
@@ -18,10 +24,6 @@ const TableView = () => {
   const [open, setOpen] = useState(false);
   const [size, setSize] = useState();
 
-  // const showLargeDrawer = () => {
-  //   setSize('large');
-  //   setOpen(true);
-  // };
   const onClose = () => {
     setOpen(false);
   };
@@ -65,6 +67,7 @@ const TableView = () => {
   };
 
   const goToUpdateParameter = () => {
+    setEditTemplate("Edit")
     localStorage.setItem(
       "UpdateingTemp", 
       JSON.stringify(allEntries.map(entry => entry.templatesave))
@@ -92,7 +95,9 @@ const TableView = () => {
           <Button type="primary" block onClick={() => showLargeDrawer()}>
             Go to Parameter and Unit
           </Button>
-          <Button type="primary" block onClick={()=>goToUpdateParameter()}>
+          <Button type="primary" block onClick={()=>goToUpdateParameter()
+                 
+          }>
             Edit
           </Button>
         </Space>

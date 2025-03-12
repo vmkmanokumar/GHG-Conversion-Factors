@@ -108,15 +108,15 @@ export default function Dashboard() {
     </div>
         <div className="grid grid-cols-4 gap-5 mt-5">
   {[
-    { title: "Total Goods Produced", key: "goodsProduced", value: totalGoods, color: "#72b2f2" },
-    { title: "Total CO₂ Emitted (kg)", key: "co2Emitted", value: totalCO2, color: "#f87171" },
-    { title: "Scope 1 Emissions", key: "scope1", value: totalScope1, color: "#ffff80"},
-    { title: "Scope 2 Emissions", key: "scope2", value: totalScope2, color: "#ffff80" },
+    { title: "Total Goods Produced", key: "goodsProduced", value: totalGoods, color: "linear-gradient(185deg, rgba(205,233,255,1) 0%, rgba(131,202,255,1) 66%)" },
+    { title: "Total CO₂ Emitted (kg)", key: "co2Emitted", value: totalCO2, color: " linear-gradient(185deg, rgba(255,240,205,1) 23%, rgba(226,177,145,1) 91%)" },
+    { title: "Scope 1 Emissions", key: "scope1", value: totalScope1, color: "linear-gradient(185deg, rgba(255, 255, 205, 1) 0%, rgba(255, 255, 131, 1) 66%)"},
+    { title: "Scope 2 Emissions", key: "scope2", value: totalScope2, color: "linear-gradient(185deg, rgba(255, 255, 205, 1) 0%, rgba(255, 255, 131, 1) 66%)" },
   ].map((item) => (
     <Card
       key={item.key}
       className="relative p-5 text-white rounded-lg shadow-lg overflow-hidden"
-      style={{ backgroundColor: item.color }}
+      style={{ background: item.color }}
     >
       {/* Chart Container - Ensure interaction */}
       <div className="absolute inset-0 z-0 pointer-events-auto mt-10 opacity-90">
@@ -126,7 +126,7 @@ export default function Dashboard() {
             <AreaChart data={filteredData} className="mt-10 w-[100] ">
               <defs>
                 <linearGradient id="colorCO2" x1="1" y1="0" x2="10" y2="10" className="">
-                  <stop offset="0%" stopColor=" #ff9999" stopOpacity={1} />
+                  {/* <stop offset="0%" stopColor="white" stopOpacity={1} /> */}
                   <stop offset="95%" stopColor="black" stopOpacity={0} />
                 </linearGradient>
               </defs>
@@ -145,7 +145,7 @@ export default function Dashboard() {
                         return null;
                       }}
                     />
-              <Area type="monotone" dataKey="co2Emitted" stroke="#ff9999" fill="url(#colorCO2)" strokeWidth={2} />
+              <Area type="monotone" dataKey="co2Emitted" stroke="white" fill="url(#colorCO2)" strokeWidth={2} />
             </AreaChart>
           ) : (
             // LineChart for other categories
