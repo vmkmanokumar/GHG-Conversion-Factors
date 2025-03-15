@@ -15,6 +15,7 @@ export function ScopeOneProvider({ children }) {
     const [templatecontent, settemplatecontent] = useState("");
     const [selectedShift, setSelectedShift] = useState("");
     // 🔹 Add shift state
+    const [data, setData] = useState([]); // data entry page
     const [editTemplate, setEditTemplate] = useState("Create");
     const [allEntries, setAllEntries] = useState([]);
     const [fetchedCheckedValues, setFetchedCheckedValues] = useState([]);
@@ -24,7 +25,7 @@ export function ScopeOneProvider({ children }) {
         <ScopeOneContext.Provider
 
             value={{
-                userId, setUserId, allEntries, setAllEntries,
+                userId, setUserId, allEntries, setAllEntries,data, setData,
                 templatecontent, settemplatecontent,
                 selectedShift, setSelectedShift,
                 checkedValuesScopeOne,

@@ -2,7 +2,9 @@
 
 
 
-
+body {
+  overflow: auto !important; /* Ensure modal is visible */
+}
 
 
 body {

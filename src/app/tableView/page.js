@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Table, Button, Space, Skeleton, Drawer } from "antd"; // ✅ Import Skeleton
+import { Table, Button, Space, Skeleton, Drawer ,Modal} from "antd"; // ✅ Import Skeleton
 import { useRouter } from "next/navigation";
 import NavBar from "@/Componants/NavBar";
 import ParametersAndUnits from "../(Scopes)/ScopeOne/Activities/parameterAndUnit/page";
@@ -63,6 +63,14 @@ const TableView = () => {
     setOpen(true);
   };
 
+  const goToEnterData =()=>{
+    localStorage.setItem("UpdateingTemp", JSON.stringify(allEntries.map(entry => entry.templatesave)));
+    localStorage.setItem("templatecontent", JSON.stringify(allEntries.map(entry => entry.templatecontent)));
+    localStorage.setItem("templatID", JSON.stringify(allEntries.map(entry => entry.id)));
+    router.push("/DataEntery")
+
+  }
+
   const goToUpdateParameter = () => {
     setEditTemplate("Edit");
     localStorage.setItem("UpdateingTemp", JSON.stringify(allEntries.map(entry => entry.templatesave)));
@@ -87,8 +95,11 @@ const TableView = () => {
       key: "actions",
       render: (_, record) => (
         <Space direction="horizontal" size="small">
-          <Button type="primary" block onClick={showLargeDrawer}>
+          {/* <Button type="primary" block onClick={showLargeDrawer}>
             Go to Parameter and Unit
+          </Button> */}
+          <Button type="primary" block onClick={goToEnterData}>
+            EnterData
           </Button>
           <Button type="primary" block onClick={goToUpdateParameter}>
             Edit

@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Layout, Card, Statistic, Menu, Flex, DatePicker } from "antd";
 import { FormOutlined, EditOutlined, TableOutlined, FileDoneOutlined, CheckCircleOutlined } from "@ant-design/icons";
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell,AreaChart,Area } from "recharts";
 import dayjs from "dayjs";
 import Link from "next/link";
 import NavBar from "@/Componants/NavBar";
+
+import { useScopeOne } from "../(Scopes)/ScopeOne/Context/ScopeOneContext";
 
 const { Content } = Layout;
 const { RangePicker } = DatePicker;
@@ -44,17 +46,68 @@ const dummyData = [
   { date: "2025-03-30", goodsProduced: 400, co2Emitted: 520, scope1: 380, scope2: 340 },
 ]; 
 
-const filterDataByDateRange = (data, startDate, endDate) => {
-  return data.filter((item) => {
-    const itemDate = dayjs(item.date);
-    return itemDate.isAfter(startDate.subtract(1, "day")) && itemDate.isBefore(endDate.add(1, "day"));
-  });
-};
+
 
 export default function Dashboard() {
+  const [data, setData] = useState([]);
   const [dateRange, setDateRange] = useState([dayjs().startOf("month"), dayjs().endOf("month")]);
+  // const {data} = useScopeOne()
+  
 
-  const filteredData = filterDataByDateRange(dummyData, dateRange[0], dateRange[1]);
+  console.log("data change",typeof(data))
+
+  const Dashboard_Data = async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:5000/api/DashBoardData", {
+        method: "GET",
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+  
+      const res = await response.json();
+      console.log("Response from Dashboard API:", res);
+  
+      return Array.isArray(res) ? res : []; // Ensure result is an array
+    } catch (error) {
+      console.error("Error fetching dashboard data:", error);
+      return []; // Return empty array instead of null to avoid errors
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await Dashboard_Data();
+
+      if (result.length > 0) { // Ensure there is data before mapping
+        const formattedData = result.map((item) => ({
+          date: item.date,
+          goodsProduced: parseInt(item.goodsProduced, 10) || 0,
+          co2Emitted: parseInt(item.co2Emitted, 10) || 0,
+          scope1: parseInt(item.scope1, 10) || 0,
+          scope2: parseInt(item.scope2, 10) || 0,
+        }));
+
+        console.log("Formatted Data:", formattedData);
+        setData(formattedData);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // console.log("get from data entery page",data)
+
+
+  const filterDataByDateRange = (data, startDate, endDate) => {
+    return data.filter((item) => {
+      const itemDate = dayjs(item.date);
+      return itemDate.isAfter(startDate.subtract(1, "day")) && itemDate.isBefore(endDate.add(1, "day"));
+    });
+  };
+
+  const filteredData = filterDataByDateRange(data, dateRange[0], dateRange[1]);
 
   const totalGoods = filteredData.reduce((sum, item) => sum + item.goodsProduced, 0);
   const totalCO2 = filteredData.reduce((sum, item) => sum + item.co2Emitted, 0);
@@ -68,6 +121,10 @@ export default function Dashboard() {
     cumulativeCO2 += item.co2Emitted;
     return { date: item.date, cumulativeGoods, cumulativeCO2 };
   });
+
+  useEffect(() => {
+    console.log("Updated Data:", data);
+  }, [data]);
 
   return (
     <Layout className="h-screen bg-white text-black">
