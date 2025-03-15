@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-// import { Disclosure } from "@headlessui/react";
 import { Checkbox } from "antd";
 import { Disclosure } from "@headlessui/react";
 import { ChevronDown } from "lucide-react";
@@ -9,34 +8,36 @@ import { motion } from "framer-motion";
 import { useScopeOne } from "../Context/ScopeOneContext";
 
 export default function ChooseActivities() {
-  const { checkedValuesScopeOne, selectedValuesScopeOne, setSelectedValuesScopeOne } =
-    useScopeOne();
+  const {
+    checkedValuesScopeOne,
+    selectedValuesScopeOne,
+    setSelectedValuesScopeOne,
+    fetchedCheckedValues,
+    editTemplate,
+  } = useScopeOne();
 
-    const [activities, setActivities] = useState([])
-
-  const [userId, setUserId] = useState(null);
+  const [activities, setActivities] = useState({});
   const debounceSave = useRef(null);
 
-  // Fetch `userId` only on the client-side
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setUserId(localStorage.getItem("username") || "");
-    }
-  }, []);
-
-  console.log("From Activities Page - Checked Values:", activities);
+  console.log("fetchedCheckedValues from activity page:", fetchedCheckedValues);
+  console.log("From Activities Page - Checked Values:", checkedValuesScopeOne);
 
   // Fetch available activities based on checked scope factors
   const FetchActivities = async () => {
-    if (!checkedValuesScopeOne || checkedValuesScopeOne.length === 0) {
+    let checkedValuesStr = "";
+
+    if (editTemplate === "Edit" && fetchedCheckedValues?.length > 0) {
+      checkedValuesStr = fetchedCheckedValues.map(encodeURIComponent).join(",");
+    } else if (checkedValuesScopeOne?.length > 0) {
+      checkedValuesStr = checkedValuesScopeOne.map(encodeURIComponent).join(",");
+    } else {
       console.log("No checked values, skipping fetch.");
       return;
     }
 
-    try {
-      const checkedValuesStr = checkedValuesScopeOne.map(encodeURIComponent).join(",");
-      console.log("Fetching activities for:", checkedValuesStr);
+    console.log("Fetching activities for:", checkedValuesStr);
 
+    try {
       const response = await fetch(
         `https://ghg-conversion-factors-backend.vercel.app/scope_activities/${checkedValuesStr}`,
         { method: "GET", headers: { "Content-Type": "application/json" } }
@@ -50,28 +51,6 @@ export default function ChooseActivities() {
       setActivities(data);
     } catch (error) {
       console.error("Error fetching scope activities:", error);
-    }
-  };
-
-  // Save selected activities to PostgreSQL (Debounced)
-  const saveActivitiesToDraft = async (updatedData) => {
-    if (!userId) return; // Avoid API call if userId is not set
-
-    try {
-      const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/save_scope_one_draft", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          user_id: userId,
-          activities: updatedData,
-        }),
-      });
-
-      if (!response.ok) throw new Error("Failed to save data");
-
-      console.log("Activities saved successfully!");
-    } catch (error) {
-      console.error("Error saving activities:", error);
     }
   };
 
@@ -96,30 +75,9 @@ export default function ChooseActivities() {
     });
   };
 
-  // Fetch saved activities from PostgreSQL when page loads
-  const fetchSavedActivities = async () => {
-    if (!userId) return; // Ensure userId is available
-
-    try {
-      const response = await fetch(`https://ghg-conversion-factors-backend.vercel.app/get_scope_one_draft/${userId}`);
-      if (!response.ok) throw new Error("Failed to fetch saved data");
-
-      const data = await response.json();
-      // setSelectedValuesScopeOne(data.activities || {});  
-    } catch (error) {
-      console.error("Error loading saved activities:", error);
-    }
-  };
-
-  useEffect(() => {
-    if (userId) {
-      fetchSavedActivities();
-    }
-  }, [userId]); // Fetch saved data when userId is available
-
   useEffect(() => {
     FetchActivities();
-  }, [checkedValuesScopeOne]); // Fetch new activities when checkboxes change
+  }, [checkedValuesScopeOne, fetchedCheckedValues]); // Fetch new activities when checkboxes change
 
   return (
     <div className="flex flex-col justify-center border-[#31CE95] items-center bg-[#effbf7] w-full md:w-[768px] lg:w-[1152px] md:mx-auto mt-10 md:mt-16 lg:mt-10 p-4 md:p-6 rounded-xl shadow-lg flex-grow min-h-[515px]">
@@ -131,7 +89,11 @@ export default function ChooseActivities() {
       {/* Disclosure Section */}
       <div className="w-full min-h-[250px] flex-grow text-[22px]">
         {Object.keys(activities).map((key) => {
-          if (!checkedValuesScopeOne.includes(key)) return null; // Only display if category is checked
+          const shouldDisplay = editTemplate === "Edit"
+            ? fetchedCheckedValues.includes(key)
+            : checkedValuesScopeOne.includes(key);
+
+          if (!shouldDisplay) return null; // Only display if category is checked
 
           return (
             <Disclosure key={key}>
@@ -142,7 +104,7 @@ export default function ChooseActivities() {
                     <span>{key}</span>
                     <ChevronDown className={`w-5 h-5 transition-transform ${open ? "rotate-180" : "rotate-0"}`} />
                   </Disclosure.Button>
-          
+
                   {/* Smoothly Expanding Panel */}
                   <motion.div
                     initial={{ height: 0, opacity: 0 }}

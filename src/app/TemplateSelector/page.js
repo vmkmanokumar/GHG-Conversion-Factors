@@ -117,13 +117,20 @@ const TemplateSelector = () => {
   // ✅ Handle Next button click
   const handleNext = () => {
     if (selected) {
+      
       localStorage.setItem("selectedTemplate", selected);
+    
+       // ✅ This is enough for navigation
+      // setTimeout(() => {
+      //   window.location.reload();
+        
+      // },500) 
       router.push("/tableView");
     } else {
-      alert("Please select a template before proceeding!");
+      message.error("Please select a template before proceeding!");
+    
     }
   };
-
   return (
     <div className="flex flex-col items-center mt-10">
       <h2 className="text-lg font-semibold mb-4">Choose a saved template</h2>

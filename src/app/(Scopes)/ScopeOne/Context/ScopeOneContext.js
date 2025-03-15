@@ -11,18 +11,20 @@ export function ScopeOneProvider({ children }) {
     const [selectedFuels, setSelectedFuels] = useState({});
     const [activities, setActivities] = useState([]);
     const [fetchedParameters, setFetchedParameters] = useState({});
-    const[userId,setUserId] = useState("")
+    const [userId, setUserId] = useState("")
     const [templatecontent, settemplatecontent] = useState("");
     const [selectedShift, setSelectedShift] = useState("");
-     // 🔹 Add shift state
-     const [editTemplate, setEditTemplate] = useState("Create");
+    // 🔹 Add shift state
+    const [editTemplate, setEditTemplate] = useState("Create");
+    const [allEntries, setAllEntries] = useState([]);
+    const [fetchedCheckedValues, setFetchedCheckedValues] = useState([]);
 
     return (
 
         <ScopeOneContext.Provider
 
             value={{
-                userId,setUserId,
+                userId, setUserId, allEntries, setAllEntries,
                 templatecontent, settemplatecontent,
                 selectedShift, setSelectedShift,
                 checkedValuesScopeOne,
@@ -35,7 +37,9 @@ export function ScopeOneProvider({ children }) {
                 setActivities,
                 fetchedParameters,
                 setFetchedParameters,
-                editTemplate, setEditTemplate
+                editTemplate, setEditTemplate, fetchedCheckedValues, setFetchedCheckedValues
+
+
             }}>
             {children}
 
