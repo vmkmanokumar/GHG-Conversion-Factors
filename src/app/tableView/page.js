@@ -73,9 +73,22 @@ const TableView = () => {
 
   const goToUpdateParameter = () => {
     setEditTemplate("Edit");
+<<<<<<< HEAD
+  
+    const updatingTemp = JSON.stringify(allEntries.map(entry => entry.templatesave));
+    const templateContent = JSON.stringify(allEntries.map(entry => entry.templatecontent));
+    const selectedShift = JSON.stringify(allEntries.map(entry => entry.shift)); // Store shift value
+    const templateID = JSON.stringify(allEntries.map(entry => entry.id));
+  
+    localStorage.setItem("UpdatingTemp", updatingTemp);
+    localStorage.setItem("templateContent", templateContent);
+    localStorage.setItem("selectedShift", selectedShift);
+    localStorage.setItem("templateID", templateID);
+=======
     localStorage.setItem("UpdateingTemp", JSON.stringify(allEntries.map(entry => entry.templatesave)));
     localStorage.setItem("templatecontent", JSON.stringify(allEntries.map(entry => entry.templatecontent)));
     localStorage.setItem("templatID", JSON.stringify(allEntries.map(entry => entry.id)));
+>>>>>>> 1e1916d651cb9a7a4e884953a41d3076945da582
   
     router.push("/ScopeOne");
     // setEditTemplate("Create");
