@@ -73,7 +73,7 @@ const DataTable = () => {
     };
   
     try {
-      const response = await fetch("http://127.0.0.1:5000/DashBoardData", {
+      const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/DashBoardData", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -113,7 +113,7 @@ const DataTable = () => {
       cancelText: "No",
       async onOk() {
         try {
-          const response = await fetch(`http://127.0.0.1:5000/DashBoardData/Delete/${key}`, {
+          const response = await fetch(`https://ghg-conversion-factors-backend.vercel.app/DashBoardData/Delete/${key}`, {
             method: "DELETE",
           });
   
@@ -157,7 +157,7 @@ const DataTable = () => {
     };
   
     try {
-      const res = await fetch(`http://127.0.0.1:5000/DashBoardData/Update/${key}`, {
+      const res = await fetch(`https://ghg-conversion-factors-backend.vercel.app/DashBoardData/Update/${key}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -201,7 +201,7 @@ const editRow = (key) => {
 useEffect(() => {
   const fetchData = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:5000/api/DashBoardData");
+      const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/api/DashBoardData");
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
