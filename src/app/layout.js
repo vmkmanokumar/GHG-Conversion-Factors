@@ -1,5 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import "antd/dist/reset.css";
 import { ScopeTwoProvider } from "./(Scopes)/Scopetwo/Context/ScopeTwoContext";
 import { ScopeThreeProvider } from "./(Scopes)/Scopethree/Context/ScopeThreeContext";
 import { ScopeOneProvider } from "./(Scopes)/ScopeOne/Context/ScopeOneContext";
