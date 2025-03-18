@@ -15,18 +15,19 @@ const { confirm } = Modal;
 
 const { Option } = Select;
 
-const router = useRouter(); // Initialize useRouter
+
 
 const DataTable = () => {
 
   const { data, setData } = useScopeOne()
+  const router = useRouter(); // Initialize useRouter
 
 
   // Function to navigate to the Parameters & Values page with animation
   const navigateToParameters = () => {
     document.body.classList.add("slide-out"); // Apply animation
     setTimeout(() => {
-      router.push("/parameterAndUnit"); // Navigate after animation
+      router.push("ScopeOne/Activities/parameterAndUnit"); // Navigate after animation
     }, 300); // Ensure animation completes before navigation
   };
 
