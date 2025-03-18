@@ -58,7 +58,7 @@ export default function Dashboard() {
 
   const Dashboard_Data = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:5000/api/DashBoardData", {
+      const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/api/DashBoardData", {
         method: "GET",
       });
   
