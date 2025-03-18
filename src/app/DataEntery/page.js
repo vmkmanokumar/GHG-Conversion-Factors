@@ -186,15 +186,12 @@ const DataTable = () => {
   };
   
 
-const editRow = (key) => {
-
-  console.log("edit",key)
-
-  const newData = data.map((row) =>
-    row.key === key ? { ...row, isSaved: false } : row
-  );
-  setData(newData);
-};
+  const editRow = (key) => {
+    const newData = data.map((row) =>
+      row.key === key ? { ...row, isSaved: false, isEdited: true } : row
+    );
+    setData(newData);
+  };
 
  // Runs only on the first render
 
@@ -332,37 +329,38 @@ useEffect(() => {
     {
       title: "Actions",
       key: "actions",
-      render: (_, record) =>
-        record.isSaved ? (
+      render: (_, record) => {
+        if (!record.isSaved) {
+          // If it's a new row (not saved yet), show only Save button
+          if (!record.isEdited) {
+            return (
+              <Button type="primary" onClick={() => saveRow(record.key)}>
+                Save
+              </Button>
+            );
+          } 
+          // If the row is being edited (already saved before), show only Update button
+          else {
+            return (
+              <Button type="primary" onClick={() => UpdateRow(record.key)}>
+                Update
+              </Button>
+            );
+          }
+        } 
+        // If the row is saved, show Edit and Delete buttons
+        return (
           <div className="flex gap-4">
-          <Button type="default" onClick={() => editRow(record.key)}>
-            Edit
-          </Button>
-          <Button type="default" className="!bg-red-600" onClick={() => {
-  console.log("Delete button clicked for key:", record.key);
-  deleteRow(record.key);
-}}>
-  Delete
-</Button>
-
-        
+            <Button type="default" onClick={() => editRow(record.key)}>
+              Edit
+            </Button>
+            <Button type="default" className="!bg-red-600" onClick={() => deleteRow(record.key)}>
+              Delete
+            </Button>
           </div>
-          
-
-        ) : (
-        <>
-        <Button type="primary" onClick={() => saveRow(record.key)}>
-            Save
-          </Button> 
-          <Button type="primary" onClick={() => UpdateRow(record.key)}>
-            Update
-          </Button> 
-
-        
-        </>
-          
-        ),
-    },
+        );
+      },
+    }    
   ];
 
   return (
