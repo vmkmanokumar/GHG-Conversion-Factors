@@ -24,11 +24,12 @@ const DataTable = () => {
 
 
   // Function to navigate to the Parameters & Values page with animation
-  const navigateToParameters = () => {
-    document.body.classList.add("slide-out"); // Apply animation
-    setTimeout(() => {
-      router.push("ScopeOne/Activities/parameterAndUnit"); // Navigate after animation
-    }, 300); // Ensure animation completes before navigation
+  const navigateToParameters = (fuelsData) => {
+    // Convert Fuels data to JSON and encode it
+  const encodedData = encodeURIComponent(JSON.stringify(fuelsData));
+
+  // Navigate to the parameterAndUnit page with the data in query params
+  router.push(`/ScopeOne/Activities/parameterAndUnit?fuels=${encodedData}`);
   };
 
   // Function to add a new row
