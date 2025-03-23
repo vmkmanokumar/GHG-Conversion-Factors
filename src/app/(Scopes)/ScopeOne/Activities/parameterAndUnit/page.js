@@ -38,7 +38,7 @@ export default function ParametersAndUnits() {
     console.log("Payload to be sent:", payload); // Check the transformed payload
   
     try {
-      const response = await fetch("http://127.0.0.1:5000/DataEntery/Scope1", {
+      const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/DataEntery/Scope1", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",   // ✅ Fixed header format
