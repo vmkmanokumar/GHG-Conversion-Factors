@@ -99,7 +99,7 @@ const DataTable = () => {
         
       } else {
         // ✅ Add Mode: Insert new record
-        const response = await fetch("http://127.0.0.1:5000/DashBoardData", {
+        const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/DashBoardData", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(newRow),

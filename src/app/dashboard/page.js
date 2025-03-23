@@ -170,7 +170,7 @@ export default function Dashboard() {
               title: "Scope 2 Emissions",
               key: "scope2",
               value: totalScope2,
-              color: "linear-gradient(185deg, rgba(255, 255, 205, 1) 0%, rgba(255, 255, 131, 1) ",
+              color: "white",
               chartColor: "#F5DB06",
             },
           ].map((item) => (
