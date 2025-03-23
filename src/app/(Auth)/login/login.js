@@ -1,6 +1,6 @@
 "use client";
 
-import { Col, Row, Input, Button, Checkbox, Form, Typography } from "antd";
+import { Col, Row, Input, Button, Checkbox, Form, Typography, message } from "antd";
 import { useRouter } from "next/navigation";
 import loginLogo from "@/assets/images/loginLogo.png";
 import { useState } from "react";
@@ -23,7 +23,7 @@ export default function Login() {
       });
     }, 10000);
   };
-
+ const [messageApi, contextHolder] = message.useMessage();
   const router = useRouter();
   
 
@@ -46,11 +46,14 @@ export default function Login() {
         const token = data.token; // ✅ Fetch JWT token from response
         const username = data.user.email
         const roles = data.user.roles
+        messageApi.success("Login successful!");
   
         if (token) {
           localStorage.setItem("token", token); // ✅ Store token
           localStorage.setItem("username",username)
+          localStorage.setItem("firstLogin", "true");
           localStorage.setItem("roles",roles)
+        
           router.push("/dashboard"); // ✅ Redirect user
         } else {
           alert("Login failed: No token received!");
@@ -67,6 +70,8 @@ export default function Login() {
   
 
   return (
+    <>
+    {contextHolder}
     <div className="h-screen w-screen bg-white flex items-center justify-center p-4">
       <Row className="w-full h-auto rounded-lg flex flex-col md:flex-row items-center md:items-start  lg:ml-28">
         {/* Left Section: Logo (Hidden on Mobile) */}
@@ -146,5 +151,7 @@ export default function Login() {
         </Col>
       </Row>
     </div>
+    </>
   );
+ 
 }

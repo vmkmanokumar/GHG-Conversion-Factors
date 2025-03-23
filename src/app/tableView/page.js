@@ -11,6 +11,7 @@ const TableView = () => {
   const { editTemplate, setEditTemplate,allEntries, setAllEntries } = useScopeOne();
   
   // const [allEntries, setAllEntries] = useState([]);
+  console.log("all",allEntries)
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState("");
@@ -66,6 +67,7 @@ const TableView = () => {
   const goToEnterData =()=>{
     localStorage.setItem("UpdateingTemp", JSON.stringify(allEntries.map(entry => entry.templatesave)));
     localStorage.setItem("templatecontent", JSON.stringify(allEntries.map(entry => entry.templatecontent)));
+    localStorage.setItem("templateSaves", JSON.stringify(allEntries.map(entry => entry.templatesave)));
     localStorage.setItem("templatID", JSON.stringify(allEntries.map(entry => entry.id)));
     router.push("/DataEntery")
 

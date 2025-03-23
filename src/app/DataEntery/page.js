@@ -12,7 +12,7 @@ const { confirm } = Modal;
 const { Option } = Select;
 
 const DataTable = () => {
-  const { data, setData } = useScopeOne();
+  const { data, setData ,userId } = useScopeOne();
   const router = useRouter();
   const [view, setView] = useState("DataEntry");
   const [form] = Form.useForm();
@@ -32,12 +32,6 @@ const DataTable = () => {
   };
 
   const enterLoading = (index) => {
-    location.reload();
-    setLoadings((prevLoadings) => {
-      const newLoadings = [...prevLoadings];
-      newLoadings[index] = true;
-      return newLoadings;
-    });
 
     setTimeout(() => {
       setLoadings((prevLoadings) => {
@@ -210,11 +204,11 @@ const DataTable = () => {
           <Input type="number" />
         </Form.Item>
 
-        <Form.Item label="Scope 1" name="scope1">
+        <Form.Item label="Scope 1" name="scope1" rules={[{ required: true}]}>
           <Button  onClick={showLargeDrawer}>Parameters</Button>
         </Form.Item>
 
-        <Form.Item label="Scope 2" name="scope2">
+        <Form.Item label="Scope 2" name="scope2"  rules={[{ required: true}]}>
           <Input type="number" />
         </Form.Item>
 
@@ -224,7 +218,7 @@ const DataTable = () => {
       </Form>
       )}
 
-      {view === "List" && <Table columns={columns} dataSource={data} pagination={false} />}
+      {view === "List" && <Table className="mt-10" columns={columns} dataSource={data} pagination={false} />}
 </div>
 
 <Drawer

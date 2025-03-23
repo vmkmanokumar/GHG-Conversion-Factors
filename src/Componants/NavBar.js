@@ -9,7 +9,7 @@ import {
   Menu,
   Avatar,
   Popover,
-  Segmented
+  message
 } from "antd";
 import {
   MenuOutlined,
@@ -22,7 +22,7 @@ import {
 import Link from "next/link";
 import TemplateSelector from "@/app/TemplateSelector/page";
 import { useScopeOne } from "@/app/(Scopes)/ScopeOne/Context/ScopeOneContext";
-import "../Componants/css/MenuStyles.css"
+import "../Componants/css/MenuStyles.css";
 
 const { Header } = Layout;
 const { Title } = Typography;
@@ -34,13 +34,23 @@ export default function NavBar() {
   const [openEditTemplate, setOpenEditTemplate] = useState(false);
   const [userId, setUserId] = useState("");
   const [user, setUser] = useState("");
+  const [messageApi, contextHolder] = message.useMessage();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const userName = localStorage.getItem("username");
+      
       if (userName) {
         setUserId(userName);
-        setUser(userName.charAt(0).toUpperCase()); // Ensure safe access
+        setUser(userName.charAt(0).toUpperCase());
+
+        // ✅ Check for first login flag
+        const firstLogin = localStorage.getItem("firstLogin");
+
+        if (firstLogin === "true") {
+          messageApi.success(`Welcome, ${userName}!`);
+          localStorage.removeItem("firstLogin");  // ✅ Remove flag after displaying
+        }
       }
     }
   }, []);
@@ -71,7 +81,7 @@ export default function NavBar() {
 
   return (
     <>
-      {/* Header */}
+      {contextHolder}
       <Header className="shadow-lg flex items-center justify-between px-6 h-20 bg-white">
         <div className="flex items-center">
           <Button
@@ -80,8 +90,10 @@ export default function NavBar() {
             onClick={() => setDrawerVisible(true)}
             className="text-xl text-gray-800 hover:bg-gray-100 rounded-full p-2"
           />
-          <Title level={3} className="mt-2  text-xl font-bold text-gray-800">
-           <Link href="/dashboard"> <span className="text-black">Dashboard</span></Link> 
+          <Title level={3} className="mt-2 text-xl font-bold text-gray-800">
+            <Link href="/dashboard">
+              <span className="text-black">Dashboard</span>
+            </Link>
           </Title>
         </div>
         <Popover content={popoverContent} trigger="hover">

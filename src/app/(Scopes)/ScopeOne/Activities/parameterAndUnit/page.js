@@ -14,6 +14,57 @@ export default function ParametersAndUnits() {
 
   console.log("Selected Fuels:", selectedFuels);
 
+
+  const DataEnteryScope1 = async () => {
+    // ✅ Extracting only parameter, maxValue, and selectedValue
+    const payload = [];
+  
+    Object.keys(selectedFuels).forEach((category) => {
+      Object.keys(selectedFuels[category]).forEach((item) => {
+        Object.keys(selectedFuels[category][item]).forEach((parameter) => {
+          const paramData = selectedFuels[category][item][parameter];
+  
+          if (paramData.checked) {
+            payload.push({
+              parameter: parameter,                          // Parameter name
+              maxValue: paramData.maxValue || "",            // Max value
+              selectedValue: paramData.selectedValue || ""   // Selected unit
+            });
+          }
+        });
+      });
+    });
+  
+    console.log("Payload to be sent:", payload); // Check the transformed payload
+  
+    try {
+      const response = await fetch("http://127.0.0.1:5000/DataEntery/Scope1", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",   // ✅ Fixed header format
+        },
+        body: JSON.stringify(payload),          // ✅ Sending only the relevant fields
+      });
+  
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Data successfully sent:", data);
+      } else {
+        console.error("Failed to send data:", response.status);
+      }
+    } catch (error) {
+      console.error("Error in POST request:", error);
+    }
+  };
+  
+
+
+
+
+
+
+
+
   useEffect(() => {
     const fetchBiogasData = async () => {
       try {
@@ -41,25 +92,10 @@ export default function ParametersAndUnits() {
     }
   }, []);
 
-  const saveDraftData = async () => {
-    try {
-      const response = await fetch(
-        `https://ghg-conversion-factors-backend.vercel.app/saveParameter/vmkmano13@gmail.com`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(selectedFuels),
-        }
-      );
 
-      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
-      const data = await response.json();
-      console.log("Draft saved successfully:", data);
-    } catch (error) {
-      console.error("Error saving draft:", error);
-    }
-  };
+
+
 
   const handleChange = (category, item, parameter, field, value) => {
     setSelectedFuels((prev) => ({
@@ -139,13 +175,11 @@ export default function ParametersAndUnits() {
                                               {/* Parameter Dropdown */}
                                               <Disclosure.Button className="flex justify-between items-center w-full mt-2 px-3 py-2 bg-[#CBF4E5] text-gray-700 rounded-md">
                                                 <span className="text-sm">{parameter}</span>
-                                                <ChevronDown
-                                                  className={`w-4 h-4 transition-transform ${open ? "rotate-180" : "rotate-0"}`}
-                                                />
+                                    
                                               </Disclosure.Button>
 
                                               {/* Parameter Panel */}
-                                              <Disclosure.Panel className="p-2 bg-white rounded-lg mt-1">
+                                              <div className="p-2 bg-white rounded-lg mt-1">
                                                 <div className="flex items-center gap-4">
                                                   {/* Max Value Input */}
                                                   <Input
@@ -173,7 +207,7 @@ export default function ParametersAndUnits() {
                                                     ))}
                                                   </Select>
                                                 </div>
-                                              </Disclosure.Panel>
+                                              </div>
                                             </div>
                                           )}
                                         </Disclosure>
@@ -197,10 +231,10 @@ export default function ParametersAndUnits() {
       {/* Save Changes Button */}
       <div className="w-full flex justify-center mt-auto pt-6">
         <Button
-          onClick={saveDraftData}
-          className="bg-[#91e6c7] text-black font-bold text-lg md:text-xl py-2 px-6 md:py-6 md:px-6 rounded-lg shadow-md hover:bg-white transition-all duration-300 w-full md:w-auto"
+          onClick={DataEnteryScope1}
+          className="bg-[#91e6c7] text-black hover:!bg-[#91e6c9]"
         >
-          Save Changes
+          EnterData
         </Button>
       </div>
     </div>
