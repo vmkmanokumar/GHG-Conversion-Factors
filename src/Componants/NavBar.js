@@ -9,6 +9,7 @@ import {
   Menu,
   Avatar,
   Popover,
+  Segmented
 } from "antd";
 import {
   MenuOutlined,
@@ -80,7 +81,7 @@ export default function NavBar() {
             className="text-xl text-gray-800 hover:bg-gray-100 rounded-full p-2"
           />
           <Title level={3} className="mt-2  text-xl font-bold text-gray-800">
-            Dashboard
+           <Link href="/dashboard"> <span className="text-black">Dashboard</span></Link> 
           </Title>
         </div>
         <Popover content={popoverContent} trigger="hover">

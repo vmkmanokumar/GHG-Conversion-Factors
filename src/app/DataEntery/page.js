@@ -1,210 +1,131 @@
-"use client"
+"use client";
 import React, { useEffect, useState } from "react";
-import { Table, Input, Button, DatePicker, Select, message } from "antd";
+import { Table, Input, Button, DatePicker, Select, message, Segmented, Form, Drawer, Space, Modal } from "antd";
+import { BarsOutlined, AppstoreAddOutlined, PoweroffOutlined, SyncOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
-// import { ExclamationCircleFilled } from "@ant-design/icons";
-
-import { useRouter } from "next/navigation"; // Import useRouter
-
+import { useRouter } from "next/navigation"; 
 import { useScopeOne } from "../(Scopes)/ScopeOne/Context/ScopeOneContext";
-
-import { ExclamationCircleFilled } from "@ant-design/icons";
-import { Modal } from "antd";
+import ParametersAndUnits from "../(Scopes)/ScopeOne/Activities/parameterAndUnit/page";
+import NavBar from "@/Componants/NavBar";
 
 const { confirm } = Modal;
-
 const { Option } = Select;
 
-
-
 const DataTable = () => {
+  const { data, setData } = useScopeOne();
+  const router = useRouter();
+  const [view, setView] = useState("DataEntry");
+  const [form] = Form.useForm();
+  const [size, setSize] = useState();
+  const [open, setOpen] = useState(false);
+  const [loadings, setLoadings] = useState([]);
+  const [currentRow, setCurrentRow] = useState(null);  // ✅ Store row being edited
+  const [isEditMode, setIsEditMode] = useState(false); // ✅ Track if editing
 
-  const { data, setData } = useScopeOne()
-  const router = useRouter(); // Initialize useRouter
-
-
-  // Function to navigate to the Parameters & Values page with animation
-  const navigateToParameters = (fuelsData) => {
-    // Convert Fuels data to JSON and encode it
-  const encodedData = encodeURIComponent(JSON.stringify(fuelsData));
-
-  // Navigate to the parameterAndUnit page with the data in query params
-  router.push(`/ScopeOne/Activities/parameterAndUnit?fuels=${encodedData}`);
+  const onClose = () => {
+    setOpen(false);
   };
 
-  // Function to add a new row
-  const addRow = () => {
+  const showLargeDrawer = () => {
+    setSize("large");
+    setOpen(true);
+  };
+
+  const enterLoading = (index) => {
+    location.reload();
+    setLoadings((prevLoadings) => {
+      const newLoadings = [...prevLoadings];
+      newLoadings[index] = true;
+      return newLoadings;
+    });
+
+    setTimeout(() => {
+      setLoadings((prevLoadings) => {
+        const newLoadings = [...prevLoadings];
+        newLoadings[index] = false;
+        return newLoadings;
+      });
+    }, 2000);
+  };
+
+  // ✅ Edit function - Switch to DataEntry and pre-fill form
+  const editRow = (row) => {
+    setCurrentRow(row);        // Store the row being edited
+    setIsEditMode(true);       // Set to edit mode
+    setView("DataEntry");      // Switch to data entry view
+
+    form.setFieldsValue({
+      username: row.username,
+      date: dayjs(row.date),
+      shift: row.shift,
+      goodsProduced: row.goodsProduced,
+      scope1: row.scope1,
+      scope2: row.scope2,
+    });
+  };
+
+  // ✅ Handle form submission (both edit and add)
+  const handleFormSubmit = async (values) => {
     const newRow = {
-      key: Date.now(),
-      username: "Current User",
-      date: null, // User selects date
-      shift: "",
-      goodsProduced: "",
-      scope1: "",
-      scope2: "",
-      co2Emitted: 0,
-      isSaved: false, // Editable before saving
-    };
-    setData([newRow, ...data]);
-  };
-
-  // Function to update a row field
-  const updateRow = (key, field, value) => {
-    const newData = data.map((row) => {
-      if (row.key === key) {
-        let updatedRow = { ...row, [field]: value };
-
-        // Ensure CO2 emitted is updated dynamically
-        if (field === "scope1" || field === "scope2") {
-          updatedRow.co2Emitted =
-            Number(updatedRow.scope1 || 0) + Number(updatedRow.scope2 || 0);
-        }
-
-        return updatedRow;
-      }
-      return row;
-    });
-    setData(newData);
-  };
-
-  // Function to save row (lock editing)
-  const saveRow = async (key) => {
-    const updatedRow = data.find((row) => row.key === key);
-
-    if (!updatedRow) return;
-
-    const formattedData = {
-      record_date: updatedRow.date, // Ensure date is correctly formatted
-      username: updatedRow.username,
-      goods_produced: updatedRow.goodsProduced,
-      co2_emitted: updatedRow.co2Emitted,
-      scope1: updatedRow.scope1,
-      scope2: updatedRow.scope2,
-      shift: updatedRow.shift,
+      record_date: values.date ? dayjs(values.date).format("YYYY-MM-DD") : "",
+      username: values.username || "Unknown",
+      shift: values.shift || "",
+      goods_produced: values.goodsProduced || 0,
+      scope1: values.scope1 || 0,
+      scope2: values.scope2 || 0,
+      co2_emitted: Number(values.scope1 || 0) + Number(values.scope2 || 0),
     };
 
     try {
-      const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/DashBoardData", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formattedData), // Send latest row data
-      });
+      if (isEditMode && currentRow) {
+        // ✅ Edit Mode: Update existing record
+        const res = await fetch(`https://ghg-conversion-factors-backend.vercel.app/DashBoardData/Update/${currentRow.key}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newRow),
+        });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      message.success("Data saved successfully");
-
-      const responseData = await response.json();
-      console.log("Response from server:", responseData);
-
-      // Mark the row as saved and update its values
-      const newData = data.map((row) =>
-        row.key === key ? { ...row, ...formattedData, isSaved: true } : row
-      );
-      setData(newData);
-
-    } catch (error) {
-      console.error("Error sending data:", error);
-    }
-  };
-
-  const deleteRow = (key) => {
-    console.log("keys", key);
-
-    Modal.confirm({
-      title: "Are you sure you want to delete this record?",
-      icon: <ExclamationCircleFilled />,
-      content: "This action cannot be undone.",
-      okText: "Yes",
-      okType: "danger",
-      cancelText: "No",
-      async onOk() {
-        try {
-          const response = await fetch(`https://ghg-conversion-factors-backend.vercel.app/DashBoardData/Delete/${key}`, {
-            method: "DELETE",
-          });
-
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-
-          const responseData = await response.json();
-          console.log("Response from server:", responseData);
-
-          // Remove deleted row from UI
-          setData((prevData) => prevData.filter((row) => row.key !== key));
-
-          message.success("Record deleted successfully");
-        } catch (error) {
-          console.error("Error deleting data:", error);
-          message.error("Failed to delete record");
+        if (!res.ok) {
+          throw new Error(`HTTP error! Status: ${res.status}`);
         }
-      },
-      onCancel() {
-        console.log("Delete action canceled");
-      },
-    });
-    console.log("maoj")
-  };
 
+        message.success("Data updated successfully");
 
-  const UpdateRow = async (key) => {
-    const updatedRow = data.find((row) => row.key === key);
+        // Update UI with edited row
+        const newData = data.map((row) =>
+          row.key === currentRow.key ? { ...row, ...newRow, isSaved: true } : row
+        );
+        setData(newData);
+        
+      } else {
+        // ✅ Add Mode: Insert new record
+        const response = await fetch("http://127.0.0.1:5000/DashBoardData", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newRow),
+        });
 
-    if (!updatedRow) return;
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
 
-    const formattedData = {
-      record_date: updatedRow.date, // Ensure date format
-      username: updatedRow.username,
-      goods_produced: updatedRow.goodsProduced,
-      co2_emitted: updatedRow.co2Emitted,
-      scope1: updatedRow.scope1,
-      scope2: updatedRow.scope2,
-      shift: updatedRow.shift,
-    };
+        message.success("Data saved successfully");
 
-    try {
-      const res = await fetch(`https://ghg-conversion-factors-backend.vercel.app/DashBoardData/Update/${key}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formattedData), // Send updated row data
-      });
-
-      if (!res.ok) {
-        throw new Error(`HTTP error! Status: ${res.status}`);
+        setData((prevData) => [
+          { key: Date.now(), ...newRow, isSaved: true },
+          ...prevData,
+        ]);
       }
 
-      const responseData = await res.json();
-      console.log("Response from server:", responseData);
-
-      message.success("Data updated successfully");
-
-      // Mark row as saved after updating
-      const newData = data.map((row) =>
-        row.key === key ? { ...row, isSaved: true } : row
-      );
-      setData(newData);
+      form.resetFields();
+      setIsEditMode(false);  // Reset edit mode
+      setCurrentRow(null);   // Clear current row
 
     } catch (error) {
-      console.error("Error updating data:", error);
+      console.error("Error saving data:", error);
+      message.error("Failed to save data");
     }
   };
-
-
-  const editRow = (key) => {
-    const newData = data.map((row) =>
-      row.key === key ? { ...row, isSaved: false, isEdited: true } : row
-    );
-    setData(newData);
-  };
-
-  // Runs only on the first render
 
   useEffect(() => {
     const fetchData = async () => {
@@ -215,19 +136,16 @@ const DataTable = () => {
         }
         const data = await response.json();
 
-        console.log("Fetched Data:", data); // Debugging step
-
-        // Ensure correct key names and add missing fields with defaults
-        const formattedData = data.map((row, index) => ({
-          key: row.record_id, // Ensure unique key
+        const formattedData = data.map((row) => ({
+          key: row.record_id,
           username: row.username || "Unknown",
-          date: row.date || "", // Handle missing date
+          date: row.date || "",
           shift: row.shift || "N/A",
           goodsProduced: row.goodsProduced || 0,
           scope1: row.scope1 || 0,
           scope2: row.scope2 || 0,
           co2Emitted: row.co2Emitted || (Number(row.scope1 || 0) + Number(row.scope2 || 0)),
-          isSaved: true, // Mark as saved since fetched from DB
+          isSaved: true,
         }));
 
         setData(formattedData);
@@ -239,148 +157,94 @@ const DataTable = () => {
     fetchData();
   }, []);
 
-
-
-  // Function to disable future dates in DatePicker
-  const disableFutureDates = (current) => {
-    return current && current > dayjs().endOf("day"); // Only allows today & past dates
-  };
-
-  // Table columns
   const columns = [
-    {
-      title: "Username",
-      dataIndex: "username",
-      key: "username",
-    },
-    {
-      title: "Date",
-      dataIndex: "date",
-      key: "date",
-      render: (text, record) =>
-        record.isSaved ? (
-          text
-        ) : (
-          <DatePicker
-            value={text ? dayjs(text) : null}
-            onChange={(date, dateString) => updateRow(record.key, "date", dateString)}
-            disabledDate={disableFutureDates} // Restrict future dates
-          />
-        ),
-    },
-    {
-      title: "Shift",
-      dataIndex: "shift",
-      key: "shift",
-      render: (text, record) =>
-        record.isSaved ? (
-          text
-        ) : (
-          <Select
-            style={{ width: 120 }}
-            value={text}
-            onChange={(value) => updateRow(record.key, "shift", value)}
-          >
-            <Option value="1">Shift 1</Option>
-            <Option value="2">Shift 2</Option>
-
-          </Select>
-        ),
-    },
-    {
-      title: "Total Goods Produced",
-      dataIndex: "goodsProduced",
-      key: "goodsProduced",
-      render: (text, record) =>
-        record.isSaved ? (
-          text
-        ) : (
-          <Input
-            type="number"
-            value={text}
-            onChange={(e) => updateRow(record.key, "goodsProduced", e.target.value)}
-          />
-        ),
-    },
-    {
-      title: "Scope 1",
-      dataIndex: "scope1",
-      key: "scope1",
-      align: "center",
-      render: (text, record) => (
-        <Button
-          type="default"
-          onClick={navigateToParameters}
-          className="navigate-button"
-          style={{ width: "100%", textAlign: "center" }}
-        >
-          Parameters & Values
-        </Button>
-      ),
-    },
-    {
-      title: "Scope 2",
-      dataIndex: "scope2",
-      key: "scope2",
-      render: (text, record) =>
-        record.isSaved ? (
-          text
-        ) : (
-          <Input
-            type="number"
-            value={text}
-            onChange={(e) => updateRow(record.key, "scope2", e.target.value)}
-          />
-        ),
-    },
-    {
-      title: "co2Emitted",
-      dataIndex: "co2Emitted",
-      key: "co2Emitted",
-    },
+    { title: "Username", dataIndex: "username", key: "username" },
+    { title: "Date", dataIndex: "date", key: "date", render: (text) => (text ? dayjs(text).format("YYYY-MM-DD") : "") },
+    { title: "Shift", dataIndex: "shift", key: "shift" },
+    { title: "Goods Produced", dataIndex: "goodsProduced", key: "goodsProduced" },
+    { title: "Scope 1", dataIndex: "scope1", key: "scope1" },
+    { title: "Scope 2", dataIndex: "scope2", key: "scope2" },
+    { title: "CO2 Emitted", dataIndex: "co2Emitted", key: "co2Emitted" },
     {
       title: "Actions",
       key: "actions",
-      render: (_, record) => {
-        if (!record.isSaved) {
-          // If it's a new row (not saved yet), show only Save button
-          if (!record.isEdited) {
-            return (
-              <Button type="primary" onClick={() => saveRow(record.key)}>
-                Save
-              </Button>
-            );
-          }
-          // If the row is being edited (already saved before), show only Update button
-          else {
-            return (
-              <Button type="primary" onClick={() => UpdateRow(record.key)}>
-                Update
-              </Button>
-            );
-          }
-        }
-        // If the row is saved, show Edit and Delete buttons
-        return (
-          <div className="flex gap-4">
-            <Button type="default" onClick={() => editRow(record.key)}>
-              Edit
-            </Button>
-            <Button type="default" className="!bg-red-600" onClick={() => deleteRow(record.key)}>
-              Delete
-            </Button>
-          </div>
-        );
-      },
-    }
+      render: (_, record) => (
+        <div className="flex gap-4">
+          <Button onClick={() => editRow(record)}>Edit</Button>
+        </div>
+      ),
+    },
   ];
 
   return (
     <div>
-      <Button type="primary" onClick={addRow} style={{ marginBottom: 16 }}>
-        Add
-      </Button>
-      <Table columns={columns} dataSource={data} pagination={false} virtual />
+      <NavBar />
+<div className="w-[1000] ml-[500] mt-[70] shadow-lg p-10 h-[700]">
+<Segmented
+        options={[
+          { label: "Data Entry", value: "DataEntry", icon: <AppstoreAddOutlined /> },
+          { label: "List", value: "List", icon: <BarsOutlined /> },
+        ]}
+        onChange={setView}
+        value={view}
+      />
+
+      {view === "DataEntry" && (
+        <Form form={form} onFinish={handleFormSubmit} layout="vertical" className="p-4">
+        <Form.Item label="Username" name="username" initialValue="Current User">
+          <Input placeholder="Enter Username" disabled />
+        </Form.Item>
+
+        <Form.Item label="Date" name="date" rules={[{ required: true, message: "Please select date" }]}>
+          <DatePicker />
+        </Form.Item>
+
+        <Form.Item label="Shift" name="shift" rules={[{ required: true, message: "Select shift" }]}>
+          <Select>
+            <Option value="1">Shift 1</Option>
+            <Option value="2">Shift 2</Option>
+          </Select>
+        </Form.Item>
+
+        <Form.Item label="Goods Produced" name="goodsProduced" rules={[{ required: true, message: "Enter production" }]}>
+          <Input type="number" />
+        </Form.Item>
+
+        <Form.Item label="Scope 1" name="scope1">
+          <Button  onClick={showLargeDrawer}>Parameters</Button>
+        </Form.Item>
+
+        <Form.Item label="Scope 2" name="scope2">
+          <Input type="number" />
+        </Form.Item>
+
+        <Button type="primary" htmlType="submit">
+          Save Data
+        </Button>
+      </Form>
+      )}
+
+      {view === "List" && <Table columns={columns} dataSource={data} pagination={false} />}
+</div>
+
+<Drawer
+        title="Paramter"
+        placement="right"
+        size={size}
+        onClose={onClose}
+        open={open}
+        extra={
+          <Space>
+            <Button onClick={onClose}>Cancel</Button>
+            <Button type="primary" onClick={onClose}>
+              OK
+            </Button>
+          </Space>
+        }
+      >
+      <ParametersAndUnits></ParametersAndUnits>
+      </Drawer>
+      
     </div>
   );
 };

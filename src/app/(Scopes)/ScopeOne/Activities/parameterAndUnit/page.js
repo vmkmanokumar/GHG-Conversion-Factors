@@ -78,7 +78,7 @@ export default function ParametersAndUnits() {
   };
 
   return (
-    <div className="flex flex-col h-full justify-between items-center bg-[#effbf7] w-full md:w-[768px] lg:w-[1152px] md:mx-auto mt-10 md:mt-16 lg:mt-10 p-4 md:p-6 rounded-xl shadow-lg flex-grow min-h-[515px]">
+    <div className="flex flex-col  justify-between items-center bg-[#effbf7]  md:w-[768px] lg:w-[650px] md:mx-auto mt-10 md:mt-20 lg:mt-10 p-4 md:p-6 rounded-xl shadow-lg flex-grow min-h-[515px]">
       {/* Title */}
       <div className="w-full mb-4">
         <h1 className="text-2xl font-bold text-gray-800">Parameters Maximum Value</h1>

@@ -2,7 +2,7 @@
 
 import React, { useState,useEffect } from "react";
 import { Layout, Card, Statistic, Menu, Flex, DatePicker } from "antd";
-import { FormOutlined, EditOutlined, TableOutlined, FileDoneOutlined, CheckCircleOutlined } from "@ant-design/icons";
+
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell,AreaChart,Area } from "recharts";
 import dayjs from "dayjs";
 import Link from "next/link";
