@@ -21,6 +21,7 @@ import {
 import Link from "next/link";
 import TemplateSelector from "@/app/TemplateSelector/page";
 import { useScopeOne } from "@/app/(Scopes)/ScopeOne/Context/ScopeOneContext";
+import "../Componants/css/MenuStyles.css"
 
 const { Header } = Layout;
 const { Title } = Typography;
@@ -60,7 +61,7 @@ export default function NavBar() {
 
   const popoverContent = (
     <div className="p-2 text-center">
-      <p className="mb-2 font-semibold">{userId}</p>
+      <p className="mb-2 font-semibold text-gray-700">{userId}</p>
       <Button type="primary" danger size="small" onClick={handleLogout}>
         Logout
       </Button>
@@ -70,30 +71,30 @@ export default function NavBar() {
   return (
     <>
       {/* Header */}
-      <Header className="drop-shadow-md m-10 flex items-center px-4 sm:px-6 h-[100px] bg-white text-black">
-        <Button
-          icon={<MenuOutlined />}
-          type="text"
-          onClick={() => setDrawerVisible(true)}
-          className="text-xl mr-4 mt-1 text-gray-800"
-        />
-        <Title level={3} className="ml-10 flex-1 mt-4 text-lg sm:text-xl">
-          Dashboard
-        </Title>
-        <Popover content={popoverContent} trigger="hover" className="mt-4 mr-5">
-          <span className="mr-4 text-sm sm:text-base shadow-xl rounded-full size-10 cursor-pointer">
-            <Avatar
-              style={{
-                backgroundColor: "blue",
-                verticalAlign: "middle",
-                cursor: "pointer",
-              }}
-              size="large"
-              className="size-10"
-            >
-              {user}
-            </Avatar>
-          </span>
+      <Header className="shadow-lg flex items-center justify-between px-6 h-20 bg-white">
+        <div className="flex items-center">
+          <Button
+            icon={<MenuOutlined />}
+            type="text"
+            onClick={() => setDrawerVisible(true)}
+            className="text-xl text-gray-800 hover:bg-gray-100 rounded-full p-2"
+          />
+          <Title level={3} className="mt-2  text-xl font-bold text-gray-800">
+            Dashboard
+          </Title>
+        </div>
+        <Popover content={popoverContent} trigger="hover">
+          <Avatar
+            style={{
+              backgroundColor: "#3b82f6",
+              verticalAlign: "middle",
+              cursor: "pointer",
+            }}
+            size="large"
+            className="text-white font-semibold hover:bg-blue-600 transition-colors"
+          >
+            {user}
+          </Avatar>
         </Popover>
       </Header>
 
@@ -104,8 +105,9 @@ export default function NavBar() {
         onClose={() => setDrawerVisible(false)}
         open={drawerVisible}
         className="bg-white"
+        width={250}
       >
-        <Menu>
+        <Menu mode="inline" className="custom-menu">
           <Menu.Item icon={<FormOutlined />}>
             <a onClick={handleCreateTemplate}>Create Template</a>
           </Menu.Item>
@@ -128,7 +130,14 @@ export default function NavBar() {
       </Drawer>
 
       {/* Right Drawer (Edit Template) */}
-      <Drawer title="Edit Template" placement="right" closable={false} onClose={onClose} open={openEditTemplate}>
+      <Drawer
+        title="Edit Template"
+        placement="right"
+        closable={false}
+        onClose={onClose}
+        open={openEditTemplate}
+        width={350}
+      >
         <TemplateSelector />
       </Drawer>
     </>

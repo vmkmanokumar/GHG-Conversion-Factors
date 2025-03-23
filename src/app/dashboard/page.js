@@ -127,123 +127,136 @@ export default function Dashboard() {
   }, [data]);
 
   return (
-    <Layout className="h-screen bg-white text-black">
+    <Layout className="h-screen bg-gray-50">
       <NavBar />
-      <Content className="p-4 sm:p-6 bg-white text-black">
-        <h2 className="text-lg font-semibold sm:text-xl">CO₂ Emission Dashboard</h2>
-        <div className="flex justify-center sm:justify-start mt-5">
+      <Content className="p-6">
+        <h2 className="text-2xl font-bold text-gray-800 mb-6">CO₂ Emission Dashboard</h2>
+
+        {/* Date Picker */}
+        <div className="flex justify-start mb-8">
           <RangePicker
-            className="w-full sm:w-auto p-2 border border-gray-300 rounded-lg shadow-md hover:border-blue-500 focus:border-blue-600 transition duration-300 ease-in-out"
+            className="w-full sm:w-auto p-2 border border-gray-300 rounded-lg shadow-sm hover:border-blue-500 focus:border-blue-600 transition duration-300"
             defaultValue={dateRange}
             onChange={(dates) => setDateRange(dates || [dayjs().startOf("month"), dayjs().endOf("month")])}
             allowClear
           />
         </div>
-        <div className="grid grid-cols-4 gap-5 mt-5">
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {[
-            { title: "Total Goods Produced", key: "goodsProduced", value: totalGoods, color: "linear-gradient(185deg, rgba(205,233,255,1) 0%, rgba(131,202,255,1) 66%)" },
-            { title: "Total CO₂ Emitted (kg)", key: "co2Emitted", value: totalCO2, color: "linear-gradient(185deg, rgba(255,240,205,1) 23%, rgba(226,177,145,1) 91%)" },
-            { title: "Scope 1 Emissions", key: "scope1", value: totalScope1, color: "linear-gradient(185deg, rgba(255, 255, 205, 1) 0%, rgba(255, 255, 131, 1) 66%)" },
-            { title: "Scope 2 Emissions", key: "scope2", value: totalScope2, color: "linear-gradient(185deg, rgba(255, 255, 205, 1) 0%, rgba(255, 255, 131, 1) 66%)" },
+            {
+              title: "Total Goods Produced",
+              key: "goodsProduced",
+              value: totalGoods,
+              color: "white",
+              chartColor: "#7625F5",
+            },
+            {
+              title: "Total CO₂ Emitted (kg)",
+              key: "co2Emitted",
+              value: totalCO2,
+              color: "white",
+              chartColor: "#F56B62",
+            },
+            {
+              title: "Scope 1 Emissions",
+              key: "scope1",
+              value: totalScope1,
+              color: "white",
+              chartColor: "#F5DB06",
+            },
+            {
+              title: "Scope 2 Emissions",
+              key: "scope2",
+              value: totalScope2,
+              color: "linear-gradient(185deg, rgba(255, 255, 205, 1) 0%, rgba(255, 255, 131, 1) ",
+              chartColor: "#F5DB06",
+            },
           ].map((item) => (
-            <Card key={item.key} className="relative p-5 text-white rounded-lg shadow-lg overflow-hidden" style={{ background: item.color }}>
-              <div className="absolute inset-0 z-0 pointer-events-auto mt-10 opacity-90">
-                <ResponsiveContainer width="100%" height={120}>
-                  {item.key === "co2Emitted" ? (
-                    <AreaChart data={filteredData} className="mt-10 w-[100]">
-                      <defs>
-                        <linearGradient id="colorCO2" x1="1" y1="0" x2="10" y2="10">
-                          <stop offset="95%" stopColor="black" stopOpacity={0} />
-                        </linearGradient>
-                      </defs>
-                      <XAxis dataKey="date" hide />
-                      <YAxis hide />
-                      <Tooltip
-                        content={({ active, payload, label }) => {
-                          if (active && payload && payload.length) {
-                            return (
-                              <div className="bg-gray-800 p-2 rounded shadow-lg opacity-80">
-                                <p className="text-sm">{`Date: ${label}`}</p>
-                                <p className="text-sm">{`${item.title}: ${payload[0].value}`}</p>
-                              </div>
-                            );
-                          }
-                          return null;
-                        }}
-                      />
-                      <Area type="monotone" dataKey="co2Emitted" stroke="white" fill="url(#colorCO2)" strokeWidth={2} />
-                    </AreaChart>
-                  ) : (
-                    <LineChart data={filteredData}>
-                      <XAxis dataKey="date" hide />
-                      <YAxis hide />
-                      <Tooltip
-                        content={({ active, payload, label }) => {
-                          if (active && payload && payload.length) {
-                            return (
-                              <div className="bg-gray-800 text-white p-2 rounded shadow-lg">
-                                <p className="text-sm">{`Date: ${label}`}</p>
-                                <p className="text-sm">{`${item.title}: ${payload[0].value}`}</p>
-                              </div>
-                            );
-                          }
-                          return null;
-                        }}
-                      />
-                      <Line type="monotone" dataKey={item.key} stroke="white" strokeWidth={2} />
-                    </LineChart>
-                  )}
-                </ResponsiveContainer>
-              </div>
-              <div className="relative z-10">
+            <Card
+              key={item.key}
+              className="rounded-lg shadow-lg border-0 overflow-hidden"
+              style={{ 
+                background: item.color,
+                borderLeft: `10px solid ${item.chartColor}`  // ✅ Individual left border color
+              }}
+            >
+              <div className="p-4  text-black">
+                <h3 className="text-[25px] font-semibold mb-2">{item.title}</h3>
                 <Statistic
-                  title={<span style={{ fontSize: "24px", color: "black" }}>{item.title}</span>}
                   value={item.value}
-                  valueStyle={{ fontSize: "36px", color: "black", fontWeight: "bold" }}
-                  className="font-semibold"
+                  valueStyle={{ fontSize: "40px", fontWeight: "bold", color: "black" }}
                 />
+              </div>
+              <div className="h-20 ml-60">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={filteredData} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id={`color${item.key}`} x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor={item.chartColor} stopOpacity={0.8} />
+                        <stop offset="95%" stopColor={item.chartColor} stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <XAxis dataKey="date" hide />
+                      <YAxis hide />
+                      <Tooltip
+                        content={({ active, payload, label }) => {
+                          if (active && payload && payload.length) {
+                            return (
+                              <div className="bg-white p-2 rounded shadow-lg opacity-80">
+                                <p className="text-sm">{`Date: ${label}`}</p>
+                                <p className="text-sm">{`${item.title}: ${payload[0].value}`}</p>
+                              </div>
+                            );
+                          }
+                          return null;
+                        }}
+                      />
+                    <Area
+                      type="monotone"
+                      dataKey={item.key}
+                      stroke={item.chartColor}
+                      fill={`url(#color${item.key})`}
+                      strokeWidth={2}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
               </div>
             </Card>
           ))}
         </div>
 
-        <Flex className="w-full p-5 flex flex-col lg:flex-row gap-10 mt-10">
-          <div className="w-full lg:w-1/2">
-            <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4">Daily Goods Produced vs CO₂ Emitted</h3>
-            <div className="bg-white p-4 rounded-lg shadow-lg">
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={filteredData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="goodsProduced" fill="#72b2f2" name="Goods Produced" />
-                  <Bar dataKey="co2Emitted" name="CO₂ Emitted" fill="#f87171">
-                    {filteredData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill="#f87171" />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+        {/* Charts Section */}
+        <Flex className="w-full gap-6">
+          <div className="w-full lg:w-1/2 bg-white p-6 rounded-lg shadow-lg">
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">Daily Goods Produced vs CO₂ Emitted</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={filteredData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="date" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="goodsProduced" fill="#7625F5" name="Goods Produced" />
+                <Bar dataKey="co2Emitted" fill="#EF4444" name="CO₂ Emitted" />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
 
-          <div className="w-full lg:w-1/2">
-            <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4">Cumulative Goods Produced & CO₂ Emissions</h3>
-            <div className="bg-white p-4 rounded-lg shadow-lg">
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={cumulativeData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Line type="monotone" dataKey="cumulativeGoods" stroke="#72b2f2" name="Cumulative Goods" strokeWidth={3.5} />
-                  <Line type="monotone" dataKey="cumulativeCO2" stroke="#f87171" name="Cumulative CO₂" strokeWidth={3.5} />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
+          <div className="w-full lg:w-1/2 bg-white p-6 rounded-lg shadow-lg">
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">Cumulative Goods Produced & CO₂ Emissions</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={cumulativeData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="date" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line type="monotone" dataKey="cumulativeGoods" stroke="#7625F5" name="Cumulative Goods" strokeWidth={3} />
+                <Line type="monotone" dataKey="cumulativeCO2" stroke="#EF4444" name="Cumulative CO₂" strokeWidth={3} />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
         </Flex>
       </Content>
