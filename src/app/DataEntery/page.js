@@ -4,7 +4,7 @@ import { Table, Input, Button, DatePicker, Select, message } from "antd";
 import dayjs from "dayjs";
 // import { ExclamationCircleFilled } from "@ant-design/icons";
 
-
+import { useRouter } from "next/navigation"; // Import useRouter
 
 import { useScopeOne } from "../(Scopes)/ScopeOne/Context/ScopeOneContext";
 
@@ -15,11 +15,22 @@ const { confirm } = Modal;
 
 const { Option } = Select;
 
+
+
 const DataTable = () => {
 
-  const {data,setData} = useScopeOne()
+  const { data, setData } = useScopeOne()
+  const router = useRouter(); // Initialize useRouter
 
 
+  // Function to navigate to the Parameters & Values page with animation
+  const navigateToParameters = (fuelsData) => {
+    // Convert Fuels data to JSON and encode it
+  const encodedData = encodeURIComponent(JSON.stringify(fuelsData));
+
+  // Navigate to the parameterAndUnit page with the data in query params
+  router.push(`/ScopeOne/Activities/parameterAndUnit?fuels=${encodedData}`);
+  };
 
   // Function to add a new row
   const addRow = () => {
@@ -42,26 +53,26 @@ const DataTable = () => {
     const newData = data.map((row) => {
       if (row.key === key) {
         let updatedRow = { ...row, [field]: value };
-  
+
         // Ensure CO2 emitted is updated dynamically
         if (field === "scope1" || field === "scope2") {
           updatedRow.co2Emitted =
             Number(updatedRow.scope1 || 0) + Number(updatedRow.scope2 || 0);
         }
-  
+
         return updatedRow;
       }
       return row;
     });
     setData(newData);
   };
-  
+
   // Function to save row (lock editing)
   const saveRow = async (key) => {
     const updatedRow = data.find((row) => row.key === key);
-    
+
     if (!updatedRow) return;
-  
+
     const formattedData = {
       record_date: updatedRow.date, // Ensure date is correctly formatted
       username: updatedRow.username,
@@ -71,7 +82,7 @@ const DataTable = () => {
       scope2: updatedRow.scope2,
       shift: updatedRow.shift,
     };
-  
+
     try {
       const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/DashBoardData", {
         method: "POST",
@@ -80,30 +91,30 @@ const DataTable = () => {
         },
         body: JSON.stringify(formattedData), // Send latest row data
       });
-  
+
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-  
+
       message.success("Data saved successfully");
-  
+
       const responseData = await response.json();
       console.log("Response from server:", responseData);
-  
+
       // Mark the row as saved and update its values
       const newData = data.map((row) =>
         row.key === key ? { ...row, ...formattedData, isSaved: true } : row
       );
       setData(newData);
-  
+
     } catch (error) {
       console.error("Error sending data:", error);
     }
   };
-  
+
   const deleteRow = (key) => {
     console.log("keys", key);
-    
+
     Modal.confirm({
       title: "Are you sure you want to delete this record?",
       icon: <ExclamationCircleFilled />,
@@ -116,17 +127,17 @@ const DataTable = () => {
           const response = await fetch(`https://ghg-conversion-factors-backend.vercel.app/DashBoardData/Delete/${key}`, {
             method: "DELETE",
           });
-  
+
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
           }
-  
+
           const responseData = await response.json();
           console.log("Response from server:", responseData);
-  
+
           // Remove deleted row from UI
           setData((prevData) => prevData.filter((row) => row.key !== key));
-  
+
           message.success("Record deleted successfully");
         } catch (error) {
           console.error("Error deleting data:", error);
@@ -139,13 +150,13 @@ const DataTable = () => {
     });
     console.log("maoj")
   };
-  
-  
+
+
   const UpdateRow = async (key) => {
     const updatedRow = data.find((row) => row.key === key);
-  
+
     if (!updatedRow) return;
-  
+
     const formattedData = {
       record_date: updatedRow.date, // Ensure date format
       username: updatedRow.username,
@@ -155,7 +166,7 @@ const DataTable = () => {
       scope2: updatedRow.scope2,
       shift: updatedRow.shift,
     };
-  
+
     try {
       const res = await fetch(`https://ghg-conversion-factors-backend.vercel.app/DashBoardData/Update/${key}`, {
         method: "PUT",
@@ -164,72 +175,69 @@ const DataTable = () => {
         },
         body: JSON.stringify(formattedData), // Send updated row data
       });
-  
+
       if (!res.ok) {
         throw new Error(`HTTP error! Status: ${res.status}`);
       }
-  
+
       const responseData = await res.json();
       console.log("Response from server:", responseData);
-  
+
       message.success("Data updated successfully");
-  
+
       // Mark row as saved after updating
       const newData = data.map((row) =>
         row.key === key ? { ...row, isSaved: true } : row
       );
       setData(newData);
-  
+
     } catch (error) {
       console.error("Error updating data:", error);
     }
   };
-  
 
-const editRow = (key) => {
 
-  console.log("edit",key)
-
-  const newData = data.map((row) =>
-    row.key === key ? { ...row, isSaved: false } : row
-  );
-  setData(newData);
-};
-
- // Runs only on the first render
-
-useEffect(() => {
-  const fetchData = async () => {
-    try {
-      const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/api/DashBoardData");
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      const data = await response.json();
-
-      console.log("Fetched Data:", data); // Debugging step
-
-      // Ensure correct key names and add missing fields with defaults
-      const formattedData = data.map((row, index) => ({
-        key: row.record_id, // Ensure unique key
-        username: row.username || "Unknown",
-        date: row.date || "", // Handle missing date
-        shift: row.shift || "N/A",
-        goodsProduced: row.goodsProduced || 0,
-        scope1: row.scope1 || 0,
-        scope2: row.scope2 || 0,
-        co2Emitted: row.co2Emitted || (Number(row.scope1 || 0) + Number(row.scope2 || 0)),
-        isSaved: true, // Mark as saved since fetched from DB
-      }));
-
-      setData(formattedData);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
+  const editRow = (key) => {
+    const newData = data.map((row) =>
+      row.key === key ? { ...row, isSaved: false, isEdited: true } : row
+    );
+    setData(newData);
   };
 
-  fetchData();
-}, []);
+  // Runs only on the first render
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/api/DashBoardData");
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+
+        console.log("Fetched Data:", data); // Debugging step
+
+        // Ensure correct key names and add missing fields with defaults
+        const formattedData = data.map((row, index) => ({
+          key: row.record_id, // Ensure unique key
+          username: row.username || "Unknown",
+          date: row.date || "", // Handle missing date
+          shift: row.shift || "N/A",
+          goodsProduced: row.goodsProduced || 0,
+          scope1: row.scope1 || 0,
+          scope2: row.scope2 || 0,
+          co2Emitted: row.co2Emitted || (Number(row.scope1 || 0) + Number(row.scope2 || 0)),
+          isSaved: true, // Mark as saved since fetched from DB
+        }));
+
+        setData(formattedData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
 
 
@@ -275,7 +283,7 @@ useEffect(() => {
           >
             <Option value="1">Shift 1</Option>
             <Option value="2">Shift 2</Option>
-          
+
           </Select>
         ),
     },
@@ -298,16 +306,17 @@ useEffect(() => {
       title: "Scope 1",
       dataIndex: "scope1",
       key: "scope1",
-      render: (text, record) =>
-        record.isSaved ? (
-          text
-        ) : (
-          <Input
-            type="number"
-            value={text}
-            onChange={(e) => updateRow(record.key, "scope1", e.target.value)}
-          />
-        ),
+      align: "center",
+      render: (text, record) => (
+        <Button
+          type="default"
+          onClick={navigateToParameters}
+          className="navigate-button"
+          style={{ width: "100%", textAlign: "center" }}
+        >
+          Parameters & Values
+        </Button>
+      ),
     },
     {
       title: "Scope 2",
@@ -332,37 +341,38 @@ useEffect(() => {
     {
       title: "Actions",
       key: "actions",
-      render: (_, record) =>
-        record.isSaved ? (
+      render: (_, record) => {
+        if (!record.isSaved) {
+          // If it's a new row (not saved yet), show only Save button
+          if (!record.isEdited) {
+            return (
+              <Button type="primary" onClick={() => saveRow(record.key)}>
+                Save
+              </Button>
+            );
+          }
+          // If the row is being edited (already saved before), show only Update button
+          else {
+            return (
+              <Button type="primary" onClick={() => UpdateRow(record.key)}>
+                Update
+              </Button>
+            );
+          }
+        }
+        // If the row is saved, show Edit and Delete buttons
+        return (
           <div className="flex gap-4">
-          <Button type="default" onClick={() => editRow(record.key)}>
-            Edit
-          </Button>
-          <Button type="default" className="!bg-red-600" onClick={() => {
-  console.log("Delete button clicked for key:", record.key);
-  deleteRow(record.key);
-}}>
-  Delete
-</Button>
-
-        
+            <Button type="default" onClick={() => editRow(record.key)}>
+              Edit
+            </Button>
+            <Button type="default" className="!bg-red-600" onClick={() => deleteRow(record.key)}>
+              Delete
+            </Button>
           </div>
-          
-
-        ) : (
-        <>
-        <Button type="primary" onClick={() => saveRow(record.key)}>
-            Save
-          </Button> 
-          <Button type="primary" onClick={() => UpdateRow(record.key)}>
-            Update
-          </Button> 
-
-        
-        </>
-          
-        ),
-    },
+        );
+      },
+    }
   ];
 
   return (
