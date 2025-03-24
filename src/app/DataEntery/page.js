@@ -1,9 +1,9 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Table, Input, Button, DatePicker, Select, message, Segmented, Form, Drawer, Space, Modal } from "antd";
-import { BarsOutlined, AppstoreAddOutlined, PoweroffOutlined, SyncOutlined,PlusOutlined } from "@ant-design/icons";
+import { BarsOutlined, AppstoreAddOutlined, PoweroffOutlined, SyncOutlined, PlusOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
-import { useRouter } from "next/navigation"; 
+import { useRouter } from "next/navigation";
 import { useScopeOne } from "../(Scopes)/ScopeOne/Context/ScopeOneContext";
 import ParametersAndUnits from "../(Scopes)/ScopeOne/Activities/parameterAndUnit/page";
 import NavBar from "@/Componants/NavBar";
@@ -12,8 +12,8 @@ const { confirm } = Modal;
 const { Option } = Select;
 
 const DataTable = () => {
-  const[scopeOneTotal,setScopeOneTotal] = useState(null);
-  const { data, setData ,userId } = useScopeOne();
+  const [scopeOneTotal, setScopeOneTotal] = useState(null);
+  const { data, setData, userId } = useScopeOne();
   const router = useRouter();
   const [view, setView] = useState("DataEntry");
   const [form] = Form.useForm();
@@ -91,7 +91,7 @@ const DataTable = () => {
           row.key === currentRow.key ? { ...row, ...newRow, isSaved: true } : row
         );
         setData(newData);
-        
+
       } else {
         // ✅ Add Mode: Insert new record
         const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/DashBoardData", {
@@ -174,55 +174,55 @@ const DataTable = () => {
   return (
     <div>
       <NavBar />
-<div className="w-[1000] ml-[500] mt-[70] shadow-lg p-10 h-[700]">
-<Segmented
-        options={[
-          { label: "Data Entry", value: "DataEntry", icon: <AppstoreAddOutlined /> },
-          { label: "List", value: "List", icon: <BarsOutlined /> },
-        ]}
-        onChange={setView}
-        value={view}
-      />
+      <div className="w-[1000] ml-[500] mt-[70] shadow-lg p-10 h-[700]">
+        <Segmented
+          options={[
+            { label: "Data Entry", value: "DataEntry", icon: <AppstoreAddOutlined /> },
+            { label: "List", value: "List", icon: <BarsOutlined /> },
+          ]}
+          onChange={setView}
+          value={view}
+        />
 
-      {view === "DataEntry" && (
-        <Form form={form} onFinish={handleFormSubmit} layout="vertical" className="p-4">
-        <Form.Item label="Username" name="username" initialValue="Current User">
-          <Input placeholder="Enter Username" disabled />
-        </Form.Item>
+        {view === "DataEntry" && (
+          <Form form={form} onFinish={handleFormSubmit} layout="vertical" className="p-4">
+            <Form.Item label="Username" name="username" initialValue="Current User">
+              <Input placeholder="Enter Username" disabled />
+            </Form.Item>
 
-        <Form.Item label="Date" name="date" rules={[{ required: true, message: "Please select date" }]}>
-          <DatePicker />
-        </Form.Item>
+            <Form.Item label="Date" name="date" rules={[{ required: true, message: "Please select date" }]}>
+              <DatePicker />
+            </Form.Item>
 
-        <Form.Item label="Shift" name="shift" rules={[{ required: true, message: "Select shift" }]}>
-          <Select>
-            <Option value="1">Shift 1</Option>
-            <Option value="2">Shift 2</Option>
-          </Select>
-        </Form.Item>
+            <Form.Item label="Shift" name="shift" rules={[{ required: true, message: "Select shift" }]}>
+              <Select>
+                <Option value="1">Shift 1</Option>
+                <Option value="2">Shift 2</Option>
+              </Select>
+            </Form.Item>
 
-        <Form.Item label="Goods Produced" name="goodsProduced" rules={[{ required: true, message: "Enter production" }]}>
-          <Input type="number" />
-        </Form.Item>
+            <Form.Item label="Goods Produced" name="goodsProduced" rules={[{ required: true, message: "Enter production" }]}>
+              <Input type="number" />
+            </Form.Item>
 
-        <Form.Item label="Scope 1" name="scope1">
-          <Button  onClick={showLargeDrawer} icon={<PlusOutlined />}>Parameters</Button><span className="ml-3">{scopeOneTotal}</span>
-        </Form.Item>
+            <Form.Item label="Scope 1" name="scope1">
+              <Button onClick={showLargeDrawer} icon={<PlusOutlined />}>Scope 1 Parameters</Button><span className="ml-3">{scopeOneTotal}</span>
+            </Form.Item>
 
-        <Form.Item label="Scope 2" name="scope2"  rules={[{ required: true}]}>
-          <Input type="number" />
-        </Form.Item>
+            <Form.Item label="Scope 2" name="scope2">
+              <Button onClick={showLargeDrawer} icon={<PlusOutlined />}>Scope 2 Parameters</Button><span className="ml-3">{scopeOneTotal}</span>
+            </Form.Item>
 
-        <Button type="primary" htmlType="submit">
-          Save Data
-        </Button>
-      </Form>
-      )}
+            <Button type="primary" htmlType="submit">
+              Save Data
+            </Button>
+          </Form>
+        )}
 
-      {view === "List" && <Table className="mt-10" columns={columns} dataSource={data} pagination={false} />}
-</div>
+        {view === "List" && <Table className="mt-10" columns={columns} dataSource={data} pagination={false} />}
+      </div>
 
-<Drawer
+      <Drawer
         title="Paramter"
         placement="right"
         size={size}
@@ -237,9 +237,10 @@ const DataTable = () => {
           </Space>
         }
       >
-      <ParametersAndUnits setScopeOneTotal={setScopeOneTotal}  scopeOneTotal={scopeOneTotal}></ParametersAndUnits>
+        <ParametersAndUnits setScopeOneTotal={setScopeOneTotal} scopeOneTotal={scopeOneTotal}></ParametersAndUnits>
+        {/* <ParametersAndUnits setScopeOneTotal={setScopeOneTotal}  scopeOneTotal={scopeOneTotal}></ParametersAndUnits> */}
       </Drawer>
-      
+
     </div>
   );
 };
