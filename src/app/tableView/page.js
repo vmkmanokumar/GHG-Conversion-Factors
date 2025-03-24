@@ -22,7 +22,7 @@ const TableView = () => {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedTemplate = localStorage.getItem("selectedTemplate");
-      const userName = localStorage.getItem("username");
+      const userName = localStorage.getItem("email");
       if (storedTemplate) setSelectedTemplate(storedTemplate);
       if (userName) setUserId(userName);
       

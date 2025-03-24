@@ -1,9 +1,9 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Table, Input, Button, DatePicker, Select, message, Segmented, Form, Drawer, Space, Modal } from "antd";
-import { BarsOutlined, AppstoreAddOutlined, PoweroffOutlined, SyncOutlined,PlusOutlined } from "@ant-design/icons";
+import { BarsOutlined, AppstoreAddOutlined, PoweroffOutlined, SyncOutlined, PlusOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
-import { useRouter } from "next/navigation"; 
+import { useRouter } from "next/navigation";
 import { useScopeOne } from "../(Scopes)/ScopeOne/Context/ScopeOneContext";
 import ParametersAndUnits from "../(Scopes)/ScopeOne/Activities/parameterAndUnit/page";
 import NavBar from "@/Componants/NavBar";
@@ -12,8 +12,11 @@ const { confirm } = Modal;
 const { Option } = Select;
 
 const DataTable = () => {
-  const[scopeOneTotal,setScopeOneTotal] = useState(null);
-  const { data, setData ,userId } = useScopeOne();
+  const [scopeOneTotal, setScopeOneTotal] = useState(null);
+  const { data, setData } = useScopeOne();
+
+  const userId = localStorage.getItem("username")
+  console.log(userId)
   const router = useRouter();
   const [view, setView] = useState("DataEntry");
   const [form] = Form.useForm();
@@ -22,6 +25,8 @@ const DataTable = () => {
   const [loadings, setLoadings] = useState([]);
   const [currentRow, setCurrentRow] = useState(null);  // ✅ Store row being edited
   const [isEditMode, setIsEditMode] = useState(false); // ✅ Track if editing
+  const [messageApi, contextHolder] = message.useMessage();
+  
 
   const onClose = () => {
     setOpen(false);
@@ -47,7 +52,11 @@ const DataTable = () => {
   const editRow = (row) => {
     setCurrentRow(row);        // Store the row being edited
     setIsEditMode(true);       // Set to edit mode
-    setView("DataEntry");      // Switch to data entry view
+    setView("DataEntry");
+
+    // Switch to data entry view
+
+    setScopeOneTotal(row.scope1);
 
     form.setFieldsValue({
       username: row.username,
@@ -84,14 +93,14 @@ const DataTable = () => {
           throw new Error(`HTTP error! Status: ${res.status}`);
         }
 
-        message.success("Data updated successfully");
+        messageApi.success("Data updated successfully");
 
         // Update UI with edited row
         const newData = data.map((row) =>
           row.key === currentRow.key ? { ...row, ...newRow, isSaved: true } : row
         );
         setData(newData);
-        
+
       } else {
         // ✅ Add Mode: Insert new record
         const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/DashBoardData", {
@@ -122,35 +131,37 @@ const DataTable = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/api/DashBoardData");
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        const data = await response.json();
+// ✅ Move fetchData outside of useEffect
+const fetchData = async () => {
+  try {
+    const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/api/DashBoardData");
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const data = await response.json();
 
-        const formattedData = data.map((row) => ({
-          key: row.record_id,
-          username: row.username || "Unknown",
-          date: row.date || "",
-          shift: row.shift || "N/A",
-          goodsProduced: row.goodsProduced || 0,
-          scope1: row.scope1 || 0,
-          scope2: row.scope2 || 0,
-          co2Emitted: row.co2Emitted || (Number(row.scope1 || 0) + Number(row.scope2 || 0)),
-          isSaved: true,
-        }));
+    const formattedData = data.map((row) => ({
+      key: row.record_id,
+      username: row.username || "Unknown",
+      date: row.date || "",
+      shift: row.shift || "N/A",
+      goodsProduced: row.goodsProduced || 0,
+      scope1: row.scope1 || 0,
+      scope2: row.scope2 || 0,
+      co2Emitted: row.co2Emitted || (Number(row.scope1 || 0) + Number(row.scope2 || 0)),
+      isSaved: true,
+    }));
 
-        setData(formattedData);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
+    setData(formattedData);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+};
 
-    fetchData();
-  }, []);
+useEffect(() => {
+  fetchData();
+}, []);
+
 
   const columns = [
     { title: "Username", dataIndex: "username", key: "username" },
@@ -174,55 +185,110 @@ const DataTable = () => {
   return (
     <div>
       <NavBar />
-<div className="w-[1000] ml-[500] mt-[70] shadow-lg p-10 h-[700]">
-<Segmented
-        options={[
-          { label: "Data Entry", value: "DataEntry", icon: <AppstoreAddOutlined /> },
-          { label: "List", value: "List", icon: <BarsOutlined /> },
-        ]}
-        onChange={setView}
-        value={view}
+      {contextHolder}
+      <div className="w-[1300] ml-[350] mt-[70] shadow-lg p-10 h-[800]">
+        <Segmented
+          options={[
+            { label: "Data Entry", value: "DataEntry", icon: <AppstoreAddOutlined /> },
+            { label: "List", value: "List", icon: <BarsOutlined /> },
+          ]}
+          onChange={setView}
+          value={view}
+        />
+
+        {view === "DataEntry" && (
+          <>
+          <Form form={form} onFinish={handleFormSubmit} layout="vertical" className="p-4">
+            <Form.Item label="Username" name="username" initialValue={userId}>
+              <Input placeholder="Enter Username" disabled />
+            </Form.Item>
+
+            <Form.Item label="Date" name="date" rules={[{ required: true, message: "Please select date" }]}>
+              <DatePicker />
+            </Form.Item>
+
+            <Form.Item label="Shift" name="shift" rules={[{ required: true, message: "Select shift" }]}>
+              <Select>
+                <Option value="1">Shift 1</Option>
+                <Option value="2">Shift 2</Option>
+              </Select>
+            </Form.Item>
+
+            <Form.Item label="Goods Produced" name="goodsProduced" rules={[{ required: true, message: "Enter production" }]}>
+              <Input type="number" />
+            </Form.Item>
+
+            <Form.Item label="Scope 1" name="scope1">
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <Button onClick={showLargeDrawer} icon={<PlusOutlined />}>Parameters</Button><span className="ml-3">{scopeOneTotal}</span>
+              </div>
+            </Form.Item>
+
+            <Form.Item label="Scope 2" name="scope2" rules={[{ required: true }]}>
+              <Input type="number" />
+            </Form.Item>
+
+            <Button type="primary" htmlType="submit">
+              Save Data
+            </Button>
+          </Form>
+          </>
+        )}
+
+{view === "List" && (
+  <div className="mt-5"> 
+    {/* ✅ Refresh and Date Filter */}
+    <div className="flex justify-between mb-4">
+      {/* ✅ Date Filter */}
+      <DatePicker.RangePicker
+        onChange={(dates) => {
+          if (dates && dates.length === 2) {
+            const [startDate, endDate] = dates;
+            const filtered = data.filter((item) => {
+              const itemDate = dayjs(item.date);
+              return itemDate.isAfter(startDate.subtract(1, "day")) && itemDate.isBefore(endDate.add(1, "day"));
+            });
+            setData(filtered);  // ✅ Update with filtered data
+          } else {
+            fetchData();        // ✅ Reset to full data when cleared
+          }
+        }}
       />
 
-      {view === "DataEntry" && (
-        <Form form={form} onFinish={handleFormSubmit} layout="vertical" className="p-4">
-        <Form.Item label="Username" name="username" initialValue="Current User">
-          <Input placeholder="Enter Username" disabled />
-        </Form.Item>
+      {/* ✅ Refresh Button with Animation */}
+      <Button 
+        type="primary" 
+        icon={<SyncOutlined />} 
+        onClick={async () => {
+          setLoadings([true]);          // ✅ Show loading animation
+          await fetchData();            // ✅ Fetch the data
+          setLoadings([false]);         // ✅ Hide loading animation
+        }}
+        loading={loadings[0]}           // ✅ Display spinner while loading
+      >
+        {loadings[0] ? "Refreshing..." : "Refresh"}
+      </Button>
+    </div>
 
-        <Form.Item label="Date" name="date" rules={[{ required: true, message: "Please select date" }]}>
-          <DatePicker />
-        </Form.Item>
+    {/* ✅ Scrollable container */}
+    <div>
+      <Table
+        className="mt-10"
+        columns={columns}
+        dataSource={[...data].sort((a, b) => new Date(b.date) - new Date(a.date))}  
+        pagination={false}
+        scroll={{ y: 550 }}
+      />
+    </div>
+  </div>
+)}
 
-        <Form.Item label="Shift" name="shift" rules={[{ required: true, message: "Select shift" }]}>
-          <Select>
-            <Option value="1">Shift 1</Option>
-            <Option value="2">Shift 2</Option>
-          </Select>
-        </Form.Item>
 
-        <Form.Item label="Goods Produced" name="goodsProduced" rules={[{ required: true, message: "Enter production" }]}>
-          <Input type="number" />
-        </Form.Item>
 
-        <Form.Item label="Scope 1" name="scope1">
-          <Button  onClick={showLargeDrawer} icon={<PlusOutlined />}>Parameters</Button><span className="ml-3">{scopeOneTotal}</span>
-        </Form.Item>
 
-        <Form.Item label="Scope 2" name="scope2"  rules={[{ required: true}]}>
-          <Input type="number" />
-        </Form.Item>
+      </div>
 
-        <Button type="primary" htmlType="submit">
-          Save Data
-        </Button>
-      </Form>
-      )}
-
-      {view === "List" && <Table className="mt-10" columns={columns} dataSource={data} pagination={false} />}
-</div>
-
-<Drawer
+      <Drawer
         title="Paramter"
         placement="right"
         size={size}
@@ -237,9 +303,9 @@ const DataTable = () => {
           </Space>
         }
       >
-      <ParametersAndUnits setScopeOneTotal={setScopeOneTotal}  scopeOneTotal={scopeOneTotal}></ParametersAndUnits>
+        <ParametersAndUnits setScopeOneTotal={setScopeOneTotal} scopeOneTotal={scopeOneTotal}></ParametersAndUnits>
       </Drawer>
-      
+
     </div>
   );
 };
