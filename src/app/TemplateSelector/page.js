@@ -24,6 +24,8 @@ const TemplateSelector = () => {
     }
   }, []);
 
+  console.log("userId",userId)
+
   const error = () => {
     messageApi.open({
       type: 'error',

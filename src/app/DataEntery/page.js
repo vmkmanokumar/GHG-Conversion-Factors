@@ -14,7 +14,14 @@ const { Option } = Select;
 
 const DataTable = () => {
   const [scopeOneTotal, setScopeOneTotal] = useState(null);
+<<<<<<< HEAD
   const { data, setData, userId } = useScopeOne();
+=======
+  const { data, setData } = useScopeOne();
+
+  const userId = localStorage.getItem("username")
+  console.log(userId)
+>>>>>>> 6ba2f50 (24/3/25 username change email change)
   const router = useRouter();
   const [view, setView] = useState("DataEntry");
   const [form] = Form.useForm();
@@ -23,6 +30,8 @@ const DataTable = () => {
   const [loadings, setLoadings] = useState([]);
   const [currentRow, setCurrentRow] = useState(null);  // ✅ Store row being edited
   const [isEditMode, setIsEditMode] = useState(false); // ✅ Track if editing
+  const [messageApi, contextHolder] = message.useMessage();
+  
 
   const onClose = () => {
     setOpen(false);
@@ -52,7 +61,11 @@ const DataTable = () => {
   const editRow = (row) => {
     setCurrentRow(row);        // Store the row being edited
     setIsEditMode(true);       // Set to edit mode
-    setView("DataEntry");      // Switch to data entry view
+    setView("DataEntry");
+
+    // Switch to data entry view
+
+    setScopeOneTotal(row.scope1);
 
     form.setFieldsValue({
       username: row.username,
@@ -89,7 +102,7 @@ const DataTable = () => {
           throw new Error(`HTTP error! Status: ${res.status}`);
         }
 
-        message.success("Data updated successfully");
+        messageApi.success("Data updated successfully");
 
         // Update UI with edited row
         const newData = data.map((row) =>
@@ -127,35 +140,37 @@ const DataTable = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/api/DashBoardData");
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        const data = await response.json();
+// ✅ Move fetchData outside of useEffect
+const fetchData = async () => {
+  try {
+    const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/api/DashBoardData");
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const data = await response.json();
 
-        const formattedData = data.map((row) => ({
-          key: row.record_id,
-          username: row.username || "Unknown",
-          date: row.date || "",
-          shift: row.shift || "N/A",
-          goodsProduced: row.goodsProduced || 0,
-          scope1: row.scope1 || 0,
-          scope2: row.scope2 || 0,
-          co2Emitted: row.co2Emitted || (Number(row.scope1 || 0) + Number(row.scope2 || 0)),
-          isSaved: true,
-        }));
+    const formattedData = data.map((row) => ({
+      key: row.record_id,
+      username: row.username || "Unknown",
+      date: row.date || "",
+      shift: row.shift || "N/A",
+      goodsProduced: row.goodsProduced || 0,
+      scope1: row.scope1 || 0,
+      scope2: row.scope2 || 0,
+      co2Emitted: row.co2Emitted || (Number(row.scope1 || 0) + Number(row.scope2 || 0)),
+      isSaved: true,
+    }));
 
-        setData(formattedData);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
+    setData(formattedData);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+};
 
-    fetchData();
-  }, []);
+useEffect(() => {
+  fetchData();
+}, []);
+
 
   const columns = [
     { title: "Username", dataIndex: "username", key: "username" },
@@ -179,7 +194,12 @@ const DataTable = () => {
   return (
     <div>
       <NavBar />
+<<<<<<< HEAD
       <div className="w-[1000] ml-[500] mt-[70] shadow-lg p-10 h-[700]">
+=======
+      {contextHolder}
+      <div className="w-[1300] ml-[350] mt-[70] shadow-lg p-10 h-[800]">
+>>>>>>> 6ba2f50 (24/3/25 username change email change)
         <Segmented
           options={[
             { label: "Data Entry", value: "DataEntry", icon: <AppstoreAddOutlined /> },
@@ -188,6 +208,7 @@ const DataTable = () => {
           onChange={setView}
           value={view}
         />
+<<<<<<< HEAD
 
         {view === "DataEntry" && (
           <Form form={form} onFinish={handleFormSubmit} layout="vertical" className="p-4">
@@ -227,6 +248,101 @@ const DataTable = () => {
         {view === "List" && <Table className="mt-10" columns={columns} dataSource={data} pagination={false} />}
       </div>
 
+=======
+
+        {view === "DataEntry" && (
+          <>
+          <Form form={form} onFinish={handleFormSubmit} layout="vertical" className="p-4">
+            <Form.Item label="Username" name="username" initialValue={userId}>
+              <Input placeholder="Enter Username" disabled />
+            </Form.Item>
+
+            <Form.Item label="Date" name="date" rules={[{ required: true, message: "Please select date" }]}>
+              <DatePicker />
+            </Form.Item>
+
+            <Form.Item label="Shift" name="shift" rules={[{ required: true, message: "Select shift" }]}>
+              <Select>
+                <Option value="1">Shift 1</Option>
+                <Option value="2">Shift 2</Option>
+              </Select>
+            </Form.Item>
+
+            <Form.Item label="Goods Produced" name="goodsProduced" rules={[{ required: true, message: "Enter production" }]}>
+              <Input type="number" />
+            </Form.Item>
+
+            <Form.Item label="Scope 1" name="scope1">
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <Button onClick={showLargeDrawer} icon={<PlusOutlined />}>Parameters</Button><span className="ml-3">{scopeOneTotal}</span>
+              </div>
+            </Form.Item>
+
+            <Form.Item label="Scope 2" name="scope2" rules={[{ required: true }]}>
+              <Input type="number" />
+            </Form.Item>
+
+            <Button type="primary" htmlType="submit">
+              Save Data
+            </Button>
+          </Form>
+          </>
+        )}
+
+{view === "List" && (
+  <div className="mt-5"> 
+    {/* ✅ Refresh and Date Filter */}
+    <div className="flex justify-between mb-4">
+      {/* ✅ Date Filter */}
+      <DatePicker.RangePicker
+        onChange={(dates) => {
+          if (dates && dates.length === 2) {
+            const [startDate, endDate] = dates;
+            const filtered = data.filter((item) => {
+              const itemDate = dayjs(item.date);
+              return itemDate.isAfter(startDate.subtract(1, "day")) && itemDate.isBefore(endDate.add(1, "day"));
+            });
+            setData(filtered);  // ✅ Update with filtered data
+          } else {
+            fetchData();        // ✅ Reset to full data when cleared
+          }
+        }}
+      />
+
+      {/* ✅ Refresh Button with Animation */}
+      <Button 
+        type="primary" 
+        icon={<SyncOutlined />} 
+        onClick={async () => {
+          setLoadings([true]);          // ✅ Show loading animation
+          await fetchData();            // ✅ Fetch the data
+          setLoadings([false]);         // ✅ Hide loading animation
+        }}
+        loading={loadings[0]}           // ✅ Display spinner while loading
+      >
+        {loadings[0] ? "Refreshing..." : "Refresh"}
+      </Button>
+    </div>
+
+    {/* ✅ Scrollable container */}
+    <div>
+      <Table
+        className="mt-10"
+        columns={columns}
+        dataSource={[...data].sort((a, b) => new Date(b.date) - new Date(a.date))}  
+        pagination={false}
+        scroll={{ y: 550 }}
+      />
+    </div>
+  </div>
+)}
+
+
+
+
+      </div>
+
+>>>>>>> 6ba2f50 (24/3/25 username change email change)
       <Drawer
         title="Paramter"
         placement="right"
@@ -244,6 +360,7 @@ const DataTable = () => {
       >
         <ParametersAndUnits setScopeOneTotal={setScopeOneTotal} scopeOneTotal={scopeOneTotal}></ParametersAndUnits>
       </Drawer>
+<<<<<<< HEAD
       <Drawer
         title="Paramter"
         placement="right"
@@ -262,6 +379,8 @@ const DataTable = () => {
         <ParameterUnitForScopeTwo setScopeOneTotal={setScopeOneTotal} scopeOneTotal={scopeOneTotal}></ParameterUnitForScopeTwo>
         
       </Drawer>
+=======
+>>>>>>> 6ba2f50 (24/3/25 username change email change)
 
     </div>
   );

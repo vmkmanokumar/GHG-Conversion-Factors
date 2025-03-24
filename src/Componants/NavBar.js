@@ -35,10 +35,14 @@ export default function NavBar() {
   const [userId, setUserId] = useState("");
   const [user, setUser] = useState("");
   const [messageApi, contextHolder] = message.useMessage();
+  const [roles,setRoles] = useState("")
+
+  console.log("rolse",roles)
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const userName = localStorage.getItem("username");
+      const roles = localStorage.getItem("roles")
       
       if (userName) {
         setUserId(userName);
@@ -51,6 +55,10 @@ export default function NavBar() {
           messageApi.success(`Welcome, ${userName}!`);
           localStorage.removeItem("firstLogin");  // ✅ Remove flag after displaying
         }
+      }
+
+      if(roles){
+        setRoles(localStorage.getItem("roles"))
       }
     }
   }, []);
