@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Table, Input, Button, DatePicker, Select, message, Segmented, Form, Drawer, Space, Modal } from "antd";
-import { BarsOutlined, AppstoreAddOutlined, PoweroffOutlined, SyncOutlined } from "@ant-design/icons";
+import { BarsOutlined, AppstoreAddOutlined, PoweroffOutlined, SyncOutlined,PlusOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation"; 
 import { useScopeOne } from "../(Scopes)/ScopeOne/Context/ScopeOneContext";
@@ -12,6 +12,7 @@ const { confirm } = Modal;
 const { Option } = Select;
 
 const DataTable = () => {
+  const[scopeOneTotal,setScopeOneTotal] = useState(null);
   const { data, setData ,userId } = useScopeOne();
   const router = useRouter();
   const [view, setView] = useState("DataEntry");
@@ -65,7 +66,7 @@ const DataTable = () => {
       username: values.username || "Unknown",
       shift: values.shift || "",
       goods_produced: values.goodsProduced || 0,
-      scope1: values.scope1 || 0,
+      scope1: scopeOneTotal || 0,
       scope2: values.scope2 || 0,
       co2_emitted: Number(values.scope1 || 0) + Number(values.scope2 || 0),
     };
@@ -204,8 +205,8 @@ const DataTable = () => {
           <Input type="number" />
         </Form.Item>
 
-        <Form.Item label="Scope 1" name="scope1" rules={[{ required: true}]}>
-          <Button  onClick={showLargeDrawer}>Parameters</Button>
+        <Form.Item label="Scope 1" name="scope1">
+          <Button  onClick={showLargeDrawer} icon={<PlusOutlined />}>Parameters</Button><span className="ml-3">{scopeOneTotal}</span>
         </Form.Item>
 
         <Form.Item label="Scope 2" name="scope2"  rules={[{ required: true}]}>
@@ -236,7 +237,7 @@ const DataTable = () => {
           </Space>
         }
       >
-      <ParametersAndUnits></ParametersAndUnits>
+      <ParametersAndUnits setScopeOneTotal={setScopeOneTotal}  scopeOneTotal={scopeOneTotal}></ParametersAndUnits>
       </Drawer>
       
     </div>

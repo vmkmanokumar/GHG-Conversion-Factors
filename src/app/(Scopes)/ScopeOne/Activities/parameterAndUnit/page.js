@@ -2,15 +2,17 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Disclosure } from "@headlessui/react";
 import { ChevronDown } from "lucide-react";
-import { Input, Select, Button } from "antd";
+import { Input, Select, Button ,message} from "antd";
 import { motion } from "framer-motion";
 import { useScopeOne } from "../../Context/ScopeOneContext";
 
 const { Option } = Select;
 
-export default function ParametersAndUnits() {
+export default function ParametersAndUnits({setScopeOneTotal,scopeOneTotal}) {
   const { selectedFuels, setSelectedFuels } = useScopeOne();
   const [biogas, setBiogas] = useState([]);
+  const [messageApi, contextHolder] = message.useMessage();
+  
 
   console.log("Selected Fuels:", selectedFuels);
 
@@ -38,7 +40,7 @@ export default function ParametersAndUnits() {
     console.log("Payload to be sent:", payload); // Check the transformed payload
   
     try {
-      const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/DataEntery/Scope1", {
+      const response = await fetch("http://127.0.0.1:5000/DataEntery/Scope1", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",   // ✅ Fixed header format
@@ -49,6 +51,10 @@ export default function ParametersAndUnits() {
       if (response.ok) {
         const data = await response.json();
         console.log("Data successfully sent:", data);
+        setScopeOneTotal(data.ScopeOneTotal)
+        messageApi.success(data.message)
+
+       
       } else {
         console.error("Failed to send data:", response.status);
       }
@@ -114,6 +120,8 @@ export default function ParametersAndUnits() {
   };
 
   return (
+    <>
+    {contextHolder}
     <div className="flex flex-col  justify-between items-center bg-[#effbf7]  md:w-[768px] lg:w-[650px] md:mx-auto mt-10 md:mt-20 lg:mt-10 p-4 md:p-6 rounded-xl shadow-lg flex-grow min-h-[515px]">
       {/* Title */}
       <div className="w-full mb-4">
@@ -238,5 +246,6 @@ export default function ParametersAndUnits() {
         </Button>
       </div>
     </div>
+    </>
   );
 }
