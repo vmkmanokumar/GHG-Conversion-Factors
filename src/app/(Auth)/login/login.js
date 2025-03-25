@@ -41,15 +41,20 @@ export default function Login() {
       });
   
       const data = await response.json();
+
+      console.log("datafromdashboard",data)
   
       if (response.ok) {
         const token = data.token; // ✅ Fetch JWT token from response
-        const username = data.user.email
+        const email = data.user.email
+        const username = data.user.username
         const roles = data.user.roles
         messageApi.success("Login successful!");
+        console.log("username",username)
   
         if (token) {
           localStorage.setItem("token", token); // ✅ Store token
+          localStorage.setItem("email",email)
           localStorage.setItem("username",username)
           localStorage.setItem("firstLogin", "true");
           localStorage.setItem("roles",roles)
