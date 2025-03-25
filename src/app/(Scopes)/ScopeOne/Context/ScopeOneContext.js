@@ -12,6 +12,7 @@ export function ScopeOneProvider({ children }) {
     const [activities, setActivities] = useState([]);
     const [fetchedParameters, setFetchedParameters] = useState({});
     const [userId, setUserId] = useState("");
+    const [user_Id, setUser_Id] = useState("");
     const [templatecontent, settemplatecontent] = useState("");
     const [selectedShift, setSelectedShift] = useState("");
     // 🔹 Add shift state
@@ -25,7 +26,7 @@ export function ScopeOneProvider({ children }) {
         <ScopeOneContext.Provider
 
             value={{
-                userId, setUserId, allEntries, setAllEntries,data, setData,
+                userId, setUserId, allEntries, setAllEntries,data, setData,user_Id, setUser_Id,
                 templatecontent, settemplatecontent,
                 selectedShift, setSelectedShift,
                 checkedValuesScopeOne,

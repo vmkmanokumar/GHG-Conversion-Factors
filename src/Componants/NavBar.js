@@ -28,11 +28,11 @@ const { Header } = Layout;
 const { Title } = Typography;
 
 export default function NavBar() {
-  const { setEditTemplate,userId } = useScopeOne();
+  const { setEditTemplate,userId ,user_Id, setUser_Id} = useScopeOne();
   const router = useRouter();
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [openEditTemplate, setOpenEditTemplate] = useState(false);
-  const [user_Id, setUser_Id] = useState("");
+  
   const [user, setUser] = useState("");
   const [messageApi, contextHolder] = message.useMessage();
   const [roles,setRoles] = useState("")
@@ -70,6 +70,7 @@ export default function NavBar() {
   const handleLogout = () => {
     console.log("User logged out");
     localStorage.removeItem("username");
+    localStorage.clear()
     router.replace("/");
   };
 

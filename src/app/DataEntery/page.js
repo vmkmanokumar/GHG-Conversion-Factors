@@ -13,7 +13,9 @@ const { Option } = Select;
 
 const DataTable = () => {
   const [scopeOneTotal, setScopeOneTotal] = useState(null);
-  const { data, setData } = useScopeOne();
+  const { data, setData ,user_Id,setUser_Id} = useScopeOne();
+
+  console.log("userID",user_Id)
 
 
   const router = useRouter();
@@ -36,6 +38,18 @@ const DataTable = () => {
     setOpen(true);
   };
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const currentUser = localStorage.getItem("username");
+      if (currentUser) {
+        setUser_Id(currentUser);  
+        form.setFieldsValue({ username: currentUser });  // ✅ Set the form value dynamically
+      }
+    }
+  }, [form]);
+  
+  
+
   const enterLoading = (index) => {
 
     setTimeout(() => {
@@ -56,9 +70,10 @@ const DataTable = () => {
     // Switch to data entry view
 
     setScopeOneTotal(row.scope1);
+    // setScopeOneTotal(row.username)
 
     form.setFieldsValue({
-      username: row.username,
+      username: user_Id,
       date: dayjs(row.date),
       shift: row.shift,
       goodsProduced: row.goodsProduced,
@@ -198,7 +213,7 @@ useEffect(() => {
         {view === "DataEntry" && (
           <>
           <Form form={form} onFinish={handleFormSubmit} layout="vertical" className="p-4">
-            <Form.Item label="Username" name="username" initialValue={userId}>
+            <Form.Item label="Username" name="username" initialValue={user_Id}>
               <Input placeholder="Enter Username" disabled />
             </Form.Item>
 
