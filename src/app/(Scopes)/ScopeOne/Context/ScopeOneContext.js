@@ -11,7 +11,7 @@ export function ScopeOneProvider({ children }) {
     const [selectedFuels, setSelectedFuels] = useState({});
     const [activities, setActivities] = useState([]);
     const [fetchedParameters, setFetchedParameters] = useState({});
-    const [userId, setUserId] = useState("")
+    const [userId, setUserId] = useState("");
     const [templatecontent, settemplatecontent] = useState("");
     const [selectedShift, setSelectedShift] = useState("");
     // 🔹 Add shift state

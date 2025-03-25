@@ -28,16 +28,16 @@ const { Header } = Layout;
 const { Title } = Typography;
 
 export default function NavBar() {
-  const { setEditTemplate } = useScopeOne();
+  const { setEditTemplate,userId } = useScopeOne();
   const router = useRouter();
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [openEditTemplate, setOpenEditTemplate] = useState(false);
-  const [userId, setUserId] = useState("");
+  const [user_Id, setUser_Id] = useState("");
   const [user, setUser] = useState("");
   const [messageApi, contextHolder] = message.useMessage();
   const [roles,setRoles] = useState("")
 
-  console.log("rolse",roles)
+  console.log("userIdfromNav",userId)
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -45,7 +45,7 @@ export default function NavBar() {
       const roles = localStorage.getItem("roles")
       
       if (userName) {
-        setUserId(userName);
+        setUser_Id(userName);
         setUser(userName.charAt(0).toUpperCase());
 
         // ✅ Check for first login flag
@@ -80,7 +80,8 @@ export default function NavBar() {
 
   const popoverContent = (
     <div className="p-2 text-center">
-      <p className="mb-2 font-semibold text-gray-700">{userId}</p>
+      <p className="mb-2 font-semibold text-gray-700">{user_Id}</p>
+      <p className="mb-2 font-semibold text-gray-700">{roles}</p>
       <Button type="primary" danger size="small" onClick={handleLogout}>
         Logout
       </Button>
@@ -129,9 +130,12 @@ export default function NavBar() {
         width={250}
       >
         <Menu mode="inline" className="custom-menu">
-          <Menu.Item icon={<FormOutlined />}>
+
+          {roles === "Supervisor" ?
+          (<Menu.Item icon={<FormOutlined />}>
             <a onClick={handleCreateTemplate}>Create Template</a>
-          </Menu.Item>
+          </Menu.Item>) : "" }
+          
           <Menu.Item icon={<EditOutlined />} onClick={() => setOpenEditTemplate(true)}>
             Edit Template
           </Menu.Item>
