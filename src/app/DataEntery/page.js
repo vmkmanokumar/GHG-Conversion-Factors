@@ -15,8 +15,7 @@ const DataTable = () => {
   const [scopeOneTotal, setScopeOneTotal] = useState(null);
   const { data, setData } = useScopeOne();
 
-  const userId = localStorage.getItem("username")
-  console.log(userId)
+
   const router = useRouter();
   const [view, setView] = useState("DataEntry");
   const [form] = Form.useForm();
