@@ -17,7 +17,7 @@ const TemplateSelector = () => {
   // Load user ID from localStorage
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const storedUserId = localStorage.getItem("username");
+      const storedUserId = localStorage.getItem("email");
       if (storedUserId) {
         setUserId(storedUserId);
       }

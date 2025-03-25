@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useScopeOne } from "../(Scopes)/ScopeOne/Context/ScopeOneContext";
 import ParametersAndUnits from "../(Scopes)/ScopeOne/Activities/parameterAndUnit/page";
 import NavBar from "@/Componants/NavBar";
+import ParameterUnitForScopeTwo from "../(Scopes)/Scopetwo/Activities/ParametersUnitForScopeTwo";
 
 const { confirm } = Modal;
 const { Option } = Select;
@@ -28,6 +29,10 @@ const DataTable = () => {
   };
 
   const showLargeDrawer = () => {
+    setSize("large");
+    setOpen(true);
+  };
+  const showLargeDrawerScope2 = () => {
     setSize("large");
     setOpen(true);
   };
@@ -210,7 +215,7 @@ const DataTable = () => {
             </Form.Item>
 
             <Form.Item label="Scope 2" name="scope2">
-              <Button onClick={showLargeDrawer} icon={<PlusOutlined />}>Scope 2 Parameters</Button><span className="ml-3">{scopeOneTotal}</span>
+              <Button onClick={showLargeDrawerScope2} icon={<PlusOutlined />}>Scope 2 Parameters</Button><span className="ml-3">{scopeOneTotal}</span>
             </Form.Item>
 
             <Button type="primary" htmlType="submit">
@@ -238,6 +243,24 @@ const DataTable = () => {
         }
       >
         <ParametersAndUnits setScopeOneTotal={setScopeOneTotal} scopeOneTotal={scopeOneTotal}></ParametersAndUnits>
+        {/* <ParametersAndUnits setScopeOneTotal={setScopeOneTotal}  scopeOneTotal={scopeOneTotal}></ParametersAndUnits> */}
+      </Drawer>
+      <Drawer
+        title="Paramter"
+        placement="right"
+        size={size}
+        onClose={onClose}
+        open={open}
+        extra={
+          <Space>
+            <Button onClick={onClose}>Cancel</Button>
+            <Button type="primary" onClick={onClose}>
+              OK
+            </Button>
+          </Space>
+        }
+      >
+        <ParameterUnitForScopeTwo setScopeOneTotal={setScopeOneTotal} scopeOneTotal={scopeOneTotal}></ParameterUnitForScopeTwo>
         {/* <ParametersAndUnits setScopeOneTotal={setScopeOneTotal}  scopeOneTotal={scopeOneTotal}></ParametersAndUnits> */}
       </Drawer>
 
