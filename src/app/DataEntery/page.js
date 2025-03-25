@@ -243,7 +243,6 @@ const DataTable = () => {
         }
       >
         <ParametersAndUnits setScopeOneTotal={setScopeOneTotal} scopeOneTotal={scopeOneTotal}></ParametersAndUnits>
-        {/* <ParametersAndUnits setScopeOneTotal={setScopeOneTotal}  scopeOneTotal={scopeOneTotal}></ParametersAndUnits> */}
       </Drawer>
       <Drawer
         title="Paramter"
@@ -261,7 +260,7 @@ const DataTable = () => {
         }
       >
         <ParameterUnitForScopeTwo setScopeOneTotal={setScopeOneTotal} scopeOneTotal={scopeOneTotal}></ParameterUnitForScopeTwo>
-        {/* <ParametersAndUnits setScopeOneTotal={setScopeOneTotal}  scopeOneTotal={scopeOneTotal}></ParametersAndUnits> */}
+        
       </Drawer>
 
     </div>
