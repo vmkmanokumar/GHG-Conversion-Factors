@@ -14,14 +14,7 @@ const { Option } = Select;
 
 const DataTable = () => {
   const [scopeOneTotal, setScopeOneTotal] = useState(null);
-<<<<<<< HEAD
   const { data, setData, userId } = useScopeOne();
-=======
-  const { data, setData } = useScopeOne();
-
-  const userId = localStorage.getItem("username")
-  console.log(userId)
->>>>>>> 6ba2f50704979b49b50e1285840b6f719b1eb1e4
   const router = useRouter();
   const [view, setView] = useState("DataEntry");
   const [form] = Form.useForm();
@@ -194,12 +187,7 @@ useEffect(() => {
   return (
     <div>
       <NavBar />
-<<<<<<< HEAD
       <div className="w-[1000] ml-[500] mt-[70] shadow-lg p-10 h-[700]">
-=======
-      {contextHolder}
-      <div className="w-[1300] ml-[350] mt-[70] shadow-lg p-10 h-[800]">
->>>>>>> 6ba2f50704979b49b50e1285840b6f719b1eb1e4
         <Segmented
           options={[
             { label: "Data Entry", value: "DataEntry", icon: <AppstoreAddOutlined /> },
@@ -208,7 +196,6 @@ useEffect(() => {
           onChange={setView}
           value={view}
         />
-<<<<<<< HEAD
 
         {view === "DataEntry" && (
           <Form form={form} onFinish={handleFormSubmit} layout="vertical" className="p-4">
@@ -248,101 +235,6 @@ useEffect(() => {
         {view === "List" && <Table className="mt-10" columns={columns} dataSource={data} pagination={false} />}
       </div>
 
-=======
-
-        {view === "DataEntry" && (
-          <>
-          <Form form={form} onFinish={handleFormSubmit} layout="vertical" className="p-4">
-            <Form.Item label="Username" name="username" initialValue={userId}>
-              <Input placeholder="Enter Username" disabled />
-            </Form.Item>
-
-            <Form.Item label="Date" name="date" rules={[{ required: true, message: "Please select date" }]}>
-              <DatePicker />
-            </Form.Item>
-
-            <Form.Item label="Shift" name="shift" rules={[{ required: true, message: "Select shift" }]}>
-              <Select>
-                <Option value="1">Shift 1</Option>
-                <Option value="2">Shift 2</Option>
-              </Select>
-            </Form.Item>
-
-            <Form.Item label="Goods Produced" name="goodsProduced" rules={[{ required: true, message: "Enter production" }]}>
-              <Input type="number" />
-            </Form.Item>
-
-            <Form.Item label="Scope 1" name="scope1">
-              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <Button onClick={showLargeDrawer} icon={<PlusOutlined />}>Parameters</Button><span className="ml-3">{scopeOneTotal}</span>
-              </div>
-            </Form.Item>
-
-            <Form.Item label="Scope 2" name="scope2" rules={[{ required: true }]}>
-              <Input type="number" />
-            </Form.Item>
-
-            <Button type="primary" htmlType="submit">
-              Save Data
-            </Button>
-          </Form>
-          </>
-        )}
-
-{view === "List" && (
-  <div className="mt-5"> 
-    {/* ✅ Refresh and Date Filter */}
-    <div className="flex justify-between mb-4">
-      {/* ✅ Date Filter */}
-      <DatePicker.RangePicker
-        onChange={(dates) => {
-          if (dates && dates.length === 2) {
-            const [startDate, endDate] = dates;
-            const filtered = data.filter((item) => {
-              const itemDate = dayjs(item.date);
-              return itemDate.isAfter(startDate.subtract(1, "day")) && itemDate.isBefore(endDate.add(1, "day"));
-            });
-            setData(filtered);  // ✅ Update with filtered data
-          } else {
-            fetchData();        // ✅ Reset to full data when cleared
-          }
-        }}
-      />
-
-      {/* ✅ Refresh Button with Animation */}
-      <Button 
-        type="primary" 
-        icon={<SyncOutlined />} 
-        onClick={async () => {
-          setLoadings([true]);          // ✅ Show loading animation
-          await fetchData();            // ✅ Fetch the data
-          setLoadings([false]);         // ✅ Hide loading animation
-        }}
-        loading={loadings[0]}           // ✅ Display spinner while loading
-      >
-        {loadings[0] ? "Refreshing..." : "Refresh"}
-      </Button>
-    </div>
-
-    {/* ✅ Scrollable container */}
-    <div>
-      <Table
-        className="mt-10"
-        columns={columns}
-        dataSource={[...data].sort((a, b) => new Date(b.date) - new Date(a.date))}  
-        pagination={false}
-        scroll={{ y: 550 }}
-      />
-    </div>
-  </div>
-)}
-
-
-
-
-      </div>
-
->>>>>>> 6ba2f50704979b49b50e1285840b6f719b1eb1e4
       <Drawer
         title="Paramter"
         placement="right"
@@ -360,7 +252,6 @@ useEffect(() => {
       >
         <ParametersAndUnits setScopeOneTotal={setScopeOneTotal} scopeOneTotal={scopeOneTotal}></ParametersAndUnits>
       </Drawer>
-<<<<<<< HEAD
       <Drawer
         title="Paramter"
         placement="right"
@@ -379,8 +270,6 @@ useEffect(() => {
         <ParameterUnitForScopeTwo setScopeOneTotal={setScopeOneTotal} scopeOneTotal={scopeOneTotal}></ParameterUnitForScopeTwo>
         
       </Drawer>
-=======
->>>>>>> 6ba2f50704979b49b50e1285840b6f719b1eb1e4
 
     </div>
   );
