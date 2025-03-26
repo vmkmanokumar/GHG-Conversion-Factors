@@ -5,7 +5,7 @@ import { Checkbox } from "antd";
 import ChooesactivitiesScopeTwo from "./ChooesactiviesScopeTwo";
 import ParametersForScopeTwo from "./ParametersForScopeTwo";
 import ParameterUnitForScopeTwo from "./ParametersUnitForScopeTwo";
-import { useScopeTwo } from "../Context/ScopeTwoContext";
+import { useScopeTwo } from "../Context/ScopeTwoContext"; 
 
 export default function ScopeTwoFactors({ pageChange }) {
   const { checkedValuesScopeTwo, setCheckedValuesScopeTwo } = useScopeTwo();
