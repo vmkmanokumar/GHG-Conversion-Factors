@@ -10,7 +10,7 @@ export default function ChooesactivitiesScopeTwo() {
   const { checkedValuesScopeTwo, selectedValuesScopeTwo, setSelectedValuesScopeTwo } = useScopeTwo();
 
 
-  console.log("From activi page",selectedValuesScopeTwo)
+  console.log("From activi page",checkedValuesScopeTwo)
 
   const handleCheckboxChange = (category, item) => {
     setSelectedValuesScopeTwo((prev) => {
@@ -26,6 +26,7 @@ export default function ChooesactivitiesScopeTwo() {
 
   return (
     <div className="flex flex-col justify-center items-center bg-[#effbf7] w-full md:w-[768px] lg:w-[1152px] md:mx-auto mt-10 md:mt-16 lg:mt-10 p-4 md:p-6 rounded-xl shadow-lg flex-grow min-h-[515px]">
+      <h1>Activies</h1>
       <div className="w-full min-h-[250px] flex-grow text-[22px]">
         {Object.keys(DummydataForScope2Actives).map((key) => (
           checkedValuesScopeTwo.includes(key) && (
