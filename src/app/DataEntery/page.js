@@ -21,7 +21,11 @@ const DataTable = () => {
 
   const userId = localStorage.getItem("username")
   console.log(userId)
+<<<<<<< HEAD
 >>>>>>> 6ba2f50 (24/3/25 username change email change)
+=======
+>>>>>>> 6ba2f50704979b49b50e1285840b6f719b1eb1e4
+>>>>>>> cc93e036b20253d022238c09301f546ace14a628
   const router = useRouter();
   const [view, setView] = useState("DataEntry");
   const [form] = Form.useForm();
@@ -199,7 +203,11 @@ useEffect(() => {
 =======
       {contextHolder}
       <div className="w-[1300] ml-[350] mt-[70] shadow-lg p-10 h-[800]">
+<<<<<<< HEAD
 >>>>>>> 6ba2f50 (24/3/25 username change email change)
+=======
+>>>>>>> 6ba2f50704979b49b50e1285840b6f719b1eb1e4
+>>>>>>> cc93e036b20253d022238c09301f546ace14a628
         <Segmented
           options={[
             { label: "Data Entry", value: "DataEntry", icon: <AppstoreAddOutlined /> },
@@ -342,7 +350,11 @@ useEffect(() => {
 
       </div>
 
+<<<<<<< HEAD
 >>>>>>> 6ba2f50 (24/3/25 username change email change)
+=======
+>>>>>>> 6ba2f50704979b49b50e1285840b6f719b1eb1e4
+>>>>>>> cc93e036b20253d022238c09301f546ace14a628
       <Drawer
         title="Paramter"
         placement="right"
@@ -380,7 +392,11 @@ useEffect(() => {
         
       </Drawer>
 =======
+<<<<<<< HEAD
 >>>>>>> 6ba2f50 (24/3/25 username change email change)
+=======
+>>>>>>> 6ba2f50704979b49b50e1285840b6f719b1eb1e4
+>>>>>>> cc93e036b20253d022238c09301f546ace14a628
 
     </div>
   );
