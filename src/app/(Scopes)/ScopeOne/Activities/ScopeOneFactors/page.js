@@ -35,11 +35,18 @@ export default function ScopeOneFactors({ pageChange }) {
         "https://ghg-conversion-factors-backend.vercel.app/scope_factors"
       );
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-
+  
       const data = await response.json();
-      console.log("Fetched activities:", data);
-
-      setActivities(Array.isArray(data) ? data.map((item) => ({ name: item, value: item })) : []);
+      console.log("Fetched activities before filtering:", data); // 🔍 Debug log
+  
+      // 🔴 Remove "UK Electricity" from the activities list
+      const filteredActivities = data.filter(item => item !== "UK Electricity");
+  
+      console.log("Filtered Scope 1 activities:", filteredActivities); // Debug log
+  
+      setActivities(
+        filteredActivities.map((item) => ({ name: item, value: item }))
+      );
     } catch (error) {
       console.error("Error fetching scope factors:", error);
       setActivities([]);
@@ -47,6 +54,7 @@ export default function ScopeOneFactors({ pageChange }) {
       setLoading(false);
     }
   };
+  
 
   // Fetch Saved Scope One
   const fetchSavedScopeOne = async () => {
