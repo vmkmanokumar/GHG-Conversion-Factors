@@ -24,6 +24,8 @@ const DataTable = () => {
   const [form] = Form.useForm();
   const [size, setSize] = useState();
   const [open, setOpen] = useState(false);
+  const [size2, setSize2] = useState();
+  const [open2, setOpen2] = useState(false);
   const [loadings, setLoadings] = useState([]);
   const [currentRow, setCurrentRow] = useState(null);  // ✅ Store row being edited
   const [isEditMode, setIsEditMode] = useState(false); // ✅ Track if editing
@@ -39,8 +41,11 @@ const DataTable = () => {
     setOpen(true);
   };
   const showLargeDrawerScope2 = () => {
-    setSize("large");
-    setOpen(true);
+    setSize2("large");
+    setOpen2(true);
+  };
+  const onClose2 = () => {
+    setOpen2(false);
   };
 
   useEffect(() => {
@@ -215,7 +220,7 @@ useEffect(() => {
         />
 
         {view === "DataEntry" && (
-          <Form form={form} onFinish={handleFormSubmit} layout="vertical" className="p-
+          <Form form={form} onFinish={handleFormSubmit} layout="vertical" className="p-2">
 
             <Form.Item label="Username" name="username" initialValue={user_Id}>
 
@@ -251,7 +256,7 @@ useEffect(() => {
           </Form>
         )}
 
-        {view === "List" && <Table className="mt-10" columns={columns} dataSource={data} pagination={false} />}
+        {view === "List" && <Table className="mt-10" columns={columns} dataSource={data} pagination={false } scroll={{y:500}} />}
       </div>
 
       <Drawer
@@ -271,16 +276,17 @@ useEffect(() => {
       >
         <ParametersAndUnits setScopeOneTotal={setScopeOneTotal} scopeOneTotal={scopeOneTotal}></ParametersAndUnits>
       </Drawer>
+
       <Drawer
         title="Paramter"
         placement="right"
-        size={size}
-        onClose={onClose}
-        open={open}
+        size={size2}
+        onClose={onClose2}
+        open={open2}
         extra={
           <Space>
-            <Button onClick={onClose}>Cancel</Button>
-            <Button type="primary" onClick={onClose}>
+            <Button onClick={onClose2}>Cancel</Button>
+            <Button type="primary" onClick={onClose2}>
               OK
             </Button>
           </Space>
