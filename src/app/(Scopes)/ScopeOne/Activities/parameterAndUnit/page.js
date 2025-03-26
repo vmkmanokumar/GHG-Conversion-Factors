@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Disclosure } from "@headlessui/react";
 import { ChevronDown } from "lucide-react";
-import { Input, Select, Button ,message} from "antd";
+import { Input, Select, Button ,message,notification} from "antd";
 import { motion } from "framer-motion";
 import { useScopeOne } from "../../Context/ScopeOneContext";
 
@@ -11,7 +11,8 @@ const { Option } = Select;
 export default function ParametersAndUnits({setScopeOneTotal,scopeOneTotal}) {
   const { selectedFuels, setSelectedFuels } = useScopeOne();
   const [biogas, setBiogas] = useState([]);
-  const [messageApi, contextHolder] = message.useMessage();
+  // const [messageApi, contextHolder] = message.useMessage();
+  const [api, contextHolder] = notification.useNotification();
   
 
   console.log("Selected Fuels:", selectedFuels);
@@ -52,7 +53,12 @@ export default function ParametersAndUnits({setScopeOneTotal,scopeOneTotal}) {
         const data = await response.json();
         console.log("Data successfully sent:", data);
         setScopeOneTotal(data.ScopeOneTotal)
-        messageApi.success(data.message)
+        api.success({
+          message: "Success",
+          description: data.message,
+          placement:"topLeft"
+        });
+        
 
        
       } else {
