@@ -8,7 +8,7 @@ export const dummyDataScope2factors = [
 
 
 export const DummydataForScope2Actives = {
-    "Uk electricity": ["Electricity generated"],
+    "UK Electricity": ["Electricity generated"],
     "UK electricity for EVs":["Cars (by market segment)"," Cars (by size)","Vans"],
     "SECR kWh UK electricity for EV":["Cars (by market segment)"," Cars (by size)","Vans"],
 }

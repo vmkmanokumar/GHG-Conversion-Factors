@@ -8,13 +8,15 @@ import ParametersAndUnits from "../(Scopes)/ScopeOne/Activities/parameterAndUnit
 import { useScopeOne } from "../(Scopes)/ScopeOne/Context/ScopeOneContext";
 
 const TableView = () => {
-  const { editTemplate, setEditTemplate,allEntries, setAllEntries } = useScopeOne();
+  const { editTemplate, setEditTemplate,allEntries, setAllEntries ,userId, setUserId} = useScopeOne();
+
+  console.log("useridtable",userId)
   
   // const [allEntries, setAllEntries] = useState([]);
   console.log("all",allEntries)
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [userId, setUserId] = useState("");
+  // const [userId, setUserId] = useState("");
   const [open, setOpen] = useState(false);
 
   const router = useRouter();
@@ -22,10 +24,19 @@ const TableView = () => {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedTemplate = localStorage.getItem("selectedTemplate");
-      const userName = localStorage.getItem("email");
       if (storedTemplate) setSelectedTemplate(storedTemplate);
-      if (userName) setUserId(userName);
       
+    }
+  }, []);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedUserId = localStorage.getItem("email");
+      const SupervisiorName = localStorage.getItem("SupervisiorName")
+      if (SupervisiorName !== "N/A" ) {
+        setUserId(SupervisiorName);
+      }else{
+        setUserId(storedUserId)
+      }
     }
   }, []);
 

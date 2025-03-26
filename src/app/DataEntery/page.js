@@ -21,11 +21,7 @@ const DataTable = () => {
 
   const userId = localStorage.getItem("username")
   console.log(userId)
-<<<<<<< HEAD
->>>>>>> 6ba2f50 (24/3/25 username change email change)
-=======
 >>>>>>> 6ba2f50704979b49b50e1285840b6f719b1eb1e4
->>>>>>> cc93e036b20253d022238c09301f546ace14a628
   const router = useRouter();
   const [view, setView] = useState("DataEntry");
   const [form] = Form.useForm();
@@ -50,6 +46,18 @@ const DataTable = () => {
     setOpen(true);
   };
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const currentUser = localStorage.getItem("username");
+      if (currentUser) {
+        setUser_Id(currentUser);  
+        form.setFieldsValue({ username: currentUser });  // ✅ Set the form value dynamically
+      }
+    }
+  }, [form]);
+  
+  
+
   const enterLoading = (index) => {
 
     setTimeout(() => {
@@ -70,9 +78,10 @@ const DataTable = () => {
     // Switch to data entry view
 
     setScopeOneTotal(row.scope1);
+    // setScopeOneTotal(row.username)
 
     form.setFieldsValue({
-      username: row.username,
+      username: user_Id,
       date: dayjs(row.date),
       shift: row.shift,
       goodsProduced: row.goodsProduced,
@@ -198,16 +207,11 @@ useEffect(() => {
   return (
     <div>
       <NavBar />
-<<<<<<< HEAD
       <div className="w-[1000] ml-[500] mt-[70] shadow-lg p-10 h-[700]">
 =======
       {contextHolder}
       <div className="w-[1300] ml-[350] mt-[70] shadow-lg p-10 h-[800]">
-<<<<<<< HEAD
->>>>>>> 6ba2f50 (24/3/25 username change email change)
-=======
 >>>>>>> 6ba2f50704979b49b50e1285840b6f719b1eb1e4
->>>>>>> cc93e036b20253d022238c09301f546ace14a628
         <Segmented
           options={[
             { label: "Data Entry", value: "DataEntry", icon: <AppstoreAddOutlined /> },
@@ -216,11 +220,12 @@ useEffect(() => {
           onChange={setView}
           value={view}
         />
-<<<<<<< HEAD
 
         {view === "DataEntry" && (
-          <Form form={form} onFinish={handleFormSubmit} layout="vertical" className="p-4">
-            <Form.Item label="Username" name="username" initialValue="Current User">
+          <Form form={form} onFinish={handleFormSubmit} layout="vertical" className="p-
+
+            <Form.Item label="Username" name="username" initialValue={user_Id}>
+
               <Input placeholder="Enter Username" disabled />
             </Form.Item>
 
@@ -350,11 +355,7 @@ useEffect(() => {
 
       </div>
 
-<<<<<<< HEAD
->>>>>>> 6ba2f50 (24/3/25 username change email change)
-=======
 >>>>>>> 6ba2f50704979b49b50e1285840b6f719b1eb1e4
->>>>>>> cc93e036b20253d022238c09301f546ace14a628
       <Drawer
         title="Paramter"
         placement="right"
@@ -372,7 +373,6 @@ useEffect(() => {
       >
         <ParametersAndUnits setScopeOneTotal={setScopeOneTotal} scopeOneTotal={scopeOneTotal}></ParametersAndUnits>
       </Drawer>
-<<<<<<< HEAD
       <Drawer
         title="Paramter"
         placement="right"
@@ -392,11 +392,7 @@ useEffect(() => {
         
       </Drawer>
 =======
-<<<<<<< HEAD
->>>>>>> 6ba2f50 (24/3/25 username change email change)
-=======
 >>>>>>> 6ba2f50704979b49b50e1285840b6f719b1eb1e4
->>>>>>> cc93e036b20253d022238c09301f546ace14a628
 
     </div>
   );
