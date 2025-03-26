@@ -49,6 +49,7 @@ export default function Login() {
         const email = data.user.email
         const username = data.user.username
         const roles = data.user.roles
+        const SupervisiorName = data.user.ownername
         messageApi.success("Login successful!");
         console.log("username",username)
   
@@ -58,6 +59,7 @@ export default function Login() {
           localStorage.setItem("username",username)
           localStorage.setItem("firstLogin", "true");
           localStorage.setItem("roles",roles)
+          localStorage.setItem("SupervisiorName",SupervisiorName)
         
           router.push("/dashboard"); // ✅ Redirect user
         } else {

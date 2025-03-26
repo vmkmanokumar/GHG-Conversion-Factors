@@ -3,11 +3,13 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button, Skeleton, message, Checkbox,Modal } from "antd";
+import { useScopeOne } from "../(Scopes)/ScopeOne/Context/ScopeOneContext";
 
 const TemplateSelector = () => {
+  const {userId, setUserId} = useScopeOne()
   const [templates, setTemplates] = useState([]);
   const [selected, setSelected] = useState(null);
-  const [userId, setUserId] = useState("");
+  // const [userId, setUserId] = useState("");
   const [loading, setLoading] = useState(true);
   const [showCheckboxes, setShowCheckboxes] = useState(false);
   const [selectedTemplates, setSelectedTemplates] = useState([]);
@@ -18,8 +20,11 @@ const TemplateSelector = () => {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedUserId = localStorage.getItem("email");
-      if (storedUserId) {
-        setUserId(storedUserId);
+      const SupervisiorName = localStorage.getItem("SupervisiorName")
+      if (SupervisiorName !== "N/A" ) {
+        setUserId(SupervisiorName);
+      }else{
+        setUserId(storedUserId)
       }
     }
   }, []);
