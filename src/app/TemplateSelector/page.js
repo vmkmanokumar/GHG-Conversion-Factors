@@ -17,6 +17,8 @@ const TemplateSelector = () => {
   const [messageApi, contextHolder] = message.useMessage();
 
   // Load user ID from localStorage
+
+  console.log("template selection",userId)
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedUserId = localStorage.getItem("email");
