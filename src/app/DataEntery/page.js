@@ -33,6 +33,7 @@ const DataTable = () => {
     setOpen(false);
   };
 
+
   const showLargeDrawer = () => {
     setSize("large");
     setOpen(true);
@@ -200,7 +201,7 @@ useEffect(() => {
     <div>
       <NavBar />
       {contextHolder}
-      <div className="w-[1400] ml-[280] mt-[70] shadow-lg p-10 h-[800]">
+      <div className="w-[1400] ml-[280] mt-[40] shadow-lg p-10 h-[800]">
         <Segmented
           options={[
             { label: "Data Entry", value: "DataEntry", icon: <AppstoreAddOutlined /> },
