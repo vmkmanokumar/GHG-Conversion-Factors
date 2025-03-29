@@ -126,7 +126,7 @@ export default function ParametersForScopeTwo() {
       }
 
       const response = await fetch(
-        "https://ghg-conversion-factors-backend.vercel.app/saveTemplate",
+        "https://ghg-conversion-factors-backend.vercel.app/templateSave_scope2",
         {
           method: "POST",
           headers: { 
