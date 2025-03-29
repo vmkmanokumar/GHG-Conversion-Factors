@@ -155,7 +155,7 @@ const fetchData = async () => {
   try {
     const templateId = JSON.parse(localStorage.getItem("templatID"))[0];  // ✅ Parse the ID properly
 
-    const response = await fetch(`https://ghg-conversion-factors-backend.vercel.app/api/DashBoardData?Template_Id=${templateId}`);
+    const response = await fetch(`https://ghg-conversion-factors-backend.vercel.app/api/DashBoard?Template_Id=${templateId}`);
 
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
