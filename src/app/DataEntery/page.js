@@ -17,6 +17,10 @@ const DataTable = () => {
 
   console.log("userID",user_Id)
 
+  const [templateId,setTemplateId] = useState(null)
+
+  console.log("templateID",templateId)
+
 
   const router = useRouter();
   const [view, setView] = useState("DataEntry");
@@ -149,10 +153,14 @@ const DataTable = () => {
 // ✅ Move fetchData outside of useEffect
 const fetchData = async () => {
   try {
-    const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/api/DashBoardData");
+    const templateId = JSON.parse(localStorage.getItem("templatID"))[0];  // ✅ Parse the ID properly
+
+    const response = await fetch(`http://127.0.0.1:5000/api/DashBoardData?Template_Id=${templateId}`);
+
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
+
     const data = await response.json();
 
     const formattedData = data.map((row) => ({
@@ -173,7 +181,13 @@ const fetchData = async () => {
   }
 };
 
+
 useEffect(() => {
+  // const templateId = localStorage.getItem("templatID")
+  // const parsedId = JSON.parse(templateId);
+  // if(parsedId){
+  //   setTemplateId(parsedId[0])
+  // } 
   fetchData();
 }, []);
 

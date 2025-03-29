@@ -202,6 +202,35 @@ export default function Dashboard() {
     return filteredData.filter((item) => item.shift === (selectedShift === "shift1" ? 1 : 2));
   };
 
+  const getCumulativeDataByShift = () => {
+    const filtered = getFilteredData(); // Apply shift filter
+    const cumulativeMap = new Map();
+  
+    let cumulativeGoods = 0;
+    let cumulativeCO2 = 0;
+  
+    filtered.forEach((item) => {
+      const key = `${item.date}-${item.shift}`;
+  
+      if (!cumulativeMap.has(key)) {
+        cumulativeMap.set(key, {
+          date: item.date,
+          shift: item.shift,
+          cumulativeGoods: 0,
+          cumulativeCO2: 0,
+        });
+      }
+  
+      const record = cumulativeMap.get(key);
+      cumulativeGoods += item.goodsProduced;
+      cumulativeCO2 += item.co2Emitted;
+  
+      record.cumulativeGoods = cumulativeGoods;
+      record.cumulativeCO2 = cumulativeCO2;
+    });
+  
+    return Array.from(cumulativeMap.values());
+  };
   const displayData = getFilteredData();
   const cumulative = getFilteredData();
 
@@ -250,7 +279,7 @@ export default function Dashboard() {
           key: "scope2",
           value: totalScope2,
           color: "white",
-          chartColor: "#06A77D",
+          chartColor: "#F5DB06",
         },
       ].map((item) => (
         <Card
@@ -424,7 +453,7 @@ export default function Dashboard() {
         <div className="w-full lg:w-1/2 bg-white p-6 rounded-lg shadow-lg">
           <h3 className="text-xl font-semibold text-gray-800 mb-4">Cumulative Goods Produced & CO₂ Emissions</h3>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={cumulativeData}>
+            <LineChart data={getCumulativeDataByShift()}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="date" />
               <YAxis />
