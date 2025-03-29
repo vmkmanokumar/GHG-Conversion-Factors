@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Layout, Card, Statistic, Menu, Flex, DatePicker ,Select} from "antd";
+import React, { useState, useEffect ,useRef} from "react";
+import { Layout, Card, Statistic, Menu, Flex, DatePicker ,Select, Modal} from "antd";
 
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell, AreaChart, Area, } from "recharts";
 import dayjs from "dayjs";
@@ -51,6 +51,65 @@ const dummyData = [
 export default function Dashboard() {
   const [data, setData] = useState([]);
   const [dateRange, setDateRange] = useState([dayjs().startOf("month"), dayjs().endOf("month")]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+
+  const [zoom, setZoom] = useState(1);
+  const [translate, setTranslate] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [startPos, setStartPos] = useState({ x: 0, y: 0 });
+
+  const chartRef = useRef(null);
+
+  // ✅ Modal Open
+  const showModal = (item) => {
+    setSelectedItem(item);
+    setIsModalVisible(true);
+    setZoom(1);  // Reset zoom on new modal
+    setTranslate({ x: 0, y: 0 });
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
+  // ✅ Handle Zoom with Scroll
+  const handleWheel = (e) => {
+    const scaleAmount = 0.1;
+    if (e.deltaY < 0) {
+      setZoom((prev) => Math.min(prev + scaleAmount, 3)); // Zoom in
+    } else {
+      setZoom((prev) => Math.max(prev - scaleAmount, 1)); // Zoom out
+    }
+  };
+
+  // ✅ Handle Dragging
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    setStartPos({ x: e.clientX - translate.x, y: e.clientY - translate.y });
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    const x = e.clientX - startPos.x;
+    const y = e.clientY - startPos.y;
+    setTranslate({ x, y });
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+
+
+  // const showModal = (item) => {
+  //   setSelectedItem(item);
+  //   setIsModalVisible(true);
+  // };
+
+  // const handleCancel = () => {
+  //   setIsModalVisible(false);
+  // };
   
   // const {data} = useScopeOne()
 
@@ -143,6 +202,35 @@ export default function Dashboard() {
     return filteredData.filter((item) => item.shift === (selectedShift === "shift1" ? 1 : 2));
   };
 
+  const getCumulativeDataByShift = () => {
+    const filtered = getFilteredData(); // Apply shift filter
+    const cumulativeMap = new Map();
+  
+    let cumulativeGoods = 0;
+    let cumulativeCO2 = 0;
+  
+    filtered.forEach((item) => {
+      const key = `${item.date}-${item.shift}`;
+  
+      if (!cumulativeMap.has(key)) {
+        cumulativeMap.set(key, {
+          date: item.date,
+          shift: item.shift,
+          cumulativeGoods: 0,
+          cumulativeCO2: 0,
+        });
+      }
+  
+      const record = cumulativeMap.get(key);
+      cumulativeGoods += item.goodsProduced;
+      cumulativeCO2 += item.co2Emitted;
+  
+      record.cumulativeGoods = cumulativeGoods;
+      record.cumulativeCO2 = cumulativeCO2;
+    });
+  
+    return Array.from(cumulativeMap.values());
+  };
   const displayData = getFilteredData();
   const cumulative = getFilteredData();
 
@@ -164,91 +252,154 @@ export default function Dashboard() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {[
-            {
-              title: "Total Goods Produced",
-              key: "goodsProduced",
-              value: totalGoods,
-              color: "white",
-              chartColor: "#7625F5",
-            },
-            {
-              title: "Total CO₂ Emitted (kg)",
-              key: "co2Emitted",
-              value: totalCO2,
-              color: "white",
-              chartColor: "#F56B62",
-            },
-            {
-              title: "Scope 1 Emissions",
-              key: "scope1",
-              value: totalScope1,
-              color: "white",
-              chartColor: "#F5DB06",
-            },
-            {
-              title: "Scope 2 Emissions",
-              key: "scope2",
-              value: totalScope2,
-              color: "white",
-              chartColor: "#F5DB06",
-            },
-          ].map((item) => (
-            <Card
-              key={item.key}
-              className="rounded-lg shadow-lg border-0 overflow-hidden"
-              style={{
-                background: item.color,
-                borderLeft: `10px solid ${item.chartColor}`  // ✅ Individual left border color
-              }}
-            >
-              <div className="p-4  text-black">
-                <h3 className="text-[25px] font-semibold mb-2">{item.title}</h3>
-                <Statistic
-                  value={item.value}
-                  valueStyle={{ fontSize: "40px", fontWeight: "bold", color: "black" }}
-                />
-              </div>
-              <div className="h-20 ml-60">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={filteredData} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
-                    <defs>
-                      <linearGradient id={`color${item.key}`} x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor={item.chartColor} stopOpacity={0.8} />
-                        <stop offset="95%" stopColor={item.chartColor} stopOpacity={0} />
-                      </linearGradient>
-                    </defs>
-                    <XAxis dataKey="date" hide />
-                    <YAxis hide />
-                    <Tooltip
+      {[
+        {
+          title: "Total Goods Produced",
+          key: "goodsProduced",
+          value: totalGoods,
+          color: "white",
+          chartColor: "#7625F5",
+        },
+        {
+          title: "Total CO₂ Emitted (kg)",
+          key: "co2Emitted",
+          value: totalCO2,
+          color: "white",
+          chartColor: "#F56B62",
+        },
+        {
+          title: "Scope 1 Emissions",
+          key: "scope1",
+          value: totalScope1,
+          color: "white",
+          chartColor: "#F5DB06",
+        },
+        {
+          title: "Scope 2 Emissions",
+          key: "scope2",
+          value: totalScope2,
+          color: "white",
+          chartColor: "#F5DB06",
+        },
+      ].map((item) => (
+        <Card
+          key={item.key}
+          className="rounded-lg shadow-lg border-0 overflow-hidden cursor-pointer"
+          style={{
+            background: item.color,
+            borderLeft: `10px solid ${item.chartColor}`,
+          }}
+          onClick={() => showModal(item)}
+        >
+          <div className="p-4 text-black">
+            <h3 className="text-[25px] font-semibold mb-2">{item.title}</h3>
+            <Statistic
+              value={item.value}
+              valueStyle={{ fontSize: "40px", fontWeight: "bold", color: "black" }}
+            />
+          </div>
+
+          <div className="h-20 ml-60">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={data} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
+                <defs>
+                  <linearGradient id={`color${item.key}`} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor={item.chartColor} stopOpacity={0.8} />
+                    <stop offset="95%" stopColor={item.chartColor} stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                {/* <XAxis dataKey="date" /> */}
+                {/* <YAxis /> */}
+                <Tooltip
                       content={({ active, payload, label }) => {
                         if (active && payload && payload.length) {
-                          // const dataPoint = filteredData.find((item) => item.date === label);
+                          const dataPoint = filteredData.find((item) => item.date === label);
                           return (
-                            <div className="bg-white p-2 rounded shadow-lg opacity-80 h-[100]">
-                              <p className="text-sm">{`Date: ${label}`}</p>
-                              <p className="text-sm">{`${item.title}: ${payload[0].value}`}</p>
-                              {/* <p className="text-sm">{`Shift: ${dataPoint ? dataPoint.shift : 'N/A'}`}</p>  ✅ Added Shift info */}
+                            <div className="bg-white p-2 rounded shadow-lg opacity-80 h-[80]">
+                              {/* <p className="text-sm">{`Date: ${label}`}</p> */}
+                              <p className="text-sm mt-4 ml-2">{`${item.title}: ${payload[0].value}`}</p>
+                              {/* <p className="text-sm">{`Shift: ${dataPoint ? dataPoint.shift : 'N/A'}`}</p>   */}
                             </div>
                           );
                         }
                         return null;
                       }}
                     />
-                    <Area
-                      type="monotone"
-                      dataKey={item.key}
-                      stroke={item.chartColor}
-                      fill={`url(#color${item.key})`}
-                      strokeWidth={2}
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
+                <Area
+                  type="monotone"
+                  dataKey={item.key}
+                  stroke={item.chartColor}
+                  fill={`url(#color${item.key})`}
+                  strokeWidth={2}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+      ))}
 
-              </div>
-            </Card>
-          ))}
-        </div>
+      {/* ✅ Modal with Zooming + Horizontal Scrolling */}
+      <Modal
+        title={selectedItem?.title}
+        open={isModalVisible}
+        onCancel={handleCancel}
+        footer={null}
+        width={1000}
+      >
+        {selectedItem && (
+          <div
+            className="w-full overflow-x-auto"  // ✅ Horizontal scrolling
+            onWheel={handleWheel}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            ref={chartRef}
+            style={{
+              cursor: isDragging ? "grabbing" : "pointer",
+              transform: `scale(${zoom}) translate(${translate.x}px, ${translate.y}px)`,
+              transition: "transform 0.2s ease",
+            }}
+          >
+            <div className="w-[1600px] h-[500px]"> {/* ✅ Wider container for scroll */}
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                  <defs>
+                    <linearGradient
+                      id={`color${selectedItem.key}`}
+                      x1="0"
+                      y1="0"
+                      x2="0" y2="1"
+                    >
+                      <stop
+                        offset="5%"
+                        stopColor={selectedItem.chartColor}
+                        stopOpacity={0.8}
+                      />
+                      <stop
+                        offset="95%"
+                        stopColor={selectedItem.chartColor}
+                        stopOpacity={0}
+                      />
+                    </linearGradient>
+                  </defs>
+                  <XAxis dataKey="date" />
+                  <YAxis />
+                  <Tooltip />
+                  <Area
+                    type="monotone"
+                    dataKey={selectedItem.key}
+                    stroke={selectedItem.chartColor}
+                    fill={`url(#color${selectedItem.key})`}
+                    strokeWidth={3}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        )}
+      </Modal>
+    </div>
+
 
         {/* Charts Section */}
          {/* <h2 className="text-2xl font-bold text-gray-800 mb-6">CO₂ Emission Dashboard</h2> */}
@@ -302,7 +453,7 @@ export default function Dashboard() {
         <div className="w-full lg:w-1/2 bg-white p-6 rounded-lg shadow-lg">
           <h3 className="text-xl font-semibold text-gray-800 mb-4">Cumulative Goods Produced & CO₂ Emissions</h3>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={cumulativeData}>
+            <LineChart data={getCumulativeDataByShift()}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="date" />
               <YAxis />

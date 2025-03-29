@@ -105,11 +105,11 @@ const TableView = () => {
     { title: "User ID", dataIndex: "username", key: "username" },
     { title: "Template Name", dataIndex: "templatecontent", key: "templatecontent" },
     { title: "Created By", dataIndex: "createdBy", key: "createdBy" },
-    { title: "Shift", dataIndex: "shift", key: "shift" },
+    // { title: "Shift", dataIndex: "shift", key: "shift" },
     { title: "Created Date", dataIndex: "created_date", key: "created_date" },
     { title: "Modified Date", dataIndex: "modified_date", key: "modified_date" },
     { title: "Modified By", dataIndex: "modifiedBy", key: "modifiedBy" },
-    { title: "Total CO₂ (kg)", dataIndex: "total_kg_co2", key: "total_kg_co2" },
+    // { title: "Total CO₂ (kg)", dataIndex: "total_kg_co2", key: "total_kg_co2" },
     {
       title: "Actions",
       key: "actions",
@@ -121,9 +121,10 @@ const TableView = () => {
           <Button type="primary" block onClick={goToEnterData}>
             EnterData
           </Button>
-          <Button type="primary" block onClick={goToUpdateParameter}>
+          {setUserId === "SupervisiorName" && <Button type="primary" block onClick={goToUpdateParameter}>
             Edit
-          </Button>
+          </Button>}
+          
         </Space>
       ),
     },

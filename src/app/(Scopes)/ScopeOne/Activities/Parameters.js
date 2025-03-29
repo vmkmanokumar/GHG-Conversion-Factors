@@ -14,6 +14,7 @@ export default function Parameters() {
     setFetchedParameters,
     templatecontent,
     selectedShift,
+    // user_id
   } = useScopeOne();
 
   const [messageApi, contextHolder] = message.useMessage();
@@ -56,7 +57,7 @@ export default function Parameters() {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const storedUserId = localStorage.getItem("username");
+      const storedUserId = localStorage.getItem("email");
       if (storedUserId) {
         setUserId(storedUserId);
       }

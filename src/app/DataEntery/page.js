@@ -27,6 +27,10 @@ const DataTable = () => {
 
   console.log("userID",user_Id)
 
+  const [templateId,setTemplateId] = useState(null)
+
+  console.log("templateID",templateId)
+
 
 >>>>>>> main
   const router = useRouter();
@@ -43,6 +47,7 @@ const DataTable = () => {
   const onClose = () => {
     setOpen(false);
   };
+
 
   const showLargeDrawer = () => {
     setSize("large");
@@ -159,10 +164,14 @@ const DataTable = () => {
 // ✅ Move fetchData outside of useEffect
 const fetchData = async () => {
   try {
-    const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/api/DashBoardData");
+    const templateId = JSON.parse(localStorage.getItem("templatID"))[0];  // ✅ Parse the ID properly
+
+    const response = await fetch(`https://ghg-conversion-factors-backend.vercel.app/api/DashBoard?Template_Id=${templateId}`);
+
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
+
     const data = await response.json();
 
     const formattedData = data.map((row) => ({
@@ -183,7 +192,13 @@ const fetchData = async () => {
   }
 };
 
+
 useEffect(() => {
+  // const templateId = localStorage.getItem("templatID")
+  // const parsedId = JSON.parse(templateId);
+  // if(parsedId){
+  //   setTemplateId(parsedId[0])
+  // } 
   fetchData();
 }, []);
 
@@ -218,8 +233,12 @@ useEffect(() => {
 >>>>>>> 6ba2f50704979b49b50e1285840b6f719b1eb1e4
 =======
       {contextHolder}
+<<<<<<< HEAD
       <div className="w-[1400] ml-[280] mt-[70] shadow-lg p-10 h-[800]">
 >>>>>>> main
+=======
+      <div className="w-[1400] ml-[280] mt-[40] shadow-lg p-10 h-[800]">
+>>>>>>> 8157a6a9b5b6b5824cc05acf3bd0ed7e1868695e
         <Segmented
           options={[
             { label: "Data Entry", value: "DataEntry", icon: <AppstoreAddOutlined /> },
