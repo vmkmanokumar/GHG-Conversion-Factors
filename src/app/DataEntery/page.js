@@ -97,7 +97,10 @@ const DataTable = () => {
       scope1: scopeOneTotal || 0,
       scope2: values.scope2 || 0,
       co2_emitted: Number(values.scope1 || 0) + Number(values.scope2 || 0),
+      template_Id:templateId
     };
+
+    console.log("template",newRow.template_Id)
 
     try {
       if (isEditMode && currentRow) {
@@ -183,11 +186,11 @@ const fetchData = async () => {
 
 
 useEffect(() => {
-  // const templateId = localStorage.getItem("templatID")
-  // const parsedId = JSON.parse(templateId);
-  // if(parsedId){
-  //   setTemplateId(parsedId[0])
-  // } 
+  const templateId = localStorage.getItem("templatID")
+  const parsedId = JSON.parse(templateId);
+  if(parsedId){
+    setTemplateId(parsedId[0])
+  } 
   fetchData();
 }, []);
 
